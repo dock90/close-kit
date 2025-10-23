@@ -28,7 +28,7 @@ export function Sidebar() {
 	const pathname = usePathname();
 
 	return (
-		<div className='w-64 bg-white shadow-lg'>
+		<div className='hidden lg:block w-64 bg-white shadow-lg'>
 			<div className='p-6'>
 				<h1 className='text-2xl font-bold text-gray-900'>CloseKit</h1>
 			</div>
@@ -44,11 +44,12 @@ export function Sidebar() {
 								key={item.name}
 								href={item.href}
 								className={cn(
-									'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
+									'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors touch-manipulation',
 									isActive
 										? 'bg-indigo-100 text-indigo-700'
 										: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
 								)}
+								style={{ minHeight: '44px' }}
 							>
 								<item.icon
 									className={cn(

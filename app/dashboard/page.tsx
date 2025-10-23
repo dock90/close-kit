@@ -1,14 +1,8 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
-import {
-	WeekMetrics,
-	RevenueProgress,
-	MiniDealPipeline,
-	UpcomingTasks,
-	ActivityTimeline,
-	WeeklyReportWidget,
-} from '@/components/dashboard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default async function DashboardPage() {
 	const user = await currentUser();
@@ -188,8 +182,13 @@ export default async function DashboardPage() {
 	}));
 
 	return (
-		<div className='space-y-8'>
-			{/* Header */}
+		<div className='space-y-6'>
+			<DashboardHeader
+				totalDeals={totalDeals}
+				openDeals={openDeals}
+				wonDeals={wonDeals}
+				totalRevenue={totalRevenue}
+			/>
 			<div>
 				<h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
 				<p className='text-gray-600 mt-1'>

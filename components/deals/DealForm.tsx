@@ -163,7 +163,8 @@ export function DealForm({
 						<button
 							type='button'
 							onClick={onCancel}
-							className='p-2 text-gray-400 hover:text-gray-600'
+							className='p-2 text-gray-400 hover:text-gray-600 touch-manipulation'
+							style={{ minHeight: '44px', minWidth: '44px' }}
 						>
 							<X className='h-5 w-5' />
 						</button>
@@ -182,7 +183,7 @@ export function DealForm({
 							onChange={(e) =>
 								handleChange('name', e.target.value)
 							}
-							className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+							className={`w-full px-3 py-3 lg:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation ${
 								errors.name
 									? 'border-red-300'
 									: 'border-gray-300'
@@ -215,7 +216,7 @@ export function DealForm({
 										parseInt(e.target.value) || 0
 									)
 								}
-								className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+								className={`w-full pl-8 pr-3 py-3 lg:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation ${
 									errors.value
 										? 'border-red-300'
 										: 'border-gray-300'
@@ -464,7 +465,8 @@ export function DealForm({
 						<button
 							type='button'
 							onClick={onCancel}
-							className='px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+							className='px-4 py-3 lg:py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors touch-manipulation'
+							style={{ minHeight: '44px' }}
 						>
 							Cancel
 						</button>
@@ -472,7 +474,8 @@ export function DealForm({
 					<button
 						type='submit'
 						disabled={isLoading}
-						className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+						className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-3 lg:py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation'
+						style={{ minHeight: '44px' }}
 					>
 						<Save className='h-4 w-4' />
 						<span>{isLoading ? 'Saving...' : 'Save Deal'}</span>
