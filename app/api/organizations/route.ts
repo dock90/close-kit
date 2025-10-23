@@ -60,8 +60,17 @@ export async function POST(request: NextRequest) {
 		});
 
 		return NextResponse.json(organization);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error creating organization:', error);
+		
+		// Check for Prisma unique constraint violation
+		if (error.code === 'P2002' && error.meta?.target?.includes('slug')) {
+			return NextResponse.json(
+				{ error: 'This organization slug is already taken. Please choose a different one.' },
+				{ status: 409 }
+			);
+		}
+		
 		return NextResponse.json(
 			{ error: 'Internal server error' },
 			{ status: 500 }

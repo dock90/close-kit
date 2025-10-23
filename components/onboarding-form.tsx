@@ -7,6 +7,7 @@ export function OnboardingForm() {
 	const [name, setName] = useState('');
 	const [slug, setSlug] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState('');
 	const router = useRouter();
 
 	const generateSlug = (name: string) => {
@@ -25,6 +26,7 @@ export function OnboardingForm() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
+		setError('');
 
 		try {
 			const response = await fetch('/api/organizations', {
@@ -38,11 +40,12 @@ export function OnboardingForm() {
 			if (response.ok) {
 				router.push('/dashboard');
 			} else {
-				const error = await response.json();
-				console.error('Error creating organization:', error);
+				const errorData = await response.json();
+				setError(errorData.error || 'Failed to create organization');
 			}
-		} catch (error) {
-			console.error('Error creating organization:', error);
+		} catch (err) {
+			console.error('Error creating organization:', err);
+			setError('An unexpected error occurred. Please try again.');
 		} finally {
 			setLoading(false);
 		}
@@ -50,6 +53,17 @@ export function OnboardingForm() {
 
 	return (
 		<form onSubmit={handleSubmit} className='space-y-6'>
+			{error && (
+				<div className='rounded-md bg-red-50 p-4'>
+					<div className='flex'>
+						<div className='ml-3'>
+							<h3 className='text-sm font-medium text-red-800'>
+								{error}
+							</h3>
+						</div>
+					</div>
+				</div>
+			)}
 			<div>
 				<label
 					htmlFor='name'
