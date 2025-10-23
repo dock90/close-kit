@@ -12,7 +12,9 @@ import {
 	FileText,
 	Settings,
 	Home,
+	LogOut,
 } from 'lucide-react';
+import { SignOutButton } from '@clerk/nextjs';
 
 const navigation = [
 	{ name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -28,12 +30,12 @@ export function Sidebar() {
 	const pathname = usePathname();
 
 	return (
-		<div className='hidden lg:block w-64 bg-white shadow-lg'>
+		<div className='hidden lg:flex lg:flex-col w-64 bg-white shadow-lg'>
 			<div className='p-6'>
 				<h1 className='text-2xl font-bold text-gray-900'>CloseKit</h1>
 			</div>
 
-			<nav className='mt-6'>
+			<nav className='mt-6 flex-1'>
 				<div className='px-3 space-y-1'>
 					{navigation.map((item) => {
 						const isActive = item.href === '/dashboard'
@@ -65,6 +67,15 @@ export function Sidebar() {
 					})}
 				</div>
 			</nav>
+
+			<div className='p-3 border-t border-gray-200'>
+				<SignOutButton>
+					<button className='w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors touch-manipulation' style={{ minHeight: '44px' }}>
+						<LogOut className='mr-3 h-5 w-5 flex-shrink-0 text-gray-400' />
+						Sign Out
+					</button>
+				</SignOutButton>
+			</div>
 		</div>
 	);
 }
