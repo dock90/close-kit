@@ -191,6 +191,17 @@ export function CompaniesPageClient() {
 			...selectedCompany,
 			createdAt: new Date(selectedCompany.createdAt),
 			updatedAt: new Date(selectedCompany.updatedAt),
+			// Transform activities if they exist
+			activities: selectedCompany.activities?.map((activity) => ({
+				...activity,
+				scheduledDate: activity.scheduledDate
+					? new Date(activity.scheduledDate)
+					: undefined,
+				completedDate: activity.completedDate
+					? new Date(activity.completedDate)
+					: undefined,
+				createdAt: new Date(activity.createdAt),
+			})),
 		};
 
 		return (
