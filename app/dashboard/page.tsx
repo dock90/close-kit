@@ -2,6 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DailyOutreachTracker } from '@/components/outreach';
 
 export default async function DashboardPage() {
 	const user = await currentUser();
@@ -73,6 +74,9 @@ export default async function DashboardPage() {
 					Welcome back to {dbUser.organization.name}
 				</p>
 			</div>
+
+			{/* Daily Outreach Tracker */}
+			<DailyOutreachTracker />
 
 			{/* Stats Cards */}
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>

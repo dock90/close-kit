@@ -25,6 +25,9 @@ model Organization {
   activities    Activity[]
   revenueGoals  RevenueGoal[]
   weeklyReports WeeklyReport[]
+  templates     Template[]
+  dailyGoals    DailyGoal[]
+  reminders     Reminder[]
 }
 
 model User {
@@ -78,6 +81,7 @@ model Contact {
 
   deals             Deal[]
   activities        Activity[]
+  reminders         Reminder[]
 }
 
 model Deal {
@@ -101,6 +105,7 @@ model Deal {
   updatedAt         DateTime @updatedAt
 
   activities        Activity[]
+  reminders         Reminder[]
 }
 
 model Activity {
@@ -121,6 +126,8 @@ model Activity {
   organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+
+  reminders         Reminder[]
 }
 
 model RevenueGoal {
@@ -146,6 +153,57 @@ model WeeklyReport {
   dealsClosed       Int @default(0)
   revenueGenerated  Int @default(0) // in cents
   roadblocks        String?
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Email/LinkedIn templates
+model Template {
+  id                String   @id @default(cuid())
+  name              String
+  type              String // "email" | "linkedin"
+  subject           String?
+  body              String
+  category          String? // "cold_outreach" | "follow_up" | "proposal" | "meeting_request" | "other"
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Daily outreach goals and tracking
+model DailyGoal {
+  id                String   @id @default(cuid())
+  date              DateTime
+  emailsGoal        Int @default(8)
+  linkedinGoal      Int @default(8)
+  emailsSent        Int @default(0)
+  linkedinSent      Int @default(0)
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([organizationId, date])
+}
+
+// Smart follow-up reminders
+model Reminder {
+  id                String   @id @default(cuid())
+  type              String // "no_response_email" | "proposal_pending" | "discovery_call_tomorrow" | "custom"
+  title             String
+  description       String?
+  dueDate           DateTime
+  status            String @default("active") // "active" | "dismissed" | "completed"
+  priority          String @default("medium") // "low" | "medium" | "high"
+  activityId        String?
+  activity          Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  dealId            String?
+  deal              Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  contactId         String?
+  contact           Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
   organizationId    String
   organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now())

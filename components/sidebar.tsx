@@ -12,6 +12,8 @@ import {
 	FileText,
 	Settings,
 	Home,
+	Mail,
+	Upload,
 } from 'lucide-react';
 
 const navigation = [
@@ -20,6 +22,8 @@ const navigation = [
 	{ name: 'Contacts', href: '/dashboard/contacts', icon: Users },
 	{ name: 'Deals', href: '/dashboard/deals', icon: TrendingUp },
 	{ name: 'Activities', href: '/dashboard/activities', icon: Activity },
+	{ name: 'Templates', href: '/dashboard/templates', icon: Mail },
+	{ name: 'Bulk Import', href: '/dashboard/import', icon: Upload },
 	{ name: 'Reports', href: '/dashboard/reports', icon: FileText },
 	{ name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
