@@ -2,6 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DailyOutreachTracker } from '@/components/outreach';
 import { SuccessMetrics } from '@/components/dashboard';
 import {
 	DashboardHeader,
@@ -224,6 +225,8 @@ export default async function DashboardPage() {
 				</p>
 			</div>
 
+			{/* Daily Outreach Tracker */}
+			<DailyOutreachTracker />
 			{/* Success Metrics */}
 			<SuccessMetrics />
 
