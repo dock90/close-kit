@@ -214,7 +214,7 @@ export default async function DashboardPage() {
 				totalDeals={totalDeals}
 				openDeals={openDeals}
 				wonDeals={wonDeals}
-				totalRevenue={totalRevenue}
+				totalRevenue={revenue}
 			/>
 			<div>
 				<h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
@@ -236,16 +236,16 @@ export default async function DashboardPage() {
 				/>
 			</div>
 
-		{/* Revenue Progress */}
-		{currentGoal && (
-			<RevenueProgress
-				currentRevenue={revenue}
-				targetRevenue={currentGoal.targetAmount}
-				period='Current Goal'
-				startDate={currentGoal.startDate}
-				endDate={currentGoal.endDate}
-			/>
-		)}
+			{/* Revenue Progress */}
+			{currentGoal && (
+				<RevenueProgress
+					currentRevenue={revenue}
+					targetRevenue={currentGoal.targetAmount}
+					period='Current Goal'
+					startDate={currentGoal.startDate}
+					endDate={currentGoal.endDate}
+				/>
+			)}
 
 			{/* Middle Section - Pipeline */}
 			<div className='space-y-4'>
