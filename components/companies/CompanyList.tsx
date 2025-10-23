@@ -15,6 +15,8 @@ import { useCompanyStore, Company, Industry } from '@/lib/stores';
 interface CompanyListProps {
 	onCompanySelect?: (company: Company) => void;
 	onCompanyCreate?: () => void;
+	onCompanyEdit?: (company: Company) => void;
+	onCompanyDelete?: (company: Company) => void;
 }
 
 const INDUSTRY_FILTERS = [
@@ -35,6 +37,8 @@ const STAGE_FILTERS = [
 export function CompanyList({
 	onCompanySelect,
 	onCompanyCreate,
+	onCompanyEdit,
+	onCompanyDelete,
 }: CompanyListProps) {
 	const { companies, setFilters, getFilteredCompanies } = useCompanyStore();
 	const [searchTerm, setSearchTerm] = useState('');
