@@ -46,13 +46,28 @@ export function SuccessMetrics() {
 
 	if (loading) {
 		return (
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-				{[...Array(7)].map((_, i) => (
-					<div
-						key={i}
-						className='h-32 bg-gray-100 rounded-lg animate-pulse'
-					/>
-				))}
+			<div>
+				<div className='mb-4'>
+					<div className='h-6 bg-gray-200 rounded w-48 animate-pulse mb-2'></div>
+					<div className='h-4 bg-gray-200 rounded w-64 animate-pulse'></div>
+				</div>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+					{[...Array(7)].map((_, i) => (
+						<div
+							key={i}
+							className='bg-white border border-gray-200 rounded-lg p-6 animate-pulse'
+						>
+							<div className='flex items-center justify-between mb-4'>
+								<div className='flex-1'>
+									<div className='h-4 bg-gray-200 rounded w-24 mb-2'></div>
+									<div className='h-8 bg-gray-200 rounded w-16'></div>
+								</div>
+								<div className='w-12 h-12 bg-gray-200 rounded-full'></div>
+							</div>
+							<div className='h-3 bg-gray-200 rounded w-32'></div>
+						</div>
+					))}
+				</div>
 			</div>
 		);
 	}

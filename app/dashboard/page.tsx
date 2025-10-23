@@ -233,52 +233,57 @@ export default async function DashboardPage() {
 					Overview
 				</h2>
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>
-							Total Deals
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>{totalDeals}</div>
-					</CardContent>
-				</Card>
+					<Card>
+						<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+							<CardTitle className='text-sm font-medium'>
+								Total Deals
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<div className='text-2xl font-bold'>
+								{totalDeals}
+							</div>
+						</CardContent>
+					</Card>
 
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>
-							Open Deals
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>{openDeals}</div>
-					</CardContent>
-				</Card>
+					<Card>
+						<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+							<CardTitle className='text-sm font-medium'>
+								Open Deals
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<div className='text-2xl font-bold'>
+								{openDeals}
+							</div>
+						</CardContent>
+					</Card>
 
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>
-							Won Deals
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>{wonDeals}</div>
-					</CardContent>
-				</Card>
+					<Card>
+						<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+							<CardTitle className='text-sm font-medium'>
+								Won Deals
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<div className='text-2xl font-bold'>{wonDeals}</div>
+						</CardContent>
+					</Card>
 
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>
-							Total Revenue
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>
-							{formatCurrency(totalRevenue)}
-						</div>
-					</CardContent>
-				</Card>
+					<Card>
+						<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+							<CardTitle className='text-sm font-medium'>
+								Total Revenue
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<div className='text-2xl font-bold'>
+								{formatCurrency(revenue)}
+							</div>
+						</CardContent>
+					</Card>
 				</div>
+			</div>
 			{/* Top Section - Metrics */}
 			<div className='space-y-4'>
 				<h2 className='text-xl font-semibold text-gray-900'>
