@@ -14,11 +14,12 @@ A multi-tenant Sales Pipeline CRM specifically designed for freelancers and agen
 
 ## Tech Stack
 
--   **Frontend**: Next.js 14 with App Router, React, TypeScript
+-   **Frontend**: Next.js 15 with App Router, React 19, TypeScript
 -   **Styling**: Tailwind CSS with custom components
--   **Authentication**: Clerk for user management and authentication
--   **Database**: SQLite with Prisma ORM
+-   **Authentication**: Clerk with Google & GitHub OAuth
+-   **Database**: PostgreSQL with Prisma ORM
 -   **UI Components**: Custom components with Radix UI primitives
+-   **State Management**: Zustand for client-side state
 
 ## Getting Started
 
@@ -26,7 +27,8 @@ A multi-tenant Sales Pipeline CRM specifically designed for freelancers and agen
 
 -   Node.js 18+
 -   npm or yarn
--   Clerk account for authentication
+-   PostgreSQL database
+-   Clerk account for authentication (supports Google & GitHub OAuth)
 
 ### Installation
 
@@ -49,23 +51,26 @@ A multi-tenant Sales Pipeline CRM specifically designed for freelancers and agen
     cp env.example .env.local
     ```
 
-    Update `.env.local` with your Clerk credentials:
+    Update `.env.local` with your credentials:
 
     ```env
-    DATABASE_URL="file:./dev.db"
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-    CLERK_SECRET_KEY=your_clerk_secret_key
+    DATABASE_URL_POSTGRES="postgresql://user:password@host:port/database"
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+    CLERK_SECRET_KEY=sk_test_...
+    CLERK_WEBHOOK_SECRET=whsec_...
     NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
     NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
     NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
     ```
 
+    See `CLERK_SETUP.md` for detailed authentication setup instructions.
+
 4. **Set up the database**
 
     ```bash
-    npx prisma generate
-    npx prisma db push
+    npm run db:generate
+    npm run db:push
     ```
 
 5. **Start the development server**
@@ -95,6 +100,9 @@ The application uses the following main entities:
 The application provides RESTful API endpoints for all entities:
 
 -   `/api/organizations` - Organization management
+-   `/api/organizations/invites` - Team invitation system
+-   `/api/organizations/members/[id]` - Team member management
+-   `/api/webhooks/clerk` - User synchronization webhook
 -   `/api/companies` - Company CRUD operations
 -   `/api/contacts` - Contact management
 -   `/api/deals` - Deal pipeline management
@@ -102,26 +110,43 @@ The application provides RESTful API endpoints for all entities:
 -   `/api/revenue-goals` - Revenue goal management
 -   `/api/weekly-reports` - Weekly reporting
 
+All endpoints enforce organization-level data isolation. See `API_EXAMPLES.md` for usage examples.
+
 ## Project Structure
 
 ```
 ├── app/                    # Next.js App Router pages
-│   ├── (auth)/            # Authentication pages
-│   ├── (dashboard)/       # Protected dashboard pages
+│   ├── (auth)/            # Authentication pages (sign-in, sign-up)
+│   ├── dashboard/         # Protected dashboard pages
+│   │   └── settings/      # Settings and team management
 │   ├── api/               # API routes
-│   └── onboarding/        # User onboarding
+│   │   ├── webhooks/      # Webhook endpoints (Clerk sync)
+│   │   ├── organizations/ # Org and team management
+│   │   └── [resources]/   # Data management APIs
+│   └── onboarding/        # New user onboarding flow
 ├── components/            # Reusable UI components
+│   ├── settings/          # Settings-related components
+│   └── ui/                # Base UI components
 ├── lib/                   # Utility functions and configurations
-└── prisma/               # Database schema and migrations
+│   ├── auth.ts            # Authentication helpers
+│   └── prisma.ts          # Database client
+├── prisma/                # Database schema and migrations
+├── middleware.ts          # Route protection and auth
+└── [docs].md              # Documentation files
 ```
 
 ## Key Features Implementation
 
-### Multi-tenancy
+### Authentication & Multi-tenancy
 
--   Organizations isolate all data
--   Users belong to organizations with role-based access
--   All API routes enforce organization-level data isolation
+-   **Social Authentication**: Google and GitHub OAuth via Clerk
+-   **Email/Password**: Traditional authentication also supported
+-   **Organization Isolation**: All data filtered by organizationId
+-   **Role-Based Access**: Admin and member roles with different permissions
+-   **Team Invitations**: Admins can invite team members via email
+-   **Webhook Sync**: User data automatically synced from Clerk to database
+
+See `AUTHENTICATION_IMPLEMENTATION.md` for technical details.
 
 ### Sales Pipeline
 
@@ -161,12 +186,18 @@ npm run db:studio
 3. Create API routes in `app/api/`
 4. Add pages and components as needed
 
+## Documentation
+
+-   **CLERK_SETUP.md**: Step-by-step guide to configure Clerk authentication with Google and GitHub OAuth
+-   **AUTHENTICATION_IMPLEMENTATION.md**: Technical implementation details of authentication and multi-tenancy
+-   **API_EXAMPLES.md**: API usage examples, testing guides, and helper function documentation
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Test thoroughly (especially authentication and data isolation)
 5. Submit a pull request
 
 ## License

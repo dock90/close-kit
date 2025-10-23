@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Sidebar } from '@/components/sidebar';
 import { QuickActionButton } from '@/components/quick-actions';
 import { ReminderBell } from '@/components/reminders';
+import { BottomNavigation } from '@/components/ui/bottom-navigation';
 
 export default async function DashboardLayout({
 	children,
@@ -38,6 +39,7 @@ export default async function DashboardLayout({
 			</main>
 			{/* Quick Action Floating Button */}
 			<QuickActionButton />
+      <BottomNavigation />
 		</div>
 	);
 }
