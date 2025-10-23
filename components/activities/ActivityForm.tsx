@@ -26,6 +26,18 @@ interface ActivityFormData {
 	dealId: string;
 }
 
+interface ActivityFormErrors {
+	type?: string;
+	subject?: string;
+	notes?: string;
+	scheduledDate?: string;
+	completedDate?: string;
+	status?: string;
+	companyId?: string;
+	contactId?: string;
+	dealId?: string;
+}
+
 interface ActivityFormProps {
 	initialData?: Partial<ActivityFormData>;
 	companies: Array<{ id: string; name: string }>;
@@ -88,20 +100,23 @@ export function ActivityForm({
 		...initialData,
 	});
 
-	const [errors, setErrors] = useState<Partial<ActivityFormData>>({});
+	const [errors, setErrors] = useState<ActivityFormErrors>({});
 
 	const handleChange = (
 		field: keyof ActivityFormData,
 		value: string | Date | undefined
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
-		if (errors[field]) {
-			setErrors((prev) => ({ ...prev, [field]: undefined }));
+		if (errors[field as keyof ActivityFormErrors]) {
+			setErrors((prev) => ({
+				...prev,
+				[field as keyof ActivityFormErrors]: undefined,
+			}));
 		}
 	};
 
 	const validateForm = () => {
-		const newErrors: Partial<ActivityFormData> = {};
+		const newErrors: ActivityFormErrors = {};
 
 		if (!formData.subject.trim()) {
 			newErrors.subject = 'Subject is required';
