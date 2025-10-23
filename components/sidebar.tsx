@@ -16,12 +16,12 @@ import {
 
 const navigation = [
 	{ name: 'Dashboard', href: '/dashboard', icon: Home },
-	{ name: 'Companies', href: '/companies', icon: Building2 },
-	{ name: 'Contacts', href: '/contacts', icon: Users },
-	{ name: 'Deals', href: '/deals', icon: TrendingUp },
-	{ name: 'Activities', href: '/activities', icon: Activity },
-	{ name: 'Reports', href: '/reports', icon: FileText },
-	{ name: 'Settings', href: '/settings', icon: Settings },
+	{ name: 'Companies', href: '/dashboard/companies', icon: Building2 },
+	{ name: 'Contacts', href: '/dashboard/contacts', icon: Users },
+	{ name: 'Deals', href: '/dashboard/deals', icon: TrendingUp },
+	{ name: 'Activities', href: '/dashboard/activities', icon: Activity },
+	{ name: 'Reports', href: '/dashboard/reports', icon: FileText },
+	{ name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
 export function Sidebar() {
