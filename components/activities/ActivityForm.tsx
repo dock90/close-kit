@@ -399,12 +399,12 @@ export function ActivityForm({
 								Completed Date *
 							</label>
 							<input
-								type='datetime-local'
+								type='date'
 								value={
 									formData.completedDate
 										? formData.completedDate
 												.toISOString()
-												.slice(0, 16)
+												.slice(0, 10)
 										: ''
 								}
 								onChange={(e) =>
