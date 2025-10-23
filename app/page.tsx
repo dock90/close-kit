@@ -55,16 +55,16 @@ export default async function HomePage() {
 			<section className='pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50'>
 				<div className='max-w-7xl mx-auto'>
 					<div className='grid lg:grid-cols-2 gap-12 items-center'>
-						<div>
-							<h1 className='text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6'>
-								Hit Your Revenue Goals with{' '}
-								<span className='bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent'>
-									Sales Pipeline CRM
-								</span>
-							</h1>
-							<p className='text-xl text-gray-600 mb-8'>
-								Built for freelancers and agencies closing $100k+ deals
-							</p>
+					<div>
+						<h1 className='text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6'>
+							Stop Configuring Your CRM.{' '}
+							<span className='bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent'>
+								Start Closing Deals.
+							</span>
+						</h1>
+						<p className='text-xl text-gray-600 mb-8'>
+							Spreadsheets are chaos. Traditional CRMs are endless config hell. CloseKit gives you exactly what you need to close deals—nothing more, nothing less.
+						</p>
 							<div className='flex flex-col sm:flex-row gap-4'>
 								<Link
 									href='/sign-up'
@@ -102,29 +102,52 @@ export default async function HomePage() {
 			{/* Problem/Solution Section */}
 			<section className='py-20 px-4 sm:px-6 lg:px-8 bg-white'>
 				<div className='max-w-6xl mx-auto'>
-					<div className='grid md:grid-cols-2 gap-12 items-center'>
+					<div className='text-center mb-12'>
+						<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+							Here's the thing about sales tools...
+						</h2>
+					</div>
+					<div className='grid md:grid-cols-3 gap-8 items-start'>
 						<div className='bg-red-50 border-2 border-red-200 rounded-2xl p-8'>
 							<div className='inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg mb-4'>
 								<FileText className='h-6 w-6 text-red-600' />
 							</div>
-							<h3 className='text-2xl font-bold text-gray-900 mb-4'>
-								The Problem
+							<h3 className='text-xl font-bold text-gray-900 mb-3'>
+								Spreadsheets
 							</h3>
-							<p className='text-lg text-gray-700'>
-								Tracking deals in spreadsheets is messy, error-prone, and makes
-								it impossible to see your real pipeline health.
+							<p className='text-gray-700 mb-3'>
+								<em>Too flexible.</em> You can do anything, which means you end up with a mess.
+							</p>
+							<p className='text-sm text-gray-600'>
+								Where did I put those notes from last week's call? Which tab is this in? Did I update the status?
+							</p>
+						</div>
+						<div className='bg-orange-50 border-2 border-orange-200 rounded-2xl p-8'>
+							<div className='inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mb-4'>
+								<Target className='h-6 w-6 text-orange-600' />
+							</div>
+							<h3 className='text-xl font-bold text-gray-900 mb-3'>
+								Traditional CRMs
+							</h3>
+							<p className='text-gray-700 mb-3'>
+								<em>Too complicated.</em> A million fields to configure. Custom workflows. Integration hell.
+							</p>
+							<p className='text-sm text-gray-600'>
+								You spend more time configuring the CRM than actually talking to prospects.
 							</p>
 						</div>
 						<div className='bg-green-50 border-2 border-green-200 rounded-2xl p-8'>
 							<div className='inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4'>
 								<CheckCircle2 className='h-6 w-6 text-green-600' />
 							</div>
-							<h3 className='text-2xl font-bold text-gray-900 mb-4'>
-								The Solution
+							<h3 className='text-xl font-bold text-gray-900 mb-3'>
+								CloseKit
 							</h3>
-							<p className='text-lg text-gray-700'>
-								Visualize your pipeline, track outreach activities, and hit your
-								revenue goals with data-driven accountability.
+							<p className='text-gray-700 mb-3'>
+								<em>Opinionated and proud of it.</em> We built in exactly what matters for closing deals.
+							</p>
+							<p className='text-sm text-gray-600'>
+								No setup. No decisions about which fields to track. Just sign up and start working your pipeline.
 							</p>
 						</div>
 					</div>
@@ -136,10 +159,10 @@ export default async function HomePage() {
 				<div className='max-w-7xl mx-auto'>
 					<div className='text-center mb-16'>
 						<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
-							Everything You Need to Close More Deals
+							What's Built In (So You Don't Have To Think About It)
 						</h2>
 						<p className='text-xl text-gray-600'>
-							Powerful features designed for high-performing sales teams
+							These are the high-leverage activities that actually move deals forward. We built them in from day one.
 						</p>
 					</div>
 
@@ -150,11 +173,10 @@ export default async function HomePage() {
 								<Kanban className='h-7 w-7 text-indigo-600' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Deal Pipeline Management
+								Your Pipeline, Visualized
 							</h3>
 							<p className='text-gray-600'>
-								Visual kanban boards to track deals from prospecting to closed.
-								Drag, drop, and never lose track of an opportunity.
+								Kanban board showing every deal and where it stands. Drag to update. That's it. No custom stages to configure—we picked the ones that actually matter.
 							</p>
 						</div>
 
@@ -164,11 +186,10 @@ export default async function HomePage() {
 								<Clock className='h-7 w-7 text-purple-600' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Activity Tracking & Reminders
+								Quick-Log Your Activities
 							</h3>
 							<p className='text-gray-600'>
-								Log calls, emails, and meetings. Set reminders and never miss a
-								follow-up. Stay on top of every touchpoint.
+								Called a prospect? Click "Call." Sent an email? Click "Email." Set a reminder for next week. You're done. No 12-field form to fill out.
 							</p>
 						</div>
 
@@ -178,11 +199,10 @@ export default async function HomePage() {
 								<Target className='h-7 w-7 text-green-600' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Revenue Goal Tracking
+								Revenue Goals That Keep You Honest
 							</h3>
 							<p className='text-gray-600'>
-								Set monthly targets and track progress in real-time. Know
-								exactly where you stand and what you need to close.
+								Set your monthly target. We'll show you where you're at and what you still need to close. Simple accountability.
 							</p>
 						</div>
 
@@ -192,11 +212,10 @@ export default async function HomePage() {
 								<BarChart3 className='h-7 w-7 text-blue-600' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Weekly Accountability Reports
+								Weekly Check-Ins (Automatically)
 							</h3>
 							<p className='text-gray-600'>
-								Automated weekly summaries of activities, deals closed, and goal
-								progress. Perfect for solo founders and team check-ins.
+								Every week, we summarize what you did, what closed, and how you're tracking. Great for solo founders or team standups.
 							</p>
 						</div>
 
@@ -206,11 +225,10 @@ export default async function HomePage() {
 								<Mail className='h-7 w-7 text-orange-600' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Email & LinkedIn Templates
+								Templates for Everything
 							</h3>
 							<p className='text-gray-600'>
-								Pre-built templates for outreach, follow-ups, and proposals.
-								Customize and send without starting from scratch.
+								Outreach emails. Follow-ups. Proposals. We've written them. Tweak them if you want, or just use ours. Stop staring at a blank page.
 							</p>
 						</div>
 
@@ -220,11 +238,10 @@ export default async function HomePage() {
 								<Users className='h-7 w-7 text-pink-600' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Multi-Tenant (for agencies)
+								Multiple Clients? No Problem
 							</h3>
 							<p className='text-gray-600'>
-								Manage multiple client pipelines in one place. Perfect for
-								agencies running sales for multiple brands.
+								If you're an agency managing sales for different clients, you can keep separate pipelines in one place. No juggling accounts.
 							</p>
 						</div>
 					</div>
