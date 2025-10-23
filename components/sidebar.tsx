@@ -13,7 +13,6 @@ import {
 	Settings,
 	Home,
 	Mail,
-	Upload,
 	LogOut,
 } from 'lucide-react';
 import { SignOutButton } from '@clerk/nextjs';
@@ -25,7 +24,6 @@ const navigation = [
 	{ name: 'Deals', href: '/deals', icon: TrendingUp },
 	{ name: 'Activities', href: '/activities', icon: Activity },
 	{ name: 'Templates', href: '/templates', icon: Mail },
-	{ name: 'Bulk Import', href: '/import', icon: Upload },
 	{ name: 'Reports', href: '/reports', icon: FileText },
 	{ name: 'Settings', href: '/settings', icon: Settings },
 ];
