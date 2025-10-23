@@ -24,6 +24,3 @@ export * from './outreach';
 
 // Templates
 export * from './templates';
-
-// Bulk Import
-export * from './bulk-import';
