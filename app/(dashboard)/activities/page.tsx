@@ -34,10 +34,20 @@ export default async function ActivitiesPage() {
 
 	// Serialize dates for client component
 	const activities = activitiesRaw.map((activity) => ({
-		...activity,
+		id: activity.id,
+		type: activity.type,
+		subject: activity.subject ?? undefined,
+		notes: activity.notes ?? undefined,
+		scheduledDate: activity.scheduledDate ?? undefined,
+		completedDate: activity.completedDate ?? undefined,
+		status: activity.status,
+		companyId: activity.companyId ?? undefined,
+		contactId: activity.contactId ?? undefined,
+		dealId: activity.dealId ?? undefined,
+		company: activity.company ?? undefined,
+		contact: activity.contact ?? undefined,
+		deal: activity.deal ?? undefined,
 		createdAt: activity.createdAt,
-		scheduledDate: activity.scheduledDate,
-		completedDate: activity.completedDate,
 	}));
 
 	// Fetch companies, contacts, and deals for the form

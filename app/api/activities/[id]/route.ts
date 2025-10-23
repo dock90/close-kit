@@ -30,7 +30,7 @@ export async function GET(
 
 		const activity = await prisma.activity.findFirst({
 			where: {
-				id: id,
+				id,
 				organizationId: dbUser.organizationId,
 			},
 			include: {
@@ -79,6 +79,21 @@ export async function PATCH(
 		if (!dbUser) {
 			return NextResponse.json(
 				{ error: 'User not found' },
+				{ status: 404 }
+			);
+		}
+
+		// Check if activity exists and belongs to user's organization
+		const existingActivity = await prisma.activity.findFirst({
+			where: {
+				id,
+				organizationId: dbUser.organizationId,
+			},
+		});
+
+		if (!existingActivity) {
+			return NextResponse.json(
+				{ error: 'Activity not found' },
 				{ status: 404 }
 			);
 		}
@@ -134,13 +149,28 @@ export async function DELETE(
 			);
 		}
 
-		await prisma.activity.delete({
+		// Check if activity exists and belongs to user's organization
+		const existingActivity = await prisma.activity.findFirst({
 			where: {
-				id: id,
+				id,
 				organizationId: dbUser.organizationId,
 			},
 		});
 
+		if (!existingActivity) {
+			return NextResponse.json(
+				{ error: 'Activity not found' },
+				{ status: 404 }
+			);
+		}
+
+		await prisma.activity.delete({
+			where: { id },
+		});
+
+		await prisma.activity.delete({
+			where: { id },
+		});
 		return NextResponse.json({ success: true });
 	} catch (error) {
 		console.error('Error deleting activity:', error);

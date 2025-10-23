@@ -14,6 +14,9 @@ interface Activity {
 	scheduledDate?: Date | string | null;
 	completedDate?: Date | string | null;
 	status: string;
+	companyId?: string;
+	contactId?: string;
+	dealId?: string;
 	company?: {
 		name: string;
 	} | null;
@@ -77,6 +80,7 @@ export function ActivitiesPageClient({
 
 	const [activities, setActivities] = useState(parsedActivities);
 	const [showForm, setShowForm] = useState(false);
+	const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 
@@ -92,8 +96,14 @@ export function ActivitiesPageClient({
 				subject: data.subject === '' ? null : data.subject,
 			};
 
-			const response = await fetch('/api/activities', {
-				method: 'POST',
+			const isEditing = editingActivity !== null;
+			const url = isEditing
+				? `/api/activities/${editingActivity.id}`
+				: '/api/activities';
+			const method = isEditing ? 'PUT' : 'POST';
+
+			const response = await fetch(url, {
+				method,
 				headers: {
 					'Content-Type': 'application/json',
 				},
@@ -102,7 +112,9 @@ export function ActivitiesPageClient({
 
 			// Check if response is ok before parsing JSON
 			if (!response.ok) {
-				let errorMessage = 'Failed to create activity';
+				let errorMessage = isEditing
+					? 'Failed to update activity'
+					: 'Failed to create activity';
 				try {
 					const errorData = await response.json();
 					errorMessage = errorData.error || errorMessage;
@@ -113,20 +125,98 @@ export function ActivitiesPageClient({
 				throw new Error(errorMessage);
 			}
 
-			const newActivity = await response.json();
-			setActivities([newActivity, ...activities]);
+			const updatedActivity = await response.json();
+
+			if (isEditing) {
+				// Update the existing activity in the list
+				setActivities(
+					activities.map((a) =>
+						a.id === editingActivity.id
+							? {
+									...updatedActivity,
+									scheduledDate: updatedActivity.scheduledDate
+										? new Date(
+												updatedActivity.scheduledDate
+										  )
+										: undefined,
+									completedDate: updatedActivity.completedDate
+										? new Date(
+												updatedActivity.completedDate
+										  )
+										: undefined,
+									createdAt: new Date(
+										updatedActivity.createdAt
+									),
+							  }
+							: a
+					)
+				);
+				setEditingActivity(null);
+			} else {
+				// Add the new activity to the list
+				setActivities([updatedActivity, ...activities]);
+			}
+
 			setShowForm(false);
 			router.refresh();
 		} catch (error) {
-			console.error('Error creating activity:', error);
+			console.error('Error saving activity:', error);
 			const errorMessage =
 				error instanceof Error
 					? error.message
-					: 'Failed to create activity. Please try again.';
+					: 'Failed to save activity. Please try again.';
 			alert(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const handleEdit = (activity: Activity) => {
+		setEditingActivity(activity);
+		setShowForm(true);
+	};
+
+	const handleDelete = async (activity: Activity) => {
+		if (
+			!confirm(
+				'Are you sure you want to delete this activity? This action cannot be undone.'
+			)
+		) {
+			return;
+		}
+
+		try {
+			const response = await fetch(`/api/activities/${activity.id}`, {
+				method: 'DELETE',
+			});
+
+			if (!response.ok) {
+				let errorMessage = 'Failed to delete activity';
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.error || errorMessage;
+				} catch {
+					errorMessage = response.statusText || errorMessage;
+				}
+				throw new Error(errorMessage);
+			}
+
+			// Remove the activity from the list
+			setActivities(activities.filter((a) => a.id !== activity.id));
+			router.refresh();
+		} catch (error) {
+			console.error('Error deleting activity:', error);
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: 'Failed to delete activity. Please try again.';
+			alert(errorMessage);
+		}
+	};
+
+	const handleCancelForm = () => {
+		setShowForm(false);
+		setEditingActivity(null);
 	};
 
 	return (
@@ -141,7 +231,10 @@ export function ActivitiesPageClient({
 					</p>
 				</div>
 				<button
-					onClick={() => setShowForm(true)}
+					onClick={() => {
+						setEditingActivity(null);
+						setShowForm(true);
+					}}
 					className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
 				>
 					<Plus className='h-4 w-4 mr-2' />
@@ -152,17 +245,46 @@ export function ActivitiesPageClient({
 			{/* Activity Form */}
 			{showForm && (
 				<ActivityForm
+					initialData={
+						editingActivity
+							? {
+									type: editingActivity.type,
+									subject: editingActivity.subject || '',
+									notes: editingActivity.notes || '',
+									scheduledDate: editingActivity.scheduledDate
+										? editingActivity.scheduledDate instanceof Date
+											? editingActivity.scheduledDate
+											: new Date(editingActivity.scheduledDate)
+										: undefined,
+									completedDate: editingActivity.completedDate
+										? editingActivity.completedDate instanceof Date
+											? editingActivity.completedDate
+											: new Date(editingActivity.completedDate)
+										: undefined,
+									status: editingActivity.status,
+									companyId: editingActivity.companyId || '',
+									contactId:
+										editingActivity.contactId || '',
+									dealId: editingActivity.dealId || '',
+							  }
+							: undefined
+					}
 					companies={companies}
 					contacts={contacts}
 					deals={deals}
 					onSubmit={handleSubmit}
-					onCancel={() => setShowForm(false)}
+					onCancel={handleCancelForm}
 					isLoading={isLoading}
 				/>
 			)}
 
 			{/* Activity List */}
-			<ActivityList activities={activities} showFilters={true} />
+			<ActivityList
+				activities={activities}
+				showFilters={true}
+				onActivityEdit={handleEdit}
+				onActivityDelete={handleDelete}
+			/>
 		</div>
 	);
 }
