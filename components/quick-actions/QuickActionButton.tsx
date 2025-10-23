@@ -65,7 +65,7 @@ export function QuickActionButton() {
 	return (
 		<>
 			{/* Floating Action Button */}
-			<div className='fixed bottom-20 right-6 lg:bottom-6 z-50'>
+			<div className='fixed bottom-20 right-6 lg:bottom-6 z-50 flex flex-col items-end'>
 				{/* Quick Action Buttons */}
 				{isOpen && (
 					<div className='mb-4 flex flex-col space-y-3 items-end'>
