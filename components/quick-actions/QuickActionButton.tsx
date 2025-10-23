@@ -65,7 +65,7 @@ export function QuickActionButton() {
 	return (
 		<>
 			{/* Floating Action Button */}
-			<div className='fixed bottom-20 right-6 lg:bottom-6 z-50'>
+			<div className='fixed bottom-20 right-6 lg:bottom-6 z-50 flex flex-col items-end'>
 				{/* Quick Action Buttons */}
 				{isOpen && (
 					<div className='mb-4 flex flex-col space-y-3 items-end'>
@@ -90,7 +90,7 @@ export function QuickActionButton() {
 					onClick={() => setIsOpen(!isOpen)}
 					className={`${
 						isOpen
-							? 'bg-gray-600 hover:bg-gray-700 rotate-45'
+							? 'bg-gray-600 hover:bg-gray-700'
 							: 'bg-blue-600 hover:bg-blue-700'
 					} text-white p-4 rounded-full shadow-lg transition-all transform hover:scale-110`}
 					aria-label='Quick Actions'
