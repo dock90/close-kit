@@ -11,6 +11,21 @@ import {
 } from 'lucide-react';
 import { useCompanyStore, Industry } from '@/lib/stores';
 
+export interface Company {
+	id?: string;
+	name: string;
+	website?: string;
+	industry?: Industry | '';
+	employeeCount?: string;
+	fundingStage?: string;
+	location?: string;
+	linkedinUrl?: string;
+	notes?: string;
+	organizationId?: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
 interface CompanyFormData {
 	name: string;
 	website: string;
@@ -23,6 +38,7 @@ interface CompanyFormData {
 }
 
 interface CompanyFormProps {
+	company?: Company;
 	initialData?: Partial<CompanyFormData>;
 	onSubmit: (data: CompanyFormData) => void;
 	onCancel?: () => void;
@@ -55,6 +71,7 @@ const FUNDING_STAGE_OPTIONS = [
 ];
 
 export function CompanyForm({
+	company,
 	initialData = {},
 	onSubmit,
 	onCancel,
@@ -69,6 +86,7 @@ export function CompanyForm({
 		location: '',
 		linkedinUrl: '',
 		notes: '',
+		...company,
 		...initialData,
 	});
 
