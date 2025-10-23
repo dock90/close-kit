@@ -7,6 +7,7 @@ export async function GET(
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -27,17 +28,15 @@ export async function GET(
 			);
 		}
 
-		const { id } = await params;
-
 		const activity = await prisma.activity.findFirst({
 			where: {
 				id,
 				organizationId: dbUser.organizationId,
 			},
 			include: {
-				company: true,
-				contact: true,
 				deal: true,
+				contact: true,
+				company: true,
 			},
 		});
 
@@ -58,11 +57,12 @@ export async function GET(
 	}
 }
 
-export async function PUT(
+export async function PATCH(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -82,8 +82,6 @@ export async function PUT(
 				{ status: 404 }
 			);
 		}
-
-		const { id } = await params;
 
 		// Check if activity exists and belongs to user's organization
 		const existingActivity = await prisma.activity.findFirst({
@@ -103,12 +101,15 @@ export async function PUT(
 		const data = await request.json();
 
 		const activity = await prisma.activity.update({
-			where: { id },
+			where: {
+				id: id,
+				organizationId: dbUser.organizationId,
+			},
 			data,
 			include: {
-				company: true,
-				contact: true,
 				deal: true,
+				contact: true,
+				company: true,
 			},
 		});
 
@@ -127,6 +128,7 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -146,8 +148,6 @@ export async function DELETE(
 				{ status: 404 }
 			);
 		}
-
-		const { id } = await params;
 
 		// Check if activity exists and belongs to user's organization
 		const existingActivity = await prisma.activity.findFirst({
@@ -168,6 +168,9 @@ export async function DELETE(
 			where: { id },
 		});
 
+		await prisma.activity.delete({
+			where: { id },
+		});
 		return NextResponse.json({ success: true });
 	} catch (error) {
 		console.error('Error deleting activity:', error);
