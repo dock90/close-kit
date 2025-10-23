@@ -8,8 +8,6 @@ const isPublicRoute = createRouteMatcher([
 	'/api/webhooks(.*)',
 ]);
 
-const isOnboardingRoute = createRouteMatcher(['/onboarding']);
-
 export default clerkMiddleware(async (auth, req) => {
 	const { userId } = await auth();
 
@@ -18,27 +16,17 @@ export default clerkMiddleware(async (auth, req) => {
 		return NextResponse.next();
 	}
 
-	// Protect all other routes
+	// Redirect unauthenticated users to sign-in
 	if (!userId) {
 		return NextResponse.redirect(new URL('/sign-in', req.url));
 	}
 
-	// If user is authenticated but not on onboarding, check if they need onboarding
-	if (!isOnboardingRoute(req) && userId) {
-		// Check if user has an organization by looking at their metadata
-		// This will be set after they complete onboarding
-		const user = await auth();
-
-		// If on API routes or webhooks, allow through (API will handle auth)
-		if (req.nextUrl.pathname.startsWith('/api')) {
-			return NextResponse.next();
-		}
-
-		// For dashboard routes, users must have completed onboarding
-		// The onboarding page itself will check if user already has org and redirect to dashboard
+	// Allow API routes to proceed (they handle their own auth)
+	if (req.nextUrl.pathname.startsWith('/api')) {
 		return NextResponse.next();
 	}
 
+	// For all other authenticated routes, allow through
 	return NextResponse.next();
 });
 
