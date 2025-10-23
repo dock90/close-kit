@@ -18,7 +18,7 @@ export function WeeklyReportWidget({
 	useEffect(() => {
 		const today = new Date().getDay();
 		const isFriday = today === 5;
-		
+
 		const dismissed = localStorage.getItem('weeklyReportDismissed');
 		const dismissedDate = dismissed ? new Date(dismissed) : null;
 		const isStillDismissed =
@@ -33,10 +33,7 @@ export function WeeklyReportWidget({
 	const handleDismiss = () => {
 		setIsDismissed(true);
 		setIsVisible(false);
-		localStorage.setItem(
-			'weeklyReportDismissed',
-			new Date().toISOString()
-		);
+		localStorage.setItem('weeklyReportDismissed', new Date().toISOString());
 	};
 
 	if (!isVisible || isDismissed) {
@@ -63,11 +60,11 @@ export function WeeklyReportWidget({
 							Complete Your Weekly Report
 						</h3>
 						<p className='text-sm text-gray-600 mb-4'>
-							It's Friday! Time to reflect on your week and complete
-							your weekly report.
+							It's Friday! Time to reflect on your week and
+							complete your weekly report.
 						</p>
 						<Link
-							href='/dashboard/reports'
+							href='/reports'
 							className='inline-flex items-center justify-center w-full px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors'
 						>
 							Complete Report

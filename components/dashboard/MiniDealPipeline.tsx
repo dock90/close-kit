@@ -42,7 +42,10 @@ export function MiniDealPipeline({ deals }: MiniDealPipelineProps) {
 	};
 
 	const getStageValue = (stage: string) => {
-		return getDealsByStage(stage).reduce((sum, deal) => sum + deal.value, 0);
+		return getDealsByStage(stage).reduce(
+			(sum, deal) => sum + deal.value,
+			0
+		);
 	};
 
 	return (
@@ -61,7 +64,7 @@ export function MiniDealPipeline({ deals }: MiniDealPipelineProps) {
 						</p>
 					</div>
 					<Link
-						href='/dashboard/deals'
+						href='/deals'
 						className='flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700'
 					>
 						View All
@@ -110,7 +113,8 @@ export function MiniDealPipeline({ deals }: MiniDealPipelineProps) {
 										{stageDeals.length > 3 && (
 											<div className='text-center py-2'>
 												<span className='text-xs text-gray-600'>
-													+{stageDeals.length - 3} more
+													+{stageDeals.length - 3}{' '}
+													more
 												</span>
 											</div>
 										)}

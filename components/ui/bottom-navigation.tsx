@@ -18,15 +18,15 @@ import { useState } from 'react';
 
 const mainNavigation = [
 	{ name: 'Dashboard', href: '/dashboard', icon: Home },
-	{ name: 'Companies', href: '/dashboard/companies', icon: Building2 },
-	{ name: 'Deals', href: '/dashboard/deals', icon: TrendingUp },
-	{ name: 'Activities', href: '/dashboard/activities', icon: Activity },
+	{ name: 'Companies', href: '/companies', icon: Building2 },
+	{ name: 'Deals', href: '/deals', icon: TrendingUp },
+	{ name: 'Activities', href: '/activities', icon: Activity },
 ];
 
 const moreNavigation = [
-	{ name: 'Contacts', href: '/dashboard/contacts', icon: Users },
-	{ name: 'Reports', href: '/dashboard/reports', icon: FileText },
-	{ name: 'Settings', href: '/dashboard/settings', icon: Settings },
+	{ name: 'Contacts', href: '/contacts', icon: Users },
+	{ name: 'Reports', href: '/reports', icon: FileText },
+	{ name: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export function BottomNavigation() {
@@ -57,7 +57,8 @@ export function BottomNavigation() {
 				<div className='p-4 space-y-2'>
 					{moreNavigation.map((item) => {
 						const isActive =
-							pathname === item.href || pathname.startsWith(item.href + '/');
+							pathname === item.href ||
+							pathname.startsWith(item.href + '/');
 						return (
 							<Link
 								key={item.name}
@@ -74,10 +75,14 @@ export function BottomNavigation() {
 								<item.icon
 									className={cn(
 										'h-6 w-6 mr-3',
-										isActive ? 'text-indigo-600' : 'text-gray-500'
+										isActive
+											? 'text-indigo-600'
+											: 'text-gray-500'
 									)}
 								/>
-								<span className='text-base font-medium'>{item.name}</span>
+								<span className='text-base font-medium'>
+									{item.name}
+								</span>
 							</Link>
 						);
 					})}
@@ -91,7 +96,8 @@ export function BottomNavigation() {
 						const isActive =
 							item.href === '/dashboard'
 								? pathname === item.href
-								: pathname === item.href || pathname.startsWith(item.href + '/');
+								: pathname === item.href ||
+								  pathname.startsWith(item.href + '/');
 
 						return (
 							<Link
@@ -99,17 +105,23 @@ export function BottomNavigation() {
 								href={item.href}
 								className={cn(
 									'flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors touch-manipulation',
-									isActive ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-900'
+									isActive
+										? 'text-indigo-600'
+										: 'text-gray-500 hover:text-gray-900'
 								)}
 								style={{ minHeight: '44px' }}
 							>
 								<item.icon
 									className={cn(
 										'h-6 w-6',
-										isActive ? 'text-indigo-600' : 'text-gray-500'
+										isActive
+											? 'text-indigo-600'
+											: 'text-gray-500'
 									)}
 								/>
-								<span className='text-xs font-medium'>{item.name}</span>
+								<span className='text-xs font-medium'>
+									{item.name}
+								</span>
 							</Link>
 						);
 					})}
@@ -128,14 +140,18 @@ export function BottomNavigation() {
 							<X
 								className={cn(
 									'h-6 w-6',
-									isMoreOpen || isMoreActive ? 'text-indigo-600' : 'text-gray-500'
+									isMoreOpen || isMoreActive
+										? 'text-indigo-600'
+										: 'text-gray-500'
 								)}
 							/>
 						) : (
 							<Menu
 								className={cn(
 									'h-6 w-6',
-									isMoreOpen || isMoreActive ? 'text-indigo-600' : 'text-gray-500'
+									isMoreOpen || isMoreActive
+										? 'text-indigo-600'
+										: 'text-gray-500'
 								)}
 							/>
 						)}
