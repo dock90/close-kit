@@ -2,7 +2,15 @@ import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import {
+	DashboardHeader,
+	WeekMetrics,
+	RevenueProgress,
+	MiniDealPipeline,
+	UpcomingTasks,
+	ActivityTimeline,
+	WeeklyReportWidget,
+} from '@/components/dashboard';
 
 export default async function DashboardPage() {
 	const user = await currentUser();
@@ -41,6 +49,8 @@ export default async function DashboardPage() {
 		upcomingActivities,
 		recentActivities,
 		currentWeekReport,
+		totalDealsCount,
+		wonDealsCount,
 	] = await Promise.all([
 		// Current revenue goal
 		prisma.revenueGoal.findFirst({
@@ -116,11 +126,27 @@ export default async function DashboardPage() {
 				weekStartDate: { gte: weekStart, lt: weekEnd },
 			},
 		}),
+
+		// Total deals count
+		prisma.deal.count({
+			where: {
+				organizationId: dbUser.organizationId,
+			},
+		}),
+
+		// Won deals count
+		prisma.deal.count({
+			where: {
+				organizationId: dbUser.organizationId,
+				stage: 'closed_won',
+			},
+		}),
 	]);
 
 	// Calculate current week metrics
-	const emailsSent = weeklyActivities.filter((a) => a.type === 'email_sent')
-		.length;
+	const emailsSent = weeklyActivities.filter(
+		(a) => a.type === 'email_sent'
+	).length;
 	const linkedinMessages = weeklyActivities.filter(
 		(a) => a.type === 'linkedin_message' || a.type === 'linkedin_request'
 	).length;
@@ -133,6 +159,11 @@ export default async function DashboardPage() {
 
 	const revenue = totalRevenue._sum.value || 0;
 
+	// Calculate deal metrics
+	const totalDeals = totalDealsCount;
+	const wonDeals = wonDealsCount;
+	const openDeals = activeDeals.length;
+
 	// Transform activities for components
 	const upcomingTasks = upcomingActivities.map((activity) => ({
 		id: activity.id,
@@ -141,9 +172,7 @@ export default async function DashboardPage() {
 		notes: activity.notes || undefined,
 		scheduledDate: activity.scheduledDate!,
 		status: activity.status,
-		company: activity.company
-			? { name: activity.company.name }
-			: undefined,
+		company: activity.company ? { name: activity.company.name } : undefined,
 		contact: activity.contact
 			? {
 					firstName: activity.contact.firstName,
@@ -161,9 +190,7 @@ export default async function DashboardPage() {
 		scheduledDate: activity.scheduledDate?.toISOString(),
 		completedDate: activity.completedDate?.toISOString(),
 		status: activity.status,
-		company: activity.company
-			? { name: activity.company.name }
-			: undefined,
+		company: activity.company ? { name: activity.company.name } : undefined,
 		contact: activity.contact
 			? {
 					firstName: activity.contact.firstName,
@@ -251,9 +278,7 @@ export default async function DashboardPage() {
 			</div>
 
 			{/* Floating Widget - Weekly Report Prompt */}
-			<WeeklyReportWidget
-				hasReportForCurrentWeek={!!currentWeekReport}
-			/>
+			<WeeklyReportWidget hasReportForCurrentWeek={!!currentWeekReport} />
 		</div>
 	);
 }
