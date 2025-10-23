@@ -8,26 +8,9 @@ import {
 	Users,
 	DollarSign,
 } from 'lucide-react';
-
-interface Company {
-	id: string;
-	name: string;
-	website?: string;
-	industry?: string;
-	employeeCount?: string;
-	fundingStage?: string;
-	location?: string;
-	linkedinUrl?: string;
-	notes?: string;
-	createdAt: Date;
-	_count?: {
-		contacts: number;
-		deals: number;
-	};
-}
+import { useCompanyStore, Company, Industry } from '@/lib/stores';
 
 interface CompanyListProps {
-	companies: Company[];
 	onCompanySelect?: (company: Company) => void;
 	onCompanyCreate?: () => void;
 }
@@ -48,34 +31,44 @@ const STAGE_FILTERS = [
 ];
 
 export function CompanyList({
-	companies,
 	onCompanySelect,
 	onCompanyCreate,
 }: CompanyListProps) {
+	const { companies, setFilters, getFilteredCompanies } = useCompanyStore();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [industryFilter, setIndustryFilter] = useState('all');
 	const [stageFilter, setStageFilter] = useState('all');
 
-	const filteredCompanies = companies.filter((company) => {
+	// Update store filters when local filters change
+	React.useEffect(() => {
+		const filters: any = {};
+
+		if (industryFilter !== 'all') {
+			filters.industry = [industryFilter as Industry];
+		}
+
+		if (stageFilter !== 'all') {
+			filters.fundingStage = [stageFilter];
+		}
+
+		setFilters(filters);
+	}, [industryFilter, stageFilter, setFilters]);
+
+	const filteredCompanies = getFilteredCompanies().filter((company) => {
 		const matchesSearch =
 			company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			company.website?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			company.location?.toLowerCase().includes(searchTerm.toLowerCase());
 
-		const matchesIndustry =
-			industryFilter === 'all' || company.industry === industryFilter;
-		const matchesStage =
-			stageFilter === 'all' || company.fundingStage === stageFilter;
-
-		return matchesSearch && matchesIndustry && matchesStage;
+		return matchesSearch;
 	});
 
-	const formatDate = (date: Date) => {
+	const formatDate = (date: string) => {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
 			day: 'numeric',
 			year: 'numeric',
-		}).format(date);
+		}).format(new Date(date));
 	};
 
 	return (
@@ -197,13 +190,13 @@ export function CompanyList({
 									<div className='flex items-center space-x-1'>
 										<Users className='h-4 w-4' />
 										<span>
-											{company._count?.contacts || 0}
+											{company.contacts?.length || 0}
 										</span>
 									</div>
 									<div className='flex items-center space-x-1'>
 										<DollarSign className='h-4 w-4' />
 										<span>
-											{company._count?.deals || 0}
+											{company.deals?.length || 0}
 										</span>
 									</div>
 								</div>

@@ -11,23 +11,7 @@ import {
 	Edit,
 	Trash2,
 } from 'lucide-react';
-
-interface Company {
-	id: string;
-	name: string;
-	website?: string;
-	industry?: string;
-	employeeCount?: string;
-	fundingStage?: string;
-	location?: string;
-	linkedinUrl?: string;
-	notes?: string;
-	createdAt: Date;
-	_count?: {
-		contacts: number;
-		deals: number;
-	};
-}
+import { Company } from '@/lib/stores';
 
 interface CompanyCardProps {
 	company: Company;
@@ -42,12 +26,12 @@ export function CompanyCard({
 	onDelete,
 	onViewDetails,
 }: CompanyCardProps) {
-	const formatDate = (date: Date) => {
+	const formatDate = (date: string) => {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
 			day: 'numeric',
 			year: 'numeric',
-		}).format(date);
+		}).format(new Date(date));
 	};
 
 	const formatIndustry = (industry?: string) => {
@@ -187,12 +171,12 @@ export function CompanyCard({
 						<div className='flex items-center space-x-1'>
 							<Users className='h-4 w-4' />
 							<span>
-								{company._count?.contacts || 0} contacts
+								{company.contacts?.length || 0} contacts
 							</span>
 						</div>
 						<div className='flex items-center space-x-1'>
 							<DollarSign className='h-4 w-4' />
-							<span>{company._count?.deals || 0} deals</span>
+							<span>{company.deals?.length || 0} deals</span>
 						</div>
 					</div>
 					<div className='flex items-center space-x-1 text-xs text-gray-400'>

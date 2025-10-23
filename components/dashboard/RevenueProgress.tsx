@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
+import { useDealStore } from '@/lib/stores';
 
 interface RevenueProgressProps {
 	currentRevenue: number;

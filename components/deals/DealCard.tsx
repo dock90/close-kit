@@ -12,36 +12,13 @@ import {
 	CheckCircle,
 	XCircle,
 } from 'lucide-react';
-
-interface Deal {
-	id: string;
-	name: string;
-	value: number;
-	stage: string;
-	probability: number;
-	expectedCloseDate?: Date;
-	actualCloseDate?: Date;
-	serviceType?: string;
-	projectDuration?: string;
-	lostReason?: string;
-	company: {
-		id: string;
-		name: string;
-	};
-	contact: {
-		id: string;
-		firstName: string;
-		lastName: string;
-	};
-	createdAt: Date;
-	updatedAt: Date;
-}
+import { Deal, DealStage } from '@/lib/stores';
 
 interface DealCardProps {
 	deal: Deal;
 	onEdit?: (deal: Deal) => void;
 	onDelete?: (deal: Deal) => void;
-	onStageChange?: (dealId: string, newStage: string) => void;
+	onStageChange?: (dealId: string, newStage: DealStage) => void;
 	compact?: boolean;
 }
 
@@ -69,7 +46,7 @@ export function DealCard({
 		}).format(date);
 	};
 
-	const getStageColor = (stage: string) => {
+	const getStageColor = (stage: DealStage) => {
 		const colors = {
 			lead: 'bg-gray-100 text-gray-800 border-gray-200',
 			contacted: 'bg-blue-100 text-blue-800 border-blue-200',
@@ -79,13 +56,10 @@ export function DealCard({
 			closed_won: 'bg-green-100 text-green-800 border-green-200',
 			closed_lost: 'bg-red-100 text-red-800 border-red-200',
 		};
-		return (
-			colors[stage as keyof typeof colors] ||
-			'bg-gray-100 text-gray-800 border-gray-200'
-		);
+		return colors[stage] || 'bg-gray-100 text-gray-800 border-gray-200';
 	};
 
-	const getStageIcon = (stage: string) => {
+	const getStageIcon = (stage: DealStage) => {
 		switch (stage) {
 			case 'closed_won':
 				return <CheckCircle className='h-4 w-4' />;
@@ -99,7 +73,8 @@ export function DealCard({
 	const getDaysUntilClose = () => {
 		if (!deal.expectedCloseDate) return null;
 		const now = new Date();
-		const diffTime = deal.expectedCloseDate.getTime() - now.getTime();
+		const diffTime =
+			new Date(deal.expectedCloseDate).getTime() - now.getTime();
 		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 		return diffDays;
 	};
@@ -186,7 +161,7 @@ export function DealCard({
 						<div className='flex items-center space-x-2 mt-1'>
 							<Building2 className='h-4 w-4 text-gray-400' />
 							<span className='text-sm text-gray-600'>
-								{deal.company.name}
+								{deal.company?.name}
 							</span>
 						</div>
 					</div>
@@ -250,7 +225,7 @@ export function DealCard({
 				<div className='flex items-center space-x-2 text-sm text-gray-600'>
 					<User className='h-4 w-4' />
 					<span>
-						{deal.contact.firstName} {deal.contact.lastName}
+						{deal.contact?.firstName} {deal.contact?.lastName}
 					</span>
 				</div>
 
@@ -266,7 +241,7 @@ export function DealCard({
 									: 'text-gray-900'
 							}`}
 						>
-							{formatDate(deal.expectedCloseDate)}
+							{formatDate(new Date(deal.expectedCloseDate))}
 						</span>
 						{daysUntilClose !== null && (
 							<span
@@ -291,7 +266,8 @@ export function DealCard({
 					<div className='flex items-center space-x-2 text-sm text-gray-600'>
 						<CheckCircle className='h-4 w-4 text-green-500' />
 						<span>
-							Closed on {formatDate(deal.actualCloseDate)}
+							Closed on{' '}
+							{formatDate(new Date(deal.actualCloseDate))}
 						</span>
 					</div>
 				)}
@@ -326,8 +302,8 @@ export function DealCard({
 
 				{/* Footer */}
 				<div className='flex items-center justify-between pt-4 border-t text-xs text-gray-500'>
-					<span>Created {formatDate(deal.createdAt)}</span>
-					<span>Updated {formatDate(deal.updatedAt)}</span>
+					<span>Created {formatDate(new Date(deal.createdAt))}</span>
+					<span>Updated {formatDate(new Date(deal.updatedAt))}</span>
 				</div>
 			</div>
 		</Card>

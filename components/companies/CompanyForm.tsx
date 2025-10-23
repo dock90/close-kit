@@ -9,11 +9,12 @@ import {
 	Save,
 	X,
 } from 'lucide-react';
+import { useCompanyStore, Industry } from '@/lib/stores';
 
 interface CompanyFormData {
 	name: string;
 	website: string;
-	industry: string;
+	industry: Industry | '';
 	employeeCount: string;
 	fundingStage: string;
 	location: string;
@@ -31,9 +32,6 @@ interface CompanyFormProps {
 const INDUSTRY_OPTIONS = [
 	{ value: 'healthcare', label: 'Healthcare' },
 	{ value: 'd2c', label: 'D2C' },
-	{ value: 'fintech', label: 'Fintech' },
-	{ value: 'saas', label: 'SaaS' },
-	{ value: 'ecommerce', label: 'E-commerce' },
 	{ value: 'other', label: 'Other' },
 ];
 

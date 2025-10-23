@@ -10,16 +10,22 @@ import {
 	TrendingUp,
 	Clock,
 } from 'lucide-react';
+import {
+	useCompanyStore,
+	DealStage,
+	ServiceType,
+	ProjectDuration,
+} from '@/lib/stores';
 
 interface DealFormData {
 	name: string;
 	value: number;
-	stage: string;
+	stage: DealStage;
 	probability: number;
-	expectedCloseDate?: Date;
-	actualCloseDate?: Date;
-	serviceType: string;
-	projectDuration: string;
+	expectedCloseDate?: string;
+	actualCloseDate?: string;
+	serviceType: ServiceType | '';
+	projectDuration: ProjectDuration | '';
 	lostReason: string;
 	companyId: string;
 	contactId: string;
@@ -27,19 +33,12 @@ interface DealFormData {
 
 interface DealFormProps {
 	initialData?: Partial<DealFormData>;
-	companies: Array<{ id: string; name: string }>;
-	contacts: Array<{
-		id: string;
-		firstName: string;
-		lastName: string;
-		companyId: string;
-	}>;
 	onSubmit: (data: DealFormData) => void;
 	onCancel?: () => void;
 	isLoading?: boolean;
 }
 
-const STAGE_OPTIONS = [
+const STAGE_OPTIONS: { value: DealStage; label: string }[] = [
 	{ value: 'lead', label: 'Lead' },
 	{ value: 'contacted', label: 'Contacted' },
 	{ value: 'discovery', label: 'Discovery' },
@@ -49,27 +48,24 @@ const STAGE_OPTIONS = [
 	{ value: 'closed_lost', label: 'Closed Lost' },
 ];
 
-const SERVICE_TYPE_OPTIONS = [
+const SERVICE_TYPE_OPTIONS: { value: ServiceType; label: string }[] = [
 	{ value: 'nextjs_sanity', label: 'Next.js + Sanity' },
 	{ value: 'hydrogen_sanity', label: 'Hydrogen + Sanity' },
 	{ value: 'custom', label: 'Custom Development' },
 ];
 
-const PROJECT_DURATION_OPTIONS = [
+const PROJECT_DURATION_OPTIONS: { value: ProjectDuration; label: string }[] = [
 	{ value: '6-8 weeks', label: '6-8 weeks' },
 	{ value: '8-10 weeks', label: '8-10 weeks' },
-	{ value: '10-12 weeks', label: '10-12 weeks' },
-	{ value: '12+ weeks', label: '12+ weeks' },
 ];
 
 export function DealForm({
 	initialData = {},
-	companies,
-	contacts,
 	onSubmit,
 	onCancel,
 	isLoading = false,
 }: DealFormProps) {
+	const { companies, getFilteredCompanies } = useCompanyStore();
 	const [formData, setFormData] = useState<DealFormData>({
 		name: '',
 		value: 0,
@@ -87,9 +83,13 @@ export function DealForm({
 
 	const [errors, setErrors] = useState<Partial<DealFormData>>({});
 
+	// Get contacts for the selected company
+	const selectedCompany = companies.find((c) => c.id === formData.companyId);
+	const contacts = selectedCompany?.contacts || [];
+
 	const handleChange = (
 		field: keyof DealFormData,
-		value: string | number | Date | undefined
+		value: string | number | undefined
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 		if (errors[field]) {
@@ -363,19 +363,11 @@ export function DealForm({
 							</label>
 							<input
 								type='date'
-								value={
-									formData.expectedCloseDate
-										? formData.expectedCloseDate
-												.toISOString()
-												.split('T')[0]
-										: ''
-								}
+								value={formData.expectedCloseDate || ''}
 								onChange={(e) =>
 									handleChange(
 										'expectedCloseDate',
-										e.target.value
-											? new Date(e.target.value)
-											: undefined
+										e.target.value || undefined
 									)
 								}
 								className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
@@ -392,19 +384,11 @@ export function DealForm({
 							</label>
 							<input
 								type='date'
-								value={
-									formData.actualCloseDate
-										? formData.actualCloseDate
-												.toISOString()
-												.split('T')[0]
-										: ''
-								}
+								value={formData.actualCloseDate || ''}
 								onChange={(e) =>
 									handleChange(
 										'actualCloseDate',
-										e.target.value
-											? new Date(e.target.value)
-											: undefined
+										e.target.value || undefined
 									)
 								}
 								className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'

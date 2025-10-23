@@ -10,29 +10,9 @@ import {
 	CheckCircle,
 	XCircle,
 } from 'lucide-react';
-
-interface Activity {
-	id: string;
-	type: string;
-	subject?: string;
-	notes?: string;
-	completedDate?: Date;
-	scheduledDate?: Date;
-	status: string;
-	company?: {
-		name: string;
-	};
-	contact?: {
-		firstName: string;
-		lastName: string;
-	};
-	deal?: {
-		name: string;
-	};
-}
+import { useActivityStore, Activity } from '@/lib/stores';
 
 interface ActivityTimelineProps {
-	activities: Activity[];
 	limit?: number;
 }
 
@@ -58,10 +38,8 @@ const ACTIVITY_COLORS = {
 	note: 'text-gray-600 bg-gray-100',
 };
 
-export function ActivityTimeline({
-	activities,
-	limit = 10,
-}: ActivityTimelineProps) {
+export function ActivityTimeline({ limit = 10 }: ActivityTimelineProps) {
+	const { activities } = useActivityStore();
 	const formatDate = (date: Date) => {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
@@ -104,8 +82,16 @@ export function ActivityTimeline({
 
 	const sortedActivities = activities
 		.sort((a, b) => {
-			const dateA = a.completedDate || a.scheduledDate || new Date(0);
-			const dateB = b.completedDate || b.scheduledDate || new Date(0);
+			const dateA = a.completedDate
+				? new Date(a.completedDate)
+				: a.scheduledDate
+				? new Date(a.scheduledDate)
+				: new Date(0);
+			const dateB = b.completedDate
+				? new Date(b.completedDate)
+				: b.scheduledDate
+				? new Date(b.scheduledDate)
+				: new Date(0);
 			return dateB.getTime() - dateA.getTime();
 		})
 		.slice(0, limit);
@@ -126,8 +112,11 @@ export function ActivityTimeline({
 					{sortedActivities.map((activity, index) => {
 						const Icon = getActivityIcon(activity.type);
 						const colorClass = getActivityColor(activity.type);
-						const displayDate =
-							activity.completedDate || activity.scheduledDate;
+						const displayDate = activity.completedDate
+							? new Date(activity.completedDate)
+							: activity.scheduledDate
+							? new Date(activity.scheduledDate)
+							: null;
 
 						return (
 							<div

@@ -8,39 +8,15 @@ import {
 	Edit,
 	Trash2,
 } from 'lucide-react';
-
-interface Deal {
-	id: string;
-	name: string;
-	value: number;
-	stage: string;
-	probability: number;
-	expectedCloseDate?: Date;
-	actualCloseDate?: Date;
-	serviceType?: string;
-	projectDuration?: string;
-	lostReason?: string;
-	company: {
-		id: string;
-		name: string;
-	};
-	contact: {
-		id: string;
-		firstName: string;
-		lastName: string;
-	};
-	createdAt: Date;
-	updatedAt: Date;
-}
+import { useDealStore, Deal, DealStage } from '@/lib/stores';
 
 interface DealKanbanProps {
-	deals: Deal[];
 	onDealUpdate?: (dealId: string, updates: Partial<Deal>) => void;
 	onDealEdit?: (deal: Deal) => void;
 	onDealDelete?: (deal: Deal) => void;
 }
 
-const STAGES = [
+const STAGES: { key: DealStage; label: string; color: string }[] = [
 	{ key: 'lead', label: 'Lead', color: 'bg-gray-100 border-gray-300' },
 	{
 		key: 'contacted',
@@ -75,11 +51,11 @@ const STAGES = [
 ];
 
 export function DealKanban({
-	deals,
 	onDealUpdate,
 	onDealEdit,
 	onDealDelete,
 }: DealKanbanProps) {
+	const { deals, moveDealToStage } = useDealStore();
 	const [draggedDeal, setDraggedDeal] = useState<string | null>(null);
 
 	const formatCurrency = (amount: number) => {
@@ -98,11 +74,11 @@ export function DealKanban({
 		}).format(date);
 	};
 
-	const getDealsByStage = (stage: string) => {
+	const getDealsByStage = (stage: DealStage) => {
 		return deals.filter((deal) => deal.stage === stage);
 	};
 
-	const getStageValue = (stage: string) => {
+	const getStageValue = (stage: DealStage) => {
 		return getDealsByStage(stage).reduce(
 			(sum, deal) => sum + deal.value,
 			0
@@ -119,10 +95,11 @@ export function DealKanban({
 		e.dataTransfer.dropEffect = 'move';
 	};
 
-	const handleDrop = (e: React.DragEvent, targetStage: string) => {
+	const handleDrop = (e: React.DragEvent, targetStage: DealStage) => {
 		e.preventDefault();
-		if (draggedDeal && onDealUpdate) {
-			onDealUpdate(draggedDeal, { stage: targetStage });
+		if (draggedDeal) {
+			moveDealToStage(draggedDeal, targetStage);
+			onDealUpdate?.(draggedDeal, { stage: targetStage });
 		}
 		setDraggedDeal(null);
 	};
@@ -246,7 +223,7 @@ export function DealKanban({
 															<span className='truncate'>
 																{
 																	deal.company
-																		.name
+																		?.name
 																}
 															</span>
 														</div>
@@ -255,11 +232,11 @@ export function DealKanban({
 															<span>
 																{
 																	deal.contact
-																		.firstName
+																		?.firstName
 																}{' '}
 																{
 																	deal.contact
-																		.lastName
+																		?.lastName
 																}
 															</span>
 														</div>
@@ -269,7 +246,9 @@ export function DealKanban({
 																<span>
 																	Due{' '}
 																	{formatDate(
-																		deal.expectedCloseDate
+																		new Date(
+																			deal.expectedCloseDate
+																		)
 																	)}
 																</span>
 															</div>

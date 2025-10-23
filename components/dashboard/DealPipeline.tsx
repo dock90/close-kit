@@ -1,27 +1,12 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-
-interface Deal {
-	id: string;
-	name: string;
-	value: number;
-	stage: string;
-	company: {
-		name: string;
-	};
-	contact: {
-		firstName: string;
-		lastName: string;
-	};
-	expectedCloseDate?: Date;
-}
+import { useDealStore, Deal, DealStage } from '@/lib/stores';
 
 interface DealPipelineProps {
-	deals: Deal[];
-	onDealUpdate?: (dealId: string, newStage: string) => void;
+	onDealUpdate?: (dealId: string, newStage: DealStage) => void;
 }
 
-const STAGES = [
+const STAGES: { key: DealStage; label: string; color: string }[] = [
 	{ key: 'lead', label: 'Lead', color: 'bg-gray-100' },
 	{ key: 'contacted', label: 'Contacted', color: 'bg-blue-100' },
 	{ key: 'discovery', label: 'Discovery', color: 'bg-yellow-100' },
@@ -31,7 +16,8 @@ const STAGES = [
 	{ key: 'closed_lost', label: 'Closed Lost', color: 'bg-red-100' },
 ];
 
-export function DealPipeline({ deals, onDealUpdate }: DealPipelineProps) {
+export function DealPipeline({ onDealUpdate }: DealPipelineProps) {
+	const { deals, moveDealToStage } = useDealStore();
 	const formatCurrency = (amount: number) => {
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
@@ -48,15 +34,20 @@ export function DealPipeline({ deals, onDealUpdate }: DealPipelineProps) {
 		}).format(date);
 	};
 
-	const getDealsByStage = (stage: string) => {
+	const getDealsByStage = (stage: DealStage) => {
 		return deals.filter((deal) => deal.stage === stage);
 	};
 
-	const getStageValue = (stage: string) => {
+	const getStageValue = (stage: DealStage) => {
 		return getDealsByStage(stage).reduce(
 			(sum, deal) => sum + deal.value,
 			0
 		);
+	};
+
+	const handleDealUpdate = (dealId: string, newStage: DealStage) => {
+		moveDealToStage(dealId, newStage);
+		onDealUpdate?.(dealId, newStage);
 	};
 
 	return (
@@ -104,7 +95,7 @@ export function DealPipeline({ deals, onDealUpdate }: DealPipelineProps) {
 													key={deal.id}
 													className='bg-white rounded-lg p-3 shadow-sm border cursor-pointer hover:shadow-md transition-shadow'
 													onClick={() =>
-														onDealUpdate?.(
+														handleDealUpdate(
 															deal.id,
 															stage.key
 														)
@@ -126,24 +117,26 @@ export function DealPipeline({ deals, onDealUpdate }: DealPipelineProps) {
 															<p>
 																{
 																	deal.company
-																		.name
+																		?.name
 																}
 															</p>
 															<p>
 																{
 																	deal.contact
-																		.firstName
+																		?.firstName
 																}{' '}
 																{
 																	deal.contact
-																		.lastName
+																		?.lastName
 																}
 															</p>
 															{deal.expectedCloseDate && (
 																<p className='mt-1 text-orange-600'>
 																	Due{' '}
 																	{formatDate(
-																		deal.expectedCloseDate
+																		new Date(
+																			deal.expectedCloseDate
+																		)
 																	)}
 																</p>
 															)}
