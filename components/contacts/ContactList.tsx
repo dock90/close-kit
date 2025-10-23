@@ -109,7 +109,7 @@ export function ContactList({
 		return (
 			<div className='flex items-center justify-center py-12'>
 				<div className='text-center'>
-					<div className='inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent'></div>
+					<div className='inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent'></div>
 					<p className='mt-4 text-gray-600'>Loading contacts...</p>
 				</div>
 			</div>
@@ -140,7 +140,7 @@ export function ContactList({
 				<p className='text-gray-500 mb-4'>{error}</p>
 				<button
 					onClick={fetchContacts}
-					className='bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors'
+					className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors'
 				>
 					Try Again
 				</button>
@@ -163,7 +163,7 @@ export function ContactList({
 					</div>
 					<button
 						onClick={onContactCreate}
-						className='flex items-center space-x-2 bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors touch-manipulation'
+						className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors touch-manipulation'
 						style={{ minHeight: '44px' }}
 					>
 						<Plus className='h-5 w-5' />
@@ -182,7 +182,7 @@ export function ContactList({
 									placeholder='Search contacts...'
 									value={searchTerm}
 									onChange={(e) => setSearchTerm(e.target.value)}
-									className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent touch-manipulation'
+									className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
 									style={{ minHeight: '44px' }}
 								/>
 							</div>
@@ -208,7 +208,7 @@ export function ContactList({
 									placeholder='Search contacts...'
 									value={searchTerm}
 									onChange={(e) => setSearchTerm(e.target.value)}
-									className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+									className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 								/>
 							</div>
 						</div>
@@ -217,7 +217,7 @@ export function ContactList({
 							<select
 								value={companyFilter}
 								onChange={(e) => setCompanyFilter(e.target.value)}
-								className='px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+								className='px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 							>
 								<option value='all'>All Companies</option>
 								{companies.map((company) => (
@@ -244,7 +244,7 @@ export function ContactList({
 							<select
 								value={companyFilter}
 								onChange={(e) => setCompanyFilter(e.target.value)}
-								className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent touch-manipulation'
+								className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
 								style={{ minHeight: '44px' }}
 							>
 								<option value='all'>All Companies</option>
@@ -285,7 +285,7 @@ export function ContactList({
 						{!searchTerm && companyFilter === 'all' && (
 							<button
 								onClick={onContactCreate}
-								className='bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors touch-manipulation'
+								className='bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors touch-manipulation'
 								style={{ minHeight: '44px' }}
 							>
 								Add Contact
