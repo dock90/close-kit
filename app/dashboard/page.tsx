@@ -2,6 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SuccessMetrics } from '@/components/dashboard';
 
 export default async function DashboardPage() {
 	const user = await currentUser();
@@ -66,7 +67,7 @@ export default async function DashboardPage() {
 	const totalRevenue = totalValue._sum.value || 0;
 
 	return (
-		<div className='space-y-6'>
+		<div className='space-y-8'>
 			<div>
 				<h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
 				<p className='text-gray-600'>
@@ -74,8 +75,15 @@ export default async function DashboardPage() {
 				</p>
 			</div>
 
+			{/* Success Metrics */}
+			<SuccessMetrics />
+
 			{/* Stats Cards */}
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+			<div>
+				<h2 className='text-xl font-semibold text-gray-900 mb-4'>
+					Overview
+				</h2>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
 				<Card>
 					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className='text-sm font-medium'>
@@ -121,6 +129,7 @@ export default async function DashboardPage() {
 						</div>
 					</CardContent>
 				</Card>
+				</div>
 			</div>
 
 			{/* Revenue Goal Progress */}
