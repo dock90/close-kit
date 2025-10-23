@@ -251,10 +251,16 @@ export function ActivitiesPageClient({
 									type: editingActivity.type,
 									subject: editingActivity.subject || '',
 									notes: editingActivity.notes || '',
-									scheduledDate:
-										editingActivity.scheduledDate || undefined,
-									completedDate:
-										editingActivity.completedDate || undefined,
+									scheduledDate: editingActivity.scheduledDate
+										? editingActivity.scheduledDate instanceof Date
+											? editingActivity.scheduledDate
+											: new Date(editingActivity.scheduledDate)
+										: undefined,
+									completedDate: editingActivity.completedDate
+										? editingActivity.completedDate instanceof Date
+											? editingActivity.completedDate
+											: new Date(editingActivity.completedDate)
+										: undefined,
 									status: editingActivity.status,
 									companyId: editingActivity.companyId || '',
 									contactId:
