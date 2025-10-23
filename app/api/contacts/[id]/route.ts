@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -29,7 +30,7 @@ export async function GET(
 
 		const contact = await prisma.contact.findFirst({
 			where: {
-				id: params.id,
+				id: id,
 				organizationId: dbUser.organizationId,
 			},
 			include: {
@@ -65,9 +66,10 @@ export async function GET(
 
 export async function PATCH(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -92,7 +94,7 @@ export async function PATCH(
 
 		const contact = await prisma.contact.update({
 			where: {
-				id: params.id,
+				id: id,
 				organizationId: dbUser.organizationId,
 			},
 			data,
@@ -113,9 +115,10 @@ export async function PATCH(
 
 export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -138,7 +141,7 @@ export async function DELETE(
 
 		await prisma.contact.delete({
 			where: {
-				id: params.id,
+				id: id,
 				organizationId: dbUser.organizationId,
 			},
 		});
