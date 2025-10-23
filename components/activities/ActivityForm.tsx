@@ -12,6 +12,7 @@ import {
 	Building2,
 	User,
 	DollarSign,
+	Trash2,
 } from 'lucide-react';
 
 interface ActivityFormData {
@@ -39,7 +40,7 @@ interface ActivityFormErrors {
 }
 
 interface ActivityFormProps {
-	initialData?: Partial<ActivityFormData>;
+	initialData?: Partial<ActivityFormData> & { id?: string };
 	companies: Array<{ id: string; name: string }>;
 	contacts: Array<{
 		id: string;
@@ -50,6 +51,7 @@ interface ActivityFormProps {
 	deals: Array<{ id: string; name: string; companyId: string }>;
 	onSubmit: (data: ActivityFormData) => void;
 	onCancel?: () => void;
+	onDelete?: () => void;
 	isLoading?: boolean;
 }
 
@@ -85,6 +87,7 @@ export function ActivityForm({
 	deals,
 	onSubmit,
 	onCancel,
+	onDelete,
 	isLoading = false,
 }: ActivityFormProps) {
 	const [formData, setFormData] = useState<ActivityFormData>({
@@ -447,24 +450,39 @@ export function ActivityForm({
 				</div>
 
 				{/* Actions */}
-				<div className='flex items-center justify-end space-x-3 pt-6 border-t'>
-					{onCancel && (
+				<div className='flex items-center justify-between pt-6 border-t'>
+					<div>
+						{onDelete && initialData.id && (
+							<button
+								type='button'
+								onClick={onDelete}
+								className='flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors'
+								title='Delete activity'
+							>
+								<Trash2 className='h-4 w-4' />
+								<span>Delete</span>
+							</button>
+						)}
+					</div>
+					<div className='flex items-center space-x-3'>
+						{onCancel && (
+							<button
+								type='button'
+								onClick={onCancel}
+								className='px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+							>
+								Cancel
+							</button>
+						)}
 						<button
-							type='button'
-							onClick={onCancel}
-							className='px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+							type='submit'
+							disabled={isLoading}
+							className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
 						>
-							Cancel
+							<Save className='h-4 w-4' />
+							<span>{isLoading ? 'Saving...' : 'Save Activity'}</span>
 						</button>
-					)}
-					<button
-						type='submit'
-						disabled={isLoading}
-						className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
-					>
-						<Save className='h-4 w-4' />
-						<span>{isLoading ? 'Saving...' : 'Save Activity'}</span>
-					</button>
+					</div>
 				</div>
 			</form>
 		</Card>

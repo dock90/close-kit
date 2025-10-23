@@ -237,51 +237,23 @@ export function ActivityList({
 											</h4>
 											{getStatusIcon(activity.status)}
 										</div>
-										<div className='flex items-center space-x-2'>
-											{displayDate && (
-												<span className='text-xs text-gray-500'>
-													{formatDate(displayDate)}
-												</span>
-											)}
-											{(onActivityEdit || onActivityDelete) && (
-												<div className='flex items-center space-x-1 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity'>
-													{onActivityEdit && (
-														<button
-															onClick={(e) =>
-																handleActionClick(
-																	e,
-																	() =>
-																		onActivityEdit(
-																			activity
-																		)
-																)
-															}
-															className='p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors'
-															title='Edit activity'
-														>
-															<FileText className='h-3 w-3' />
-														</button>
-													)}
-													{onActivityDelete && (
-														<button
-															onClick={(e) =>
-																handleActionClick(
-																	e,
-																	() =>
-																		onActivityDelete(
-																			activity
-																		)
-																)
-															}
-															className='p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors'
-															title='Delete activity'
-														>
-															<XCircle className='h-3 w-3' />
-														</button>
-													)}
-												</div>
-											)}
-										</div>
+									{onActivityEdit && (
+										<button
+											onClick={(e) =>
+												handleActionClick(
+													e,
+													() =>
+														onActivityEdit(
+															activity
+														)
+												)
+											}
+											className='px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors'
+											title='Edit activity'
+										>
+											Edit
+										</button>
+									)}
 									</div>
 
 									{activity.subject && (
