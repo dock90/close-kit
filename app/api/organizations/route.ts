@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { currentUser } from '@clerk/nextjs/server';
+import { currentUser, clerkClient } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
@@ -47,6 +47,15 @@ export async function POST(request: NextRequest) {
 						role: 'admin',
 					},
 				},
+			},
+		});
+
+		// Update Clerk user metadata with organizationId
+		const client = await clerkClient();
+		await client.users.updateUserMetadata(user.id, {
+			publicMetadata: {
+				organizationId: organization.id,
+				role: 'admin',
 			},
 		});
 

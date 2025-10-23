@@ -12,7 +12,14 @@ export default function SignUpPage() {
 						Start tracking your sales pipeline today
 					</p>
 				</div>
-				<SignUp />
+				<SignUp 
+					appearance={{
+						elements: {
+							rootBox: 'mx-auto',
+							card: 'shadow-lg',
+						},
+					}}
+				/>
 			</div>
 		</div>
 	);
