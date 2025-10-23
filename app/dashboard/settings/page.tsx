@@ -83,7 +83,7 @@ export default function SettingsPage() {
 				if (goalData) {
 					setRevenueGoal(goalData);
 					setGoalForm({
-						targetAmount: (goalData.targetAmount / 100).toString(),
+						targetAmount: goalData.targetAmount.toString(),
 						startDate: goalData.startDate.split('T')[0],
 						endDate: goalData.endDate.split('T')[0],
 					});
@@ -160,7 +160,7 @@ export default function SettingsPage() {
 
 		try {
 			const goalData = {
-				targetAmount: Math.round(parseFloat(goalForm.targetAmount) * 100),
+				targetAmount: parseFloat(goalForm.targetAmount),
 				startDate: new Date(goalForm.startDate).toISOString(),
 				endDate: new Date(goalForm.endDate).toISOString(),
 			};
