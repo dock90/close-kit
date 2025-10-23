@@ -39,16 +39,15 @@ export function WeeklyReportForm({
 	isLoading = false,
 }: WeeklyReportFormProps) {
 	const [formData, setFormData] = useState<WeeklyReportFormData>({
-		weekStartDate: new Date(),
-		weekEndDate: new Date(),
-		emailsSent: 0,
-		linkedinMessages: 0,
-		callsBooked: 0,
-		proposalsSent: 0,
-		dealsClosed: 0,
-		revenueGenerated: 0,
-		roadblocks: '',
-		...initialData,
+		weekStartDate: initialData.weekStartDate || new Date(),
+		weekEndDate: initialData.weekEndDate || new Date(),
+		emailsSent: initialData.emailsSent || 0,
+		linkedinMessages: initialData.linkedinMessages || 0,
+		callsBooked: initialData.callsBooked || 0,
+		proposalsSent: initialData.proposalsSent || 0,
+		dealsClosed: initialData.dealsClosed || 0,
+		revenueGenerated: initialData.revenueGenerated || 0,
+		roadblocks: initialData.roadblocks || '',
 	});
 
 	const [errors, setErrors] = useState<Partial<WeeklyReportFormData>>({});

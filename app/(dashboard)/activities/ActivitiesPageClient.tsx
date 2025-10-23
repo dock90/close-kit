@@ -58,9 +58,14 @@ export function ActivitiesPageClient({
 	contacts,
 	deals,
 }: ActivitiesPageClientProps) {
-	// Convert serialized dates back to Date objects
+	// Convert serialized dates back to Date objects and handle null values
 	const parsedActivities = initialActivities.map((activity) => ({
 		...activity,
+		subject: activity.subject ?? undefined,
+		notes: activity.notes ?? undefined,
+		company: activity.company ?? undefined,
+		contact: activity.contact ?? undefined,
+		deal: activity.deal ?? undefined,
 		scheduledDate: activity.scheduledDate
 			? new Date(activity.scheduledDate)
 			: undefined,

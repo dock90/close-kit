@@ -31,6 +31,14 @@ interface DealFormData {
 	contactId: string;
 }
 
+interface DealFormErrors {
+	name?: string;
+	value?: string;
+	companyId?: string;
+	contactId?: string;
+	probability?: string;
+}
+
 interface DealFormProps {
 	initialData?: Partial<DealFormData>;
 	onSubmit: (data: DealFormData) => void;
@@ -81,7 +89,7 @@ export function DealForm({
 		...initialData,
 	});
 
-	const [errors, setErrors] = useState<Partial<DealFormData>>({});
+	const [errors, setErrors] = useState<DealFormErrors>({});
 
 	// Get contacts for the selected company
 	const selectedCompany = companies.find((c) => c.id === formData.companyId);
@@ -92,13 +100,16 @@ export function DealForm({
 		value: string | number | undefined
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
-		if (errors[field]) {
-			setErrors((prev) => ({ ...prev, [field]: undefined }));
+		if (errors[field as keyof DealFormErrors]) {
+			setErrors((prev) => ({
+				...prev,
+				[field as keyof DealFormErrors]: undefined,
+			}));
 		}
 	};
 
 	const validateForm = () => {
-		const newErrors: Partial<DealFormData> = {};
+		const newErrors: DealFormErrors = {};
 
 		if (!formData.name.trim()) {
 			newErrors.name = 'Deal name is required';
@@ -210,12 +221,11 @@ export function DealForm({
 							<input
 								type='number'
 								value={formData.value}
-								onChange={(e) =>
-									handleChange(
-										'value',
-										parseInt(e.target.value) || 0
-									)
-								}
+								onChange={(e) => {
+									const numValue =
+										parseInt(e.target.value) || 0;
+									handleChange('value', numValue);
+								}}
 								className={`w-full pl-8 pr-3 py-3 lg:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation ${
 									errors.value
 										? 'border-red-300'
@@ -245,12 +255,10 @@ export function DealForm({
 						<input
 							type='number'
 							value={formData.probability}
-							onChange={(e) =>
-								handleChange(
-									'probability',
-									parseInt(e.target.value) || 0
-								)
-							}
+							onChange={(e) => {
+								const numValue = parseInt(e.target.value) || 0;
+								handleChange('probability', numValue);
+							}}
 							className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
 								errors.probability
 									? 'border-red-300'
