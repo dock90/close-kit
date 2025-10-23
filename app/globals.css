@@ -57,3 +57,37 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer utilities {
+	/* Touch-friendly interactive elements */
+	.touch-manipulation {
+		-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+		touch-action: manipulation;
+	}
+
+	/* Ensure minimum touch target size on mobile */
+	@media (max-width: 1024px) {
+		button,
+		a,
+		input[type="button"],
+		input[type="submit"],
+		input[type="checkbox"],
+		input[type="radio"],
+		select {
+			min-height: 44px;
+			min-width: 44px;
+		}
+
+		/* Exception for icon-only buttons that already have explicit sizing */
+		button.icon-only {
+			min-width: auto;
+		}
+	}
+
+	/* Smooth scrolling for mobile */
+	@media (max-width: 1024px) {
+		* {
+			-webkit-overflow-scrolling: touch;
+		}
+	}
+}

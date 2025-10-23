@@ -5,3 +5,7 @@ export { ActivityTimeline } from './ActivityTimeline';
 export { WeeklyReportCard } from './WeeklyReportCard';
 export { UpcomingTasks } from './UpcomingTasks';
 export { SuccessMetrics } from './SuccessMetrics';
+export { DashboardHeader } from './DashboardHeader';
+export { WeekMetrics } from './WeekMetrics';
+export { MiniDealPipeline } from './MiniDealPipeline';
+export { WeeklyReportWidget } from './WeeklyReportWidget';

@@ -3,6 +3,15 @@ import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SuccessMetrics } from '@/components/dashboard';
+import {
+	DashboardHeader,
+	WeekMetrics,
+	RevenueProgress,
+	MiniDealPipeline,
+	UpcomingTasks,
+	ActivityTimeline,
+	WeeklyReportWidget,
+} from '@/components/dashboard';
 
 export default async function DashboardPage() {
 	const user = await currentUser();
@@ -20,57 +29,197 @@ export default async function DashboardPage() {
 		return null;
 	}
 
-	// Get dashboard stats
+	// Get current week start and end
+	const now = new Date();
+	const weekStart = new Date(now);
+	weekStart.setDate(now.getDate() - now.getDay());
+	weekStart.setHours(0, 0, 0, 0);
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekStart.getDate() + 7);
+
+	// Get next 7 days
+	const sevenDaysFromNow = new Date(now);
+	sevenDaysFromNow.setDate(now.getDate() + 7);
+
+	// Fetch all dashboard data in parallel
 	const [
-		totalDeals,
-		openDeals,
-		wonDeals,
-		totalValue,
-		recentActivities,
 		currentGoal,
+		totalRevenue,
+		weeklyActivities,
+		activeDeals,
+		upcomingActivities,
+		recentActivities,
+		currentWeekReport,
+		totalDealsCount,
+		wonDealsCount,
 	] = await Promise.all([
-		prisma.deal.count({
-			where: { organizationId: dbUser.organizationId },
+		// Current revenue goal
+		prisma.revenueGoal.findFirst({
+			where: {
+				organizationId: dbUser.organizationId,
+				startDate: { lte: now },
+				endDate: { gte: now },
+			},
+			orderBy: { createdAt: 'desc' },
 		}),
-		prisma.deal.count({
+
+		// Total revenue
+		prisma.deal.aggregate({
+			where: {
+				organizationId: dbUser.organizationId,
+				stage: 'closed_won',
+			},
+			_sum: { value: true },
+		}),
+
+		// Current week activities by type
+		prisma.activity.findMany({
+			where: {
+				organizationId: dbUser.organizationId,
+				completedDate: {
+					gte: weekStart,
+					lt: weekEnd,
+				},
+				status: 'completed',
+			},
+			select: { type: true },
+		}),
+
+		// Active deals (not closed)
+		prisma.deal.findMany({
 			where: {
 				organizationId: dbUser.organizationId,
 				stage: { notIn: ['closed_won', 'closed_lost'] },
 			},
+			include: { company: true, contact: true },
+			orderBy: { createdAt: 'desc' },
 		}),
+
+		// Upcoming activities (next 7 days)
+		prisma.activity.findMany({
+			where: {
+				organizationId: dbUser.organizationId,
+				status: 'scheduled',
+				scheduledDate: {
+					gte: now,
+					lte: sevenDaysFromNow,
+				},
+			},
+			include: { company: true, contact: true, deal: true },
+			orderBy: { scheduledDate: 'asc' },
+		}),
+
+		// Recent activities (last 10)
+		prisma.activity.findMany({
+			where: {
+				organizationId: dbUser.organizationId,
+				status: 'completed',
+			},
+			include: { company: true, contact: true, deal: true },
+			orderBy: { completedDate: 'desc' },
+			take: 10,
+		}),
+
+		// Check if there's a report for current week
+		prisma.weeklyReport.findFirst({
+			where: {
+				organizationId: dbUser.organizationId,
+				weekStartDate: { gte: weekStart, lt: weekEnd },
+			},
+		}),
+
+		// Total deals count
+		prisma.deal.count({
+			where: {
+				organizationId: dbUser.organizationId,
+			},
+		}),
+
+		// Won deals count
 		prisma.deal.count({
 			where: {
 				organizationId: dbUser.organizationId,
 				stage: 'closed_won',
 			},
 		}),
-		prisma.deal.aggregate({
-			where: { organizationId: dbUser.organizationId },
-			_sum: { value: true },
-		}),
-		prisma.activity.findMany({
-			where: { organizationId: dbUser.organizationId },
-			include: { company: true, contact: true, deal: true },
-			orderBy: { createdAt: 'desc' },
-			take: 5,
-		}),
-		prisma.revenueGoal.findFirst({
-			where: {
-				organizationId: dbUser.organizationId,
-				startDate: { lte: new Date() },
-				endDate: { gte: new Date() },
-			},
-			orderBy: { createdAt: 'desc' },
-		}),
 	]);
 
-	const totalRevenue = totalValue._sum.value || 0;
+	// Calculate current week metrics
+	const emailsSent = weeklyActivities.filter(
+		(a) => a.type === 'email_sent'
+	).length;
+	const linkedinMessages = weeklyActivities.filter(
+		(a) => a.type === 'linkedin_message' || a.type === 'linkedin_request'
+	).length;
+	const calls = weeklyActivities.filter(
+		(a) => a.type === 'call' || a.type === 'meeting'
+	).length;
+	const proposals = weeklyActivities.filter(
+		(a) => a.type === 'proposal_sent'
+	).length;
+
+	const revenue = totalRevenue._sum.value || 0;
+
+	// Calculate deal metrics
+	const totalDeals = totalDealsCount;
+	const wonDeals = wonDealsCount;
+	const openDeals = activeDeals.length;
+
+	// Transform activities for components
+	const upcomingTasks = upcomingActivities.map((activity) => ({
+		id: activity.id,
+		type: activity.type,
+		subject: activity.subject || undefined,
+		notes: activity.notes || undefined,
+		scheduledDate: activity.scheduledDate!,
+		status: activity.status,
+		company: activity.company ? { name: activity.company.name } : undefined,
+		contact: activity.contact
+			? {
+					firstName: activity.contact.firstName,
+					lastName: activity.contact.lastName,
+			  }
+			: undefined,
+		deal: activity.deal ? { name: activity.deal.name } : undefined,
+	}));
+
+	const recentActivityData = recentActivities.map((activity) => ({
+		id: activity.id,
+		type: activity.type,
+		subject: activity.subject || undefined,
+		notes: activity.notes || undefined,
+		scheduledDate: activity.scheduledDate?.toISOString(),
+		completedDate: activity.completedDate?.toISOString(),
+		status: activity.status,
+		company: activity.company ? { name: activity.company.name } : undefined,
+		contact: activity.contact
+			? {
+					firstName: activity.contact.firstName,
+					lastName: activity.contact.lastName,
+			  }
+			: undefined,
+		deal: activity.deal ? { name: activity.deal.name } : undefined,
+	}));
+
+	const dealsData = activeDeals.map((deal) => ({
+		id: deal.id,
+		name: deal.name,
+		value: deal.value,
+		stage: deal.stage,
+		company: deal.company ? { name: deal.company.name } : undefined,
+	}));
 
 	return (
-		<div className='space-y-8'>
+		<div className='space-y-6'>
+			<DashboardHeader
+				totalDeals={totalDeals}
+				openDeals={openDeals}
+				wonDeals={wonDeals}
+				totalRevenue={revenue}
+			/>
 			<div>
 				<h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
-				<p className='text-gray-600'>
+				<p className='text-gray-600 mt-1'>
 					Welcome back to {dbUser.organization.name}
 				</p>
 			</div>
@@ -130,68 +279,62 @@ export default async function DashboardPage() {
 					</CardContent>
 				</Card>
 				</div>
+			{/* Top Section - Metrics */}
+			<div className='space-y-4'>
+				<h2 className='text-xl font-semibold text-gray-900'>
+					This Week's Activity
+				</h2>
+				<WeekMetrics
+					emailsSent={emailsSent}
+					linkedinMessages={linkedinMessages}
+					calls={calls}
+					proposals={proposals}
+				/>
 			</div>
 
-			{/* Revenue Goal Progress */}
+			{/* Revenue Progress */}
 			{currentGoal && (
-				<Card>
-					<CardHeader>
-						<CardTitle>Revenue Goal Progress</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='space-y-2'>
-							<div className='flex justify-between text-sm'>
-								<span>{formatCurrency(totalRevenue)}</span>
-								<span>
-									{formatCurrency(currentGoal.targetAmount)}
-								</span>
-							</div>
-							<div className='w-full bg-gray-200 rounded-full h-2'>
-								<div
-									className='bg-indigo-600 h-2 rounded-full'
-									style={{
-										width: `${Math.min(
-											(totalRevenue /
-												currentGoal.targetAmount) *
-												100,
-											100
-										)}%`,
-									}}
-								></div>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
+				<RevenueProgress
+					currentRevenue={revenue}
+					targetRevenue={currentGoal.targetAmount}
+					period='Current Goal'
+					startDate={currentGoal.startDate}
+					endDate={currentGoal.endDate}
+				/>
 			)}
 
-			{/* Recent Activities */}
-			<Card>
-				<CardHeader>
-					<CardTitle>Recent Activities</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className='space-y-4'>
-						{recentActivities.map((activity) => (
-							<div
-								key={activity.id}
-								className='flex items-center space-x-4'
-							>
-								<div className='w-2 h-2 bg-indigo-500 rounded-full'></div>
-								<div className='flex-1'>
-									<p className='text-sm font-medium'>
-										{activity.type.replace('_', ' ')} -{' '}
-										{activity.company?.name ||
-											activity.contact?.firstName}
-									</p>
-									<p className='text-xs text-gray-500'>
-										{activity.createdAt.toLocaleDateString()}
-									</p>
-								</div>
-							</div>
-						))}
-					</div>
-				</CardContent>
-			</Card>
+			{/* Middle Section - Pipeline */}
+			<div className='space-y-4'>
+				<h2 className='text-xl font-semibold text-gray-900'>
+					Deal Pipeline
+				</h2>
+				<MiniDealPipeline deals={dealsData} />
+			</div>
+
+			{/* Bottom Section - Split View */}
+			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+				{/* Left: Upcoming Activities */}
+				<div className='space-y-4'>
+					<h2 className='text-xl font-semibold text-gray-900'>
+						Upcoming Activities
+					</h2>
+					<UpcomingTasks tasks={upcomingTasks} limit={7} />
+				</div>
+
+				{/* Right: Recent Activity Timeline */}
+				<div className='space-y-4'>
+					<h2 className='text-xl font-semibold text-gray-900'>
+						Recent Activity
+					</h2>
+					<ActivityTimeline
+						activities={recentActivityData}
+						limit={10}
+					/>
+				</div>
+			</div>
+
+			{/* Floating Widget - Weekly Report Prompt */}
+			<WeeklyReportWidget hasReportForCurrentWeek={!!currentWeekReport} />
 		</div>
 	);
 }
