@@ -83,16 +83,34 @@ export function ActivitiesPageClient({
 	const handleSubmit = async (data: any) => {
 		setIsLoading(true);
 		try {
+			// Clean up the data - convert empty strings to null for optional fields
+			const cleanedData = {
+				...data,
+				dealId: data.dealId === '' ? null : data.dealId,
+				contactId: data.contactId === '' ? null : data.contactId,
+				notes: data.notes === '' ? null : data.notes,
+				subject: data.subject === '' ? null : data.subject,
+			};
+
 			const response = await fetch('/api/activities', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(data),
+				body: JSON.stringify(cleanedData),
 			});
 
+			// Check if response is ok before parsing JSON
 			if (!response.ok) {
-				throw new Error('Failed to create activity');
+				let errorMessage = 'Failed to create activity';
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.error || errorMessage;
+				} catch {
+					// If response is not JSON, use status text
+					errorMessage = response.statusText || errorMessage;
+				}
+				throw new Error(errorMessage);
 			}
 
 			const newActivity = await response.json();
@@ -101,7 +119,11 @@ export function ActivitiesPageClient({
 			router.refresh();
 		} catch (error) {
 			console.error('Error creating activity:', error);
-			alert('Failed to create activity. Please try again.');
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: 'Failed to create activity. Please try again.';
+			alert(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}

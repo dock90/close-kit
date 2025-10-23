@@ -76,7 +76,12 @@ export function ActivityList({
 	const [filterType, setFilterType] = React.useState('all');
 	const [filterStatus, setFilterStatus] = React.useState('all');
 
-	const formatDate = (date: Date) => {
+	const formatDate = (date: Date | undefined) => {
+		// Check if date is valid
+		if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+			return 'N/A';
+		}
+
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
 			day: 'numeric',
@@ -125,8 +130,16 @@ export function ActivityList({
 			return matchesType && matchesStatus;
 		})
 		.sort((a, b) => {
-			const dateA = a.completedDate || a.scheduledDate || new Date(0);
-			const dateB = b.completedDate || b.scheduledDate || new Date(0);
+			const getDate = (activity: Activity) => {
+				const date = activity.completedDate || activity.scheduledDate;
+				if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+					return new Date(0);
+				}
+				return date;
+			};
+
+			const dateA = getDate(a);
+			const dateB = getDate(b);
 			return dateB.getTime() - dateA.getTime();
 		});
 
@@ -149,12 +162,12 @@ export function ActivityList({
 							<label className='block text-sm font-medium text-gray-700 mb-2'>
 								Filter by Type
 							</label>
-			<select
-				value={filterType}
-				onChange={(e) => setFilterType(e.target.value)}
-				className='w-full px-3 py-3 lg:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
-				style={{ minHeight: '44px' }}
-			>
+							<select
+								value={filterType}
+								onChange={(e) => setFilterType(e.target.value)}
+								className='w-full px-3 py-3 lg:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
+								style={{ minHeight: '44px' }}
+							>
 								<option value='all'>All Types</option>
 								<option value='email_sent'>Email Sent</option>
 								<option value='linkedin_request'>
@@ -176,14 +189,14 @@ export function ActivityList({
 							<label className='block text-sm font-medium text-gray-700 mb-2'>
 								Filter by Status
 							</label>
-			<select
-				value={filterStatus}
-				onChange={(e) =>
-					setFilterStatus(e.target.value)
-				}
-				className='w-full px-3 py-3 lg:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
-				style={{ minHeight: '44px' }}
-			>
+							<select
+								value={filterStatus}
+								onChange={(e) =>
+									setFilterStatus(e.target.value)
+								}
+								className='w-full px-3 py-3 lg:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
+								style={{ minHeight: '44px' }}
+							>
 								<option value='all'>All Statuses</option>
 								<option value='completed'>Completed</option>
 								<option value='scheduled'>Scheduled</option>
@@ -194,8 +207,8 @@ export function ActivityList({
 				</Card>
 			)}
 
-		{/* Activity List */}
-		<div className='space-y-3 pb-20 lg:pb-0'>
+			{/* Activity List */}
+			<div className='space-y-3 pb-20 lg:pb-0'>
 				{displayActivities.map((activity) => {
 					const Icon = getActivityIcon(activity.type);
 					const colorClass = getActivityColor(activity.type);
@@ -203,10 +216,10 @@ export function ActivityList({
 						activity.completedDate || activity.scheduledDate;
 
 					return (
-				<Card
-					key={activity.id}
-					className='p-4 hover:shadow-md transition-shadow touch-manipulation'
-				>
+						<Card
+							key={activity.id}
+							className='p-4 hover:shadow-md transition-shadow touch-manipulation'
+						>
 							<div className='flex items-start space-x-3'>
 								<div
 									className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${colorClass}`}
