@@ -218,7 +218,7 @@ export function ActivityList({
 					return (
 						<Card
 							key={activity.id}
-							className='p-4 hover:shadow-md transition-shadow touch-manipulation'
+							className='p-4 hover:shadow-md transition-shadow touch-manipulation group'
 						>
 							<div className='flex items-start space-x-3'>
 								<div
@@ -243,42 +243,44 @@ export function ActivityList({
 													{formatDate(displayDate)}
 												</span>
 											)}
-											<div className='flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity'>
-												{onActivityEdit && (
-													<button
-														onClick={(e) =>
-															handleActionClick(
-																e,
-																() =>
-																	onActivityEdit(
-																		activity
-																	)
-															)
-														}
-														className='p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors'
-														title='Edit activity'
-													>
-														<FileText className='h-3 w-3' />
-													</button>
-												)}
-												{onActivityDelete && (
-													<button
-														onClick={(e) =>
-															handleActionClick(
-																e,
-																() =>
-																	onActivityDelete(
-																		activity
-																	)
-															)
-														}
-														className='p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors'
-														title='Delete activity'
-													>
-														<XCircle className='h-3 w-3' />
-													</button>
-												)}
-											</div>
+											{(onActivityEdit || onActivityDelete) && (
+												<div className='flex items-center space-x-1 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity'>
+													{onActivityEdit && (
+														<button
+															onClick={(e) =>
+																handleActionClick(
+																	e,
+																	() =>
+																		onActivityEdit(
+																			activity
+																		)
+																)
+															}
+															className='p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors'
+															title='Edit activity'
+														>
+															<FileText className='h-3 w-3' />
+														</button>
+													)}
+													{onActivityDelete && (
+														<button
+															onClick={(e) =>
+																handleActionClick(
+																	e,
+																	() =>
+																		onActivityDelete(
+																			activity
+																		)
+																)
+															}
+															className='p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors'
+															title='Delete activity'
+														>
+															<XCircle className='h-3 w-3' />
+														</button>
+													)}
+												</div>
+											)}
 										</div>
 									</div>
 
