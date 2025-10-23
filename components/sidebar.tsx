@@ -13,7 +13,6 @@ import {
 	Settings,
 	Home,
 	Mail,
-	Upload,
 	LogOut,
 } from 'lucide-react';
 import { SignOutButton } from '@clerk/nextjs';
