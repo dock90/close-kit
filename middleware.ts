@@ -21,15 +21,20 @@ export default clerkMiddleware(async (auth, req) => {
 		return NextResponse.redirect(new URL('/sign-in', req.url));
 	}
 
-	// Allow API routes to proceed (they handle their own auth)
-	if (req.nextUrl.pathname.startsWith('/api')) {
-		return NextResponse.next();
-	}
-
 	// For all other authenticated routes, allow through
 	return NextResponse.next();
 });
 
 export const config = {
-	matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+	matcher: [
+		/*
+		 * Match all request paths except for the ones starting with:
+		 * - api (API routes - let them handle their own auth)
+		 * - _next/static (static files)
+		 * - _next/image (image optimization files)
+		 * - favicon.ico (favicon file)
+		 * - files with extensions (images, css, js, etc.)
+		 */
+		'/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)).*)',
+	],
 };
