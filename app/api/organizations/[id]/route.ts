@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -16,7 +17,7 @@ export async function GET(
 		}
 
 		const organization = await prisma.organization.findUnique({
-			where: { id: params.id },
+			where: { id: id },
 			include: {
 				users: true,
 				_count: {
@@ -49,9 +50,10 @@ export async function GET(
 
 export async function PATCH(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const { id } = await params;
 		const user = await currentUser();
 		if (!user) {
 			return NextResponse.json(
@@ -63,7 +65,7 @@ export async function PATCH(
 		const { name, slug } = await request.json();
 
 		const organization = await prisma.organization.update({
-			where: { id: params.id },
+			where: { id: id },
 			data: { name, slug },
 		});
 
