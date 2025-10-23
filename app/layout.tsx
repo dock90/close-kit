@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 	title: 'CloseKit - Sales Pipeline CRM',
 	description: 'Multi-tenant Sales Pipeline CRM for freelancers and agencies',
 	manifest: '/manifest.json',
-	themeColor: '#4f46e5',
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: 'default',
@@ -21,6 +20,7 @@ export const viewport: Viewport = {
 	width: 'device-width',
 	initialScale: 1,
 	maximumScale: 1,
+	themeColor: '#4f46e5',
 };
 
 export default function RootLayout({
