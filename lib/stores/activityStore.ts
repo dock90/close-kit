@@ -169,10 +169,10 @@ interface ActivityStore {
 		notes?: string
 	) => void;
 	logNote: (
+		notes: string,
 		companyId?: string,
 		contactId?: string,
-		dealId?: string,
-		notes: string
+		dealId?: string
 	) => void;
 }
 
@@ -766,7 +766,7 @@ export const useActivityStore = create<ActivityStore>()(
 				get().addActivity(activity);
 			},
 
-			logNote: (companyId, contactId, dealId, notes) => {
+			logNote: (notes, companyId, contactId, dealId) => {
 				const now = new Date().toISOString();
 				const activity: Activity = {
 					id: `temp-${Date.now()}`,

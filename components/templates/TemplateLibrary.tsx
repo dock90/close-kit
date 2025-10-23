@@ -25,9 +25,9 @@ interface Template {
 export function TemplateLibrary() {
 	const [templates, setTemplates] = useState<Template[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [selectedType, setSelectedType] = useState<'all' | 'email' | 'linkedin'>(
-		'all'
-	);
+	const [selectedType, setSelectedType] = useState<
+		'all' | 'email' | 'linkedin'
+	>('all');
 	const [selectedCategory, setSelectedCategory] = useState<string>('all');
 	const [showEditor, setShowEditor] = useState(false);
 	const [editingTemplate, setEditingTemplate] = useState<Template | null>(
@@ -113,7 +113,9 @@ export function TemplateLibrary() {
 
 	const categories = [
 		'all',
-		...Array.from(new Set(templates.map((t) => t.category).filter(Boolean))),
+		...Array.from(
+			new Set(templates.map((t) => t.category).filter(Boolean))
+		),
 	];
 
 	return (
@@ -191,10 +193,12 @@ export function TemplateLibrary() {
 										{cat === 'all'
 											? 'All Categories'
 											: cat
-													.split('_')
+													?.split('_')
 													.map(
 														(w) =>
-															w.charAt(0).toUpperCase() +
+															w
+																.charAt(0)
+																.toUpperCase() +
 															w.slice(1)
 													)
 													.join(' ')}
@@ -242,7 +246,10 @@ export function TemplateLibrary() {
 			) : (
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 					{filteredTemplates.map((template) => (
-						<Card key={template.id} className='p-4 hover:shadow-lg transition-shadow'>
+						<Card
+							key={template.id}
+							className='p-4 hover:shadow-lg transition-shadow'
+						>
 							<div className='flex items-start justify-between mb-3'>
 								<div className='flex items-center space-x-2'>
 									{template.type === 'email' ? (

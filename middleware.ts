@@ -2,10 +2,10 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
-	'/', 
-	'/sign-in(.*)', 
+	'/',
+	'/sign-in(.*)',
 	'/sign-up(.*)',
-	'/api/webhooks(.*)'
+	'/api/webhooks(.*)',
 ]);
 
 const isOnboardingRoute = createRouteMatcher(['/onboarding']);
@@ -20,7 +20,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 	// Protect all other routes
 	if (!userId) {
-		return auth.protect();
+		return NextResponse.redirect(new URL('/sign-in', req.url));
 	}
 
 	// If user is authenticated but not on onboarding, check if they need onboarding
@@ -28,7 +28,7 @@ export default clerkMiddleware(async (auth, req) => {
 		// Check if user has an organization by looking at their metadata
 		// This will be set after they complete onboarding
 		const user = await auth();
-		
+
 		// If on API routes or webhooks, allow through (API will handle auth)
 		if (req.nextUrl.pathname.startsWith('/api')) {
 			return NextResponse.next();

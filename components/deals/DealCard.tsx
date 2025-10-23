@@ -103,7 +103,7 @@ export function DealCard({
 								{deal.name}
 							</h4>
 							<p className='text-sm text-gray-600 truncate'>
-								{deal.company.name}
+								{deal.company?.name || 'No Company'}
 							</p>
 						</div>
 						<div className='flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity'>

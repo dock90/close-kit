@@ -17,7 +17,11 @@ interface UIActions {
 	toggleSidebar: () => void;
 	setTheme: (theme: 'light' | 'dark') => void;
 	setLoading: (key: string, loading: boolean) => void;
-	showToast: (toast: Omit<UIState['toast'], 'id'>) => void;
+	showToast: (toast: {
+		message: string;
+		type: 'success' | 'error' | 'info' | 'warning';
+		duration?: number;
+	}) => void;
 	hideToast: () => void;
 }
 
