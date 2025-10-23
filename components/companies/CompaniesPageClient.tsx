@@ -8,20 +8,20 @@ import { CompanyDetailView } from './CompanyDetailView';
 import { Company } from '@/lib/stores/companyStore';
 
 export function CompaniesPageClient() {
-	const { 
-		companies, 
-		setCompanies, 
-		addCompany, 
-		updateCompany, 
+	const {
+		companies,
+		setCompanies,
+		addCompany,
+		updateCompany,
 		deleteCompany,
-		setLoading, 
+		setLoading,
 		setError,
 		isLoading,
 		error,
 		selectedCompany,
-		setSelectedCompany
+		setSelectedCompany,
 	} = useCompanyStore();
-	
+
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [editingCompany, setEditingCompany] = useState<Company | null>(null);
@@ -32,17 +32,21 @@ export function CompaniesPageClient() {
 			try {
 				setLoading(true);
 				const response = await fetch('/api/companies');
-				
+
 				if (!response.ok) {
 					throw new Error('Failed to fetch companies');
 				}
-				
+
 				const data = await response.json();
 				setCompanies(data);
 				setError(null);
 			} catch (err) {
 				console.error('Error fetching companies:', err);
-				setError(err instanceof Error ? err.message : 'Failed to fetch companies');
+				setError(
+					err instanceof Error
+						? err.message
+						: 'Failed to fetch companies'
+				);
 			} finally {
 				setLoading(false);
 			}
@@ -78,13 +82,16 @@ export function CompaniesPageClient() {
 		if (!editingCompany) return;
 
 		try {
-			const response = await fetch(`/api/companies/${editingCompany.id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(companyData),
-			});
+			const response = await fetch(
+				`/api/companies/${editingCompany.id}`,
+				{
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(companyData),
+				}
+			);
 
 			if (!response.ok) {
 				throw new Error('Failed to update company');
@@ -94,7 +101,7 @@ export function CompaniesPageClient() {
 			updateCompany(editingCompany.id, updatedCompany);
 			setShowEditModal(false);
 			setEditingCompany(null);
-			
+
 			// Update selected company if it's the one being edited
 			if (selectedCompany?.id === editingCompany.id) {
 				setSelectedCompany(updatedCompany);
@@ -120,7 +127,7 @@ export function CompaniesPageClient() {
 			}
 
 			deleteCompany(company.id);
-			
+
 			// Clear selected company if it's the one being deleted
 			if (selectedCompany?.id === company.id) {
 				setSelectedCompany(null);
@@ -135,8 +142,14 @@ export function CompaniesPageClient() {
 		setSelectedCompany(company);
 	};
 
-	const handleEdit = (company: Company) => {
-		setEditingCompany(company);
+	const handleEdit = (company: any) => {
+		// Transform component Company back to store Company type
+		const storeCompany = {
+			...company,
+			createdAt: company.createdAt.toISOString(),
+			updatedAt: company.updatedAt.toISOString(),
+		};
+		setEditingCompany(storeCompany);
 		setShowEditModal(true);
 	};
 
@@ -146,10 +159,10 @@ export function CompaniesPageClient() {
 
 	if (isLoading && companies.length === 0) {
 		return (
-			<div className="flex items-center justify-center min-h-[400px]">
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-					<p className="text-gray-600">Loading companies...</p>
+			<div className='flex items-center justify-center min-h-[400px]'>
+				<div className='text-center'>
+					<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+					<p className='text-gray-600'>Loading companies...</p>
 				</div>
 			</div>
 		);
@@ -157,12 +170,12 @@ export function CompaniesPageClient() {
 
 	if (error) {
 		return (
-			<div className="flex items-center justify-center min-h-[400px]">
-				<div className="text-center">
-					<p className="text-red-600 mb-4">Error: {error}</p>
+			<div className='flex items-center justify-center min-h-[400px]'>
+				<div className='text-center'>
+					<p className='text-red-600 mb-4'>Error: {error}</p>
 					<button
 						onClick={() => window.location.reload()}
-						className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+						className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700'
 					>
 						Retry
 					</button>
@@ -173,20 +186,27 @@ export function CompaniesPageClient() {
 
 	// Show detail view if a company is selected
 	if (selectedCompany) {
+		// Transform store Company to component Company type
+		const transformedCompany = {
+			...selectedCompany,
+			createdAt: new Date(selectedCompany.createdAt),
+			updatedAt: new Date(selectedCompany.updatedAt),
+		};
+
 		return (
 			<>
 				<CompanyDetailView
-					company={selectedCompany}
+					company={transformedCompany}
 					onBack={handleBackToList}
 					onEdit={handleEdit}
 				/>
-				
+
 				{showEditModal && editingCompany && (
-					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-						<div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-							<div className="p-6">
-								<div className="flex items-center justify-between mb-6">
-									<h2 className="text-2xl font-bold text-gray-900">
+					<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+						<div className='bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
+							<div className='p-6'>
+								<div className='flex items-center justify-between mb-6'>
+									<h2 className='text-2xl font-bold text-gray-900'>
 										Edit Company
 									</h2>
 									<button
@@ -194,9 +214,11 @@ export function CompaniesPageClient() {
 											setShowEditModal(false);
 											setEditingCompany(null);
 										}}
-										className="text-gray-400 hover:text-gray-600"
+										className='text-gray-400 hover:text-gray-600'
 									>
-										<span className="text-2xl">&times;</span>
+										<span className='text-2xl'>
+											&times;
+										</span>
 									</button>
 								</div>
 								<CompanyForm
@@ -223,18 +245,18 @@ export function CompaniesPageClient() {
 			/>
 
 			{showCreateModal && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-					<div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-						<div className="p-6">
-							<div className="flex items-center justify-between mb-6">
-								<h2 className="text-2xl font-bold text-gray-900">
+				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+					<div className='bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
+						<div className='p-6'>
+							<div className='flex items-center justify-between mb-6'>
+								<h2 className='text-2xl font-bold text-gray-900'>
 									Add New Company
 								</h2>
 								<button
 									onClick={() => setShowCreateModal(false)}
-									className="text-gray-400 hover:text-gray-600"
+									className='text-gray-400 hover:text-gray-600'
 								>
-									<span className="text-2xl">&times;</span>
+									<span className='text-2xl'>&times;</span>
 								</button>
 							</div>
 							<CompanyForm
