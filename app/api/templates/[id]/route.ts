@@ -36,11 +36,11 @@ export async function PATCH(
 				organizationId: dbUser.organizationId,
 			},
 			data: {
-				...(name && { name }),
-				...(type && { type }),
+				...(name !== undefined && { name }),
+				...(type !== undefined && { type }),
 				...(subject !== undefined && { subject }),
-				...(templateBody && { body: templateBody }),
-				...(category && { category }),
+				...(templateBody !== undefined && { body: templateBody }),
+				...(category !== undefined && { category }),
 			},
 		});
 
