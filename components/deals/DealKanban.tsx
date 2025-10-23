@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import {
 	DollarSign,
@@ -7,6 +7,8 @@ import {
 	User,
 	Edit,
 	Trash2,
+	ChevronLeft,
+	ChevronRight,
 } from 'lucide-react';
 import { useDealStore, Deal, DealStage } from '@/lib/stores';
 
@@ -57,6 +59,9 @@ export function DealKanban({
 }: DealKanbanProps) {
 	const { deals, moveDealToStage } = useDealStore();
 	const [draggedDeal, setDraggedDeal] = useState<string | null>(null);
+	const [touchStart, setTouchStart] = useState<{ x: number; y: number; dealId: string } | null>(null);
+	const [touchOffset, setTouchOffset] = useState(0);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	const formatCurrency = (amount: number) => {
 		return new Intl.NumberFormat('en-US', {
@@ -109,6 +114,52 @@ export function DealKanban({
 		action();
 	};
 
+	const handleTouchStart = (e: React.TouchEvent, dealId: string) => {
+		const touch = e.touches[0];
+		setTouchStart({ x: touch.clientX, y: touch.clientY, dealId });
+		setTouchOffset(0);
+	};
+
+	const handleTouchMove = (e: React.TouchEvent) => {
+		if (!touchStart) return;
+		
+		const touch = e.touches[0];
+		const deltaX = touch.clientX - touchStart.x;
+		const deltaY = touch.clientY - touchStart.y;
+		
+		// Only handle horizontal swipes (not vertical scrolling)
+		if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+			setTouchOffset(deltaX);
+			e.preventDefault();
+		}
+	};
+
+	const handleTouchEnd = (e: React.TouchEvent, currentStage: DealStage) => {
+		if (!touchStart) return;
+		
+		const swipeThreshold = 100;
+		const deal = deals.find(d => d.id === touchStart.dealId);
+		
+		if (Math.abs(touchOffset) > swipeThreshold && deal) {
+			const currentStageIndex = STAGES.findIndex(s => s.key === currentStage);
+			
+			if (touchOffset < 0 && currentStageIndex < STAGES.length - 1) {
+				// Swipe left - move to next stage
+				const nextStage = STAGES[currentStageIndex + 1].key;
+				moveDealToStage(touchStart.dealId, nextStage);
+				onDealUpdate?.(touchStart.dealId, { stage: nextStage });
+			} else if (touchOffset > 0 && currentStageIndex > 0) {
+				// Swipe right - move to previous stage
+				const prevStage = STAGES[currentStageIndex - 1].key;
+				moveDealToStage(touchStart.dealId, prevStage);
+				onDealUpdate?.(touchStart.dealId, { stage: prevStage });
+			}
+		}
+		
+		setTouchStart(null);
+		setTouchOffset(0);
+	};
+
 	return (
 		<div className='space-y-6'>
 			<div className='flex items-center justify-between'>
@@ -120,8 +171,8 @@ export function DealKanban({
 				</div>
 			</div>
 
-			<div className='overflow-x-auto'>
-				<div className='flex space-x-4 min-w-max pb-4'>
+			<div className='overflow-x-auto' ref={scrollContainerRef}>
+				<div className='flex space-x-4 min-w-max pb-4 lg:pb-4 pb-20'>
 					{STAGES.map((stage) => {
 						const stageDeals = getDealsByStage(stage.key);
 						const stageValue = getStageValue(stage.key);
@@ -150,15 +201,41 @@ export function DealKanban({
 										onDragOver={handleDragOver}
 										onDrop={(e) => handleDrop(e, stage.key)}
 									>
-										{stageDeals.map((deal) => (
+										{stageDeals.map((deal) => {
+											const isBeingSwiped = touchStart?.dealId === deal.id;
+											const swipeStyle = isBeingSwiped ? {
+												transform: `translateX(${touchOffset}px)`,
+												transition: 'none'
+											} : {};
+											
+											return (
 											<div
 												key={deal.id}
 												draggable
 												onDragStart={(e) =>
 													handleDragStart(e, deal.id)
 												}
-												className='bg-white rounded-lg p-4 shadow-sm border cursor-move hover:shadow-md transition-all duration-200 group'
+												onTouchStart={(e) => handleTouchStart(e, deal.id)}
+												onTouchMove={handleTouchMove}
+												onTouchEnd={(e) => handleTouchEnd(e, stage.key)}
+												className='bg-white rounded-lg p-4 shadow-sm border cursor-move hover:shadow-md transition-all duration-200 group touch-manipulation relative'
+												style={{ minHeight: '44px', ...swipeStyle }}
 											>
+												{/* Swipe indicators */}
+												{isBeingSwiped && (
+													<>
+														{touchOffset < -50 && (
+															<div className='absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600'>
+																<ChevronRight className='h-6 w-6' />
+															</div>
+														)}
+														{touchOffset > 50 && (
+															<div className='absolute left-2 top-1/2 -translate-y-1/2 text-indigo-600'>
+																<ChevronLeft className='h-6 w-6' />
+															</div>
+														)}
+													</>
+												)}
 												<div className='space-y-3'>
 													<div className='flex items-start justify-between'>
 														<h4 className='font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors'>
@@ -276,7 +353,8 @@ export function DealKanban({
 													)}
 												</div>
 											</div>
-										))}
+											);
+										})}
 
 										{stageDeals.length === 0 && (
 											<div className='text-center text-gray-400 py-8'>
