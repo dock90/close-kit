@@ -96,11 +96,11 @@ export function ActivitiesPageClient({
 				subject: data.subject === '' ? null : data.subject,
 			};
 
-			const isEditing = editingActivity !== null;
-			const url = isEditing
-				? `/api/activities/${editingActivity.id}`
-				: '/api/activities';
-			const method = isEditing ? 'PUT' : 'POST';
+		const isEditing = editingActivity !== null;
+		const url = isEditing
+			? `/api/activities/${editingActivity.id}`
+			: '/api/activities';
+		const method = isEditing ? 'PATCH' : 'POST';
 
 			const response = await fetch(url, {
 				method,
