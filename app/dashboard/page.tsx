@@ -214,7 +214,7 @@ export default async function DashboardPage() {
 		{currentGoal && (
 			<RevenueProgress
 				currentRevenue={revenue}
-				targetRevenue={currentGoal.targetAmount / 100}
+				targetRevenue={currentGoal.targetAmount}
 				period='Current Goal'
 				startDate={currentGoal.startDate}
 				endDate={currentGoal.endDate}
