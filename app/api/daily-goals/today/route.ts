@@ -61,17 +61,19 @@ export async function GET(request: NextRequest) {
 			},
 		});
 
-		const linkedinSent = await prisma.activity.count({
-			where: {
-				organizationId: dbUser.organizationId,
-				type: 'linkedin_message',
-				status: 'completed',
-				completedDate: {
-					gte: today,
-					lt: tomorrow,
-				},
+	const linkedinSent = await prisma.activity.count({
+		where: {
+			organizationId: dbUser.organizationId,
+			type: {
+				in: ['linkedin_message', 'linkedin_request'],
 			},
-		});
+			status: 'completed',
+			completedDate: {
+				gte: today,
+				lt: tomorrow,
+			},
+		},
+	});
 
 		// Update the counts
 		dailyGoal = await prisma.dailyGoal.update({
