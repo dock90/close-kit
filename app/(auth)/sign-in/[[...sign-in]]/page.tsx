@@ -12,7 +12,14 @@ export default function SignInPage() {
 						Access your sales pipeline dashboard
 					</p>
 				</div>
-				<SignIn />
+				<SignIn 
+					appearance={{
+						elements: {
+							rootBox: 'mx-auto',
+							card: 'shadow-lg',
+						},
+					}}
+				/>
 			</div>
 		</div>
 	);
