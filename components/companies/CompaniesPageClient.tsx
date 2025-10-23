@@ -138,8 +138,31 @@ export function CompaniesPageClient() {
 		}
 	};
 
-	const handleCompanySelect = (company: Company) => {
-		setSelectedCompany(company);
+	const handleCompanySelect = async (company: Company) => {
+		try {
+			setLoading(true);
+			// Fetch full company details including contacts, deals, and activities
+			const response = await fetch(`/api/companies/${company.id}`);
+			
+			if (!response.ok) {
+				throw new Error('Failed to fetch company details');
+			}
+
+			const fullCompanyData = await response.json();
+			setSelectedCompany(fullCompanyData);
+			setError(null);
+		} catch (err) {
+			console.error('Error fetching company details:', err);
+			setError(
+				err instanceof Error
+					? err.message
+					: 'Failed to fetch company details'
+			);
+			// Fallback to the limited data we have
+			setSelectedCompany(company);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleEdit = (company: any) => {
