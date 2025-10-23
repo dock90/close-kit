@@ -26,6 +26,8 @@ interface ContactFormErrors {
 	lastName?: string;
 	email?: string;
 	phone?: string;
+	title?: string;
+	linkedinUrl?: string;
 	companyId?: string;
 }
 
