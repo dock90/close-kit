@@ -252,9 +252,9 @@ export function ActivitiesPageClient({
 									subject: editingActivity.subject || '',
 									notes: editingActivity.notes || '',
 									scheduledDate:
-										editingActivity.scheduledDate,
+										editingActivity.scheduledDate || undefined,
 									completedDate:
-										editingActivity.completedDate,
+										editingActivity.completedDate || undefined,
 									status: editingActivity.status,
 									companyId: editingActivity.companyId || '',
 									contactId:
