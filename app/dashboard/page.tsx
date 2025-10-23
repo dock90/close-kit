@@ -210,16 +210,16 @@ export default async function DashboardPage() {
 				/>
 			</div>
 
-			{/* Revenue Progress */}
-			{currentGoal && (
-				<RevenueProgress
-					currentRevenue={revenue}
-					targetRevenue={currentGoal.targetAmount}
-					period='Current Goal'
-					startDate={currentGoal.startDate}
-					endDate={currentGoal.endDate}
-				/>
-			)}
+		{/* Revenue Progress */}
+		{currentGoal && (
+			<RevenueProgress
+				currentRevenue={revenue}
+				targetRevenue={currentGoal.targetAmount / 100}
+				period='Current Goal'
+				startDate={currentGoal.startDate}
+				endDate={currentGoal.endDate}
+			/>
+		)}
 
 			{/* Middle Section - Pipeline */}
 			<div className='space-y-4'>
