@@ -4,3 +4,6 @@ export { DealPipeline } from './DealPipeline';
 export { ActivityTimeline } from './ActivityTimeline';
 export { WeeklyReportCard } from './WeeklyReportCard';
 export { UpcomingTasks } from './UpcomingTasks';
+export { WeekMetrics } from './WeekMetrics';
+export { WeeklyReportWidget } from './WeeklyReportWidget';
+export { MiniDealPipeline } from './MiniDealPipeline';

@@ -10,9 +10,29 @@ import {
 	CheckCircle,
 	XCircle,
 } from 'lucide-react';
-import { useActivityStore, Activity } from '@/lib/stores';
+
+interface Activity {
+	id: string;
+	type: string;
+	subject?: string;
+	notes?: string;
+	scheduledDate?: string;
+	completedDate?: string;
+	status: string;
+	company?: {
+		name: string;
+	};
+	contact?: {
+		firstName: string;
+		lastName: string;
+	};
+	deal?: {
+		name: string;
+	};
+}
 
 interface ActivityTimelineProps {
+	activities: Activity[];
 	limit?: number;
 }
 
@@ -38,8 +58,7 @@ const ACTIVITY_COLORS = {
 	note: 'text-gray-600 bg-gray-100',
 };
 
-export function ActivityTimeline({ limit = 10 }: ActivityTimelineProps) {
-	const { activities } = useActivityStore();
+export function ActivityTimeline({ activities, limit = 10 }: ActivityTimelineProps) {
 	const formatDate = (date: Date) => {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
