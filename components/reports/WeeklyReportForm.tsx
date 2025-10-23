@@ -25,6 +25,18 @@ interface WeeklyReportFormData {
 	roadblocks: string;
 }
 
+interface WeeklyReportFormErrors {
+	weekStartDate?: string;
+	weekEndDate?: string;
+	emailsSent?: string;
+	linkedinMessages?: string;
+	callsBooked?: string;
+	proposalsSent?: string;
+	dealsClosed?: string;
+	revenueGenerated?: string;
+	roadblocks?: string;
+}
+
 interface WeeklyReportFormProps {
 	initialData?: Partial<WeeklyReportFormData>;
 	onSubmit: (data: WeeklyReportFormData) => void;
@@ -50,20 +62,23 @@ export function WeeklyReportForm({
 		roadblocks: initialData.roadblocks || '',
 	});
 
-	const [errors, setErrors] = useState<Partial<WeeklyReportFormData>>({});
+	const [errors, setErrors] = useState<WeeklyReportFormErrors>({});
 
 	const handleChange = (
 		field: keyof WeeklyReportFormData,
 		value: string | number | Date
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
-		if (errors[field]) {
-			setErrors((prev) => ({ ...prev, [field]: undefined }));
+		if (errors[field as keyof WeeklyReportFormErrors]) {
+			setErrors((prev) => ({
+				...prev,
+				[field as keyof WeeklyReportFormErrors]: undefined,
+			}));
 		}
 	};
 
 	const validateForm = () => {
-		const newErrors: Partial<WeeklyReportFormData> = {};
+		const newErrors: WeeklyReportFormErrors = {};
 
 		if (!formData.weekStartDate) {
 			newErrors.weekStartDate = 'Week start date is required';

@@ -200,7 +200,6 @@ export function CompaniesPageClient() {
 				completedDate: activity.completedDate
 					? new Date(activity.completedDate)
 					: undefined,
-				createdAt: new Date(activity.createdAt),
 			})),
 		};
 

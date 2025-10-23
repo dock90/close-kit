@@ -29,7 +29,7 @@ export interface Company {
 interface CompanyFormData {
 	name: string;
 	website: string;
-	industry: Industry | '';
+	industry: Industry | undefined;
 	employeeCount: string;
 	fundingStage: string;
 	location: string;
@@ -78,22 +78,29 @@ export function CompanyForm({
 	isLoading = false,
 }: CompanyFormProps) {
 	const [formData, setFormData] = useState<CompanyFormData>({
-		name: '',
-		website: '',
-		industry: '',
-		employeeCount: '',
-		fundingStage: '',
-		location: '',
-		linkedinUrl: '',
-		notes: '',
-		...company,
+		name: company?.name || '',
+		website: company?.website || '',
+		industry: company?.industry === '' ? undefined : company?.industry,
+		employeeCount: company?.employeeCount || '',
+		fundingStage: company?.fundingStage || '',
+		location: company?.location || '',
+		linkedinUrl: company?.linkedinUrl || '',
+		notes: company?.notes || '',
 		...initialData,
 	});
 
 	const [errors, setErrors] = useState<Partial<CompanyFormData>>({});
 
 	const handleChange = (field: keyof CompanyFormData, value: string) => {
-		setFormData((prev) => ({ ...prev, [field]: value }));
+		setFormData((prev) => ({
+			...prev,
+			[field]:
+				field === 'industry'
+					? value === ''
+						? undefined
+						: (value as Industry)
+					: value,
+		}));
 		if (errors[field]) {
 			setErrors((prev) => ({ ...prev, [field]: undefined }));
 		}
@@ -248,7 +255,7 @@ export function CompanyForm({
 							Industry
 						</label>
 						<select
-							value={formData.industry}
+							value={formData.industry || ''}
 							onChange={(e) =>
 								handleChange('industry', e.target.value)
 							}
