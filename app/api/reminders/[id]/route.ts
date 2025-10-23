@@ -4,12 +4,15 @@ import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		const user = await currentUser();
 		if (!user) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json(
+				{ error: 'Unauthorized' },
+				{ status: 401 }
+			);
 		}
 
 		const dbUser = await prisma.user.findUnique({
@@ -17,15 +20,19 @@ export async function PATCH(
 		});
 
 		if (!dbUser) {
-			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+			return NextResponse.json(
+				{ error: 'User not found' },
+				{ status: 404 }
+			);
 		}
 
 		const body = await request.json();
 		const { status } = body;
+		const { id } = await params;
 
 		const reminder = await prisma.reminder.updateMany({
 			where: {
-				id: params.id,
+				id: id,
 				organizationId: dbUser.organizationId,
 			},
 			data: {
@@ -41,7 +48,7 @@ export async function PATCH(
 		}
 
 		const updatedReminder = await prisma.reminder.findUnique({
-			where: { id: params.id },
+			where: { id: id },
 		});
 
 		return NextResponse.json(updatedReminder);
@@ -56,12 +63,15 @@ export async function PATCH(
 
 export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		const user = await currentUser();
 		if (!user) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json(
+				{ error: 'Unauthorized' },
+				{ status: 401 }
+			);
 		}
 
 		const dbUser = await prisma.user.findUnique({
@@ -69,12 +79,17 @@ export async function DELETE(
 		});
 
 		if (!dbUser) {
-			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+			return NextResponse.json(
+				{ error: 'User not found' },
+				{ status: 404 }
+			);
 		}
+
+		const { id } = await params;
 
 		const reminder = await prisma.reminder.deleteMany({
 			where: {
-				id: params.id,
+				id: id,
 				organizationId: dbUser.organizationId,
 			},
 		});
