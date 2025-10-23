@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SignOutButton } from '@clerk/nextjs';
+import { LogOut } from 'lucide-react';
 
 interface User {
 	id: string;
@@ -406,6 +408,21 @@ export default function SettingsPage() {
 								{saving ? 'Saving...' : 'Set Revenue Goal'}
 							</button>
 						</form>
+					</CardContent>
+				</Card>
+
+				{/* Account Actions */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Account Actions</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<SignOutButton>
+							<button className='w-full flex items-center justify-center gap-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'>
+								<LogOut className='h-4 w-4' />
+								Sign Out
+							</button>
+						</SignOutButton>
 					</CardContent>
 				</Card>
 			</div>
