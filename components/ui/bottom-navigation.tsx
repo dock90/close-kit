@@ -13,27 +13,33 @@ import {
 	FileText,
 	Settings,
 	X,
+	Mail,
 } from 'lucide-react';
 import { useState } from 'react';
 
 const mainNavigation = [
 	{ name: 'Dashboard', href: '/dashboard', icon: Home },
-	{ name: 'Companies', href: '/companies', icon: Building2 },
 	{ name: 'Deals', href: '/deals', icon: TrendingUp },
 	{ name: 'Activities', href: '/activities', icon: Activity },
 ];
 
-const moreNavigation = [
-	{ name: 'Contacts', href: '/contacts', icon: Users },
-	{ name: 'Reports', href: '/reports', icon: FileText },
-	{ name: 'Settings', href: '/settings', icon: Settings },
+const moreNavigationGroups = [
+	[
+		{ name: 'Contacts', href: '/contacts', icon: Users },
+		{ name: 'Companies', href: '/companies', icon: Building2 },
+	],
+	[
+		{ name: 'Templates', href: '/templates', icon: Mail },
+		{ name: 'Reports', href: '/reports', icon: FileText },
+		{ name: 'Settings', href: '/settings', icon: Settings },
+	],
 ];
 
 export function BottomNavigation() {
 	const pathname = usePathname();
 	const [isMoreOpen, setIsMoreOpen] = useState(false);
 
-	const isMoreActive = moreNavigation.some(
+	const isMoreActive = moreNavigationGroups.flat().some(
 		(item) => pathname === item.href || pathname.startsWith(item.href + '/')
 	);
 
@@ -54,38 +60,47 @@ export function BottomNavigation() {
 					isMoreOpen ? 'translate-y-0' : 'translate-y-full'
 				)}
 			>
-				<div className='p-4 space-y-2'>
-					{moreNavigation.map((item) => {
-						const isActive =
-							pathname === item.href ||
-							pathname.startsWith(item.href + '/');
-						return (
-							<Link
-								key={item.name}
-								href={item.href}
-								onClick={() => setIsMoreOpen(false)}
-								className={cn(
-									'flex items-center px-4 py-3 rounded-lg transition-colors touch-manipulation',
-									isActive
-										? 'bg-indigo-100 text-indigo-700'
-										: 'text-gray-700 hover:bg-gray-100'
-								)}
-								style={{ minHeight: '44px' }}
-							>
-								<item.icon
-									className={cn(
-										'h-6 w-6 mr-3',
-										isActive
-											? 'text-indigo-600'
-											: 'text-gray-500'
-									)}
-								/>
-								<span className='text-base font-medium'>
-									{item.name}
-								</span>
-							</Link>
-						);
-					})}
+				<div className='p-4'>
+					{moreNavigationGroups.map((group, groupIndex) => (
+						<div key={groupIndex}>
+							<div className='space-y-2'>
+								{group.map((item) => {
+									const isActive =
+										pathname === item.href ||
+										pathname.startsWith(item.href + '/');
+									return (
+										<Link
+											key={item.name}
+											href={item.href}
+											onClick={() => setIsMoreOpen(false)}
+											className={cn(
+												'flex items-center px-4 py-3 rounded-lg transition-colors touch-manipulation',
+												isActive
+													? 'bg-indigo-100 text-indigo-700'
+													: 'text-gray-700 hover:bg-gray-100'
+											)}
+											style={{ minHeight: '44px' }}
+										>
+											<item.icon
+												className={cn(
+													'h-6 w-6 mr-3',
+													isActive
+														? 'text-indigo-600'
+														: 'text-gray-500'
+												)}
+											/>
+											<span className='text-base font-medium'>
+												{item.name}
+											</span>
+										</Link>
+									);
+								})}
+							</div>
+							{groupIndex < moreNavigationGroups.length - 1 && (
+								<div className='my-3 border-t border-gray-200' />
+							)}
+						</div>
+					))}
 				</div>
 			</div>
 
