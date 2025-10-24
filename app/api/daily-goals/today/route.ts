@@ -36,7 +36,10 @@ export async function GET(request: NextRequest) {
 			// Fetch organization to get default goals
 			const organization = await prisma.organization.findUnique({
 				where: { id: dbUser.organizationId },
-				select: { defaultEmailsGoal: true, defaultLinkedinGoal: true },
+				select: { 
+					defaultEmailsGoal: true, 
+					defaultLinkedinGoal: true 
+				},
 			});
 
 			dailyGoal = await prisma.dailyGoal.create({
