@@ -157,7 +157,7 @@ export function CompanyForm({
 					<div className='flex items-center space-x-3'>
 						<Building2 className='h-6 w-6 text-blue-600' />
 						<h2 className='text-xl font-semibold text-gray-900'>
-							{initialData.name ? 'Edit Company' : 'Add Company'}
+							{company ? 'Edit Company' : 'Add Company'}
 						</h2>
 					</div>
 					{onCancel && (
