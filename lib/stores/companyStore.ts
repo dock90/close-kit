@@ -17,6 +17,10 @@ export interface Company {
 	contacts?: Contact[];
 	deals?: Deal[];
 	activities?: Activity[];
+	_count?: {
+		contacts: number;
+		deals: number;
+	};
 }
 
 export interface Contact {
