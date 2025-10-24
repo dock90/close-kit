@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import {
 	Building2,
@@ -442,19 +443,20 @@ export function CompanyDetailView({
 						</div>
 						<div className='space-y-4'>
 							{company.contacts?.map((contact) => (
-								<div
+								<Link
 									key={contact.id}
-									className='flex items-center justify-between p-4 border border-gray-200 rounded-lg'
+									href={`/contacts?id=${contact.id}`}
+									className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer group'
 								>
 									<div className='flex items-center space-x-3'>
-										<div className='w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center'>
-											<span className='text-sm font-medium text-gray-600'>
+										<div className='w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-blue-100'>
+											<span className='text-sm font-medium text-gray-600 group-hover:text-blue-600'>
 												{contact.firstName[0]}
 												{contact.lastName[0]}
 											</span>
 										</div>
 										<div>
-											<p className='font-medium text-gray-900'>
+											<p className='font-medium text-gray-900 group-hover:text-blue-600'>
 												{contact.firstName}{' '}
 												{contact.lastName}
 											</p>
@@ -472,17 +474,30 @@ export function CompanyDetailView({
 									</div>
 									<div className='flex items-center space-x-2'>
 										{contact.email && (
-											<button className='p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors'>
+											<button 
+												onClick={(e) => {
+													e.preventDefault();
+													window.location.href = `mailto:${contact.email}`;
+												}}
+												className='p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors'
+											>
 												<Mail className='h-4 w-4' />
 											</button>
 										)}
 										{contact.phone && (
-											<button className='p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors'>
+											<button 
+												onClick={(e) => {
+													e.preventDefault();
+													window.location.href = `tel:${contact.phone}`;
+												}}
+												className='p-2 text-gray-400 hover:text-green-600 hover:bg-green-100 rounded-lg transition-colors'
+											>
 												<Phone className='h-4 w-4' />
 											</button>
 										)}
+										<ExternalLink className='h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors' />
 									</div>
-								</div>
+								</Link>
 							))}
 							{(!company.contacts ||
 								company.contacts.length === 0) && (
