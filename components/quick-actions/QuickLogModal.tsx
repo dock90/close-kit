@@ -358,7 +358,7 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 								Due Date *
 							</label>
 							<input
-								type='datetime-local'
+								type='date'
 								required
 								value={formData.scheduledDate}
 								onChange={(e) =>
