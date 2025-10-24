@@ -50,7 +50,6 @@ export function CompanyList({
 	const [searchTerm, setSearchTerm] = useState('');
 	const [industryFilter, setIndustryFilter] = useState('all');
 	const [stageFilter, setStageFilter] = useState('all');
-	const [showArchived, setShowArchived] = useState(false);
 	const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -66,10 +65,8 @@ export function CompanyList({
 			filters.fundingStage = [stageFilter];
 		}
 
-		filters.showArchived = showArchived;
-
 		setFilters(filters);
-	}, [industryFilter, stageFilter, showArchived, setFilters]);
+	}, [industryFilter, stageFilter, setFilters]);
 
 	const filteredCompanies = getFilteredCompanies().filter((company) => {
 		const matchesSearch =
@@ -184,16 +181,6 @@ export function CompanyList({
 									</option>
 								))}
 							</select>
-
-							<label className='flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50'>
-								<input
-									type='checkbox'
-									checked={showArchived}
-									onChange={(e) => setShowArchived(e.target.checked)}
-									className='rounded'
-								/>
-								<span className='text-sm'>Show Archived</span>
-							</label>
 						</div>
 					</div>
 				</Card>
@@ -238,17 +225,6 @@ export function CompanyList({
 									</option>
 								))}
 							</select>
-						</div>
-						<div>
-							<label className='flex items-center gap-3 py-2'>
-								<input
-									type='checkbox'
-									checked={showArchived}
-									onChange={(e) => setShowArchived(e.target.checked)}
-									className='w-5 h-5 rounded'
-								/>
-								<span className='text-sm font-medium text-gray-700'>Show Archived Companies</span>
-							</label>
 						</div>
 					</div>
 				</FilterDrawer>
@@ -353,6 +329,17 @@ export function CompanyList({
 							)}
 					</Card>
 				)}
+
+				{/* View Archived Button */}
+				<div className='flex justify-center pb-20 lg:pb-6'>
+					<button
+						onClick={() => router.push('/companies/archived')}
+						className='flex items-center space-x-2 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors touch-manipulation'
+						style={{ minHeight: '44px' }}
+					>
+						<span className='text-gray-700'>View Archived Companies</span>
+					</button>
+				</div>
 			</div>
 		</PullToRefresh>
 	);
