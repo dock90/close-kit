@@ -167,18 +167,18 @@ export function CompanyCard({
 
 				{/* Footer */}
 				<div className='flex items-center justify-between pt-4 border-t'>
-					<div className='flex items-center space-x-4 text-sm text-gray-500'>
-						<div className='flex items-center space-x-1'>
-							<Users className='h-4 w-4' />
-							<span>
-								{company.contacts?.length || 0} contacts
-							</span>
-						</div>
-						<div className='flex items-center space-x-1'>
-							<DollarSign className='h-4 w-4' />
-							<span>{company.deals?.length || 0} deals</span>
-						</div>
+				<div className='flex items-center space-x-4 text-sm text-gray-500'>
+					<div className='flex items-center space-x-1'>
+						<Users className='h-4 w-4' />
+						<span>
+							{company._count?.contacts || company.contacts?.length || 0} contacts
+						</span>
 					</div>
+					<div className='flex items-center space-x-1'>
+						<DollarSign className='h-4 w-4' />
+						<span>{company._count?.deals || company.deals?.length || 0} deals</span>
+					</div>
+				</div>
 					<div className='flex items-center space-x-1 text-xs text-gray-400'>
 						<Calendar className='h-3 w-3' />
 						<span>Added {formatDate(company.createdAt)}</span>
