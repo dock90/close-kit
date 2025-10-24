@@ -26,7 +26,7 @@ export function CompaniesPageClient() {
 		const fetchCompanies = async () => {
 			try {
 				setLoading(true);
-				const response = await fetch('/api/companies?includeArchived=true');
+				const response = await fetch('/api/companies');
 
 				if (!response.ok) {
 					throw new Error('Failed to fetch companies');
