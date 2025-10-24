@@ -30,7 +30,10 @@ export default function SettingsPage() {
 	const [revenueGoal, setRevenueGoal] = useState<RevenueGoal | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
-	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+	const [message, setMessage] = useState<{
+		type: 'success' | 'error';
+		text: string;
+	} | null>(null);
 
 	// Profile form state
 	const [profileForm, setProfileForm] = useState({
@@ -65,7 +68,7 @@ export default function SettingsPage() {
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-			
+
 			// Fetch user and organization data
 			const userRes = await fetch('/api/users/me');
 			if (userRes.ok) {
@@ -82,8 +85,12 @@ export default function SettingsPage() {
 						slug: userData.organization.slug || '',
 					});
 					setDailyGoalsForm({
-						defaultEmailsGoal: userData.organization.defaultEmailsGoal?.toString() || '8',
-						defaultLinkedinGoal: userData.organization.defaultLinkedinGoal?.toString() || '8',
+						defaultEmailsGoal:
+							userData.organization.defaultEmailsGoal?.toString() ||
+							'8',
+						defaultLinkedinGoal:
+							userData.organization.defaultLinkedinGoal?.toString() ||
+							'8',
 					});
 				}
 			}
@@ -124,7 +131,10 @@ export default function SettingsPage() {
 			if (response.ok) {
 				const updatedUser = await response.json();
 				setUser(updatedUser);
-				setMessage({ type: 'success', text: 'Profile updated successfully' });
+				setMessage({
+					type: 'success',
+					text: 'Profile updated successfully',
+				});
 			} else {
 				throw new Error('Failed to update profile');
 			}
@@ -144,22 +154,33 @@ export default function SettingsPage() {
 		setMessage(null);
 
 		try {
-			const response = await fetch(`/api/organizations/${user.organization.id}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(orgForm),
-			});
+			const response = await fetch(
+				`/api/organizations/${user.organization.id}`,
+				{
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(orgForm),
+				}
+			);
 
 			if (response.ok) {
 				const updatedOrg = await response.json();
-				setUser(prev => prev ? { ...prev, organization: updatedOrg } : null);
-				setMessage({ type: 'success', text: 'Organization updated successfully' });
+				setUser((prev) =>
+					prev ? { ...prev, organization: updatedOrg } : null
+				);
+				setMessage({
+					type: 'success',
+					text: 'Organization updated successfully',
+				});
 			} else {
 				throw new Error('Failed to update organization');
 			}
 		} catch (error) {
 			console.error('Error updating organization:', error);
-			setMessage({ type: 'error', text: 'Failed to update organization' });
+			setMessage({
+				type: 'error',
+				text: 'Failed to update organization',
+			});
 		} finally {
 			setSaving(false);
 		}
@@ -186,7 +207,10 @@ export default function SettingsPage() {
 			if (response.ok) {
 				const newGoal = await response.json();
 				setRevenueGoal(newGoal);
-				setMessage({ type: 'success', text: 'Revenue goal set successfully' });
+				setMessage({
+					type: 'success',
+					text: 'Revenue goal set successfully',
+				});
 			} else {
 				throw new Error('Failed to set revenue goal');
 			}
@@ -206,25 +230,45 @@ export default function SettingsPage() {
 		setMessage(null);
 
 		try {
-			const response = await fetch(`/api/organizations/${user.organization.id}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					defaultEmailsGoal: parseInt(dailyGoalsForm.defaultEmailsGoal),
-					defaultLinkedinGoal: parseInt(dailyGoalsForm.defaultLinkedinGoal),
-				}),
-			});
+			const response = await fetch(
+				`/api/organizations/${user.organization.id}`,
+				{
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						defaultEmailsGoal: parseInt(
+							dailyGoalsForm.defaultEmailsGoal
+						),
+						defaultLinkedinGoal: parseInt(
+							dailyGoalsForm.defaultLinkedinGoal
+						),
+					}),
+				}
+			);
 
 			if (response.ok) {
 				const updatedOrg = await response.json();
-				setUser(prev => prev ? { ...prev, organization: updatedOrg } : null);
-				setMessage({ type: 'success', text: 'Daily outreach goals updated successfully' });
+				setUser((prev) =>
+					prev ? { ...prev, organization: updatedOrg } : null
+				);
+				setMessage({
+					type: 'success',
+					text: 'Daily outreach goals updated successfully',
+				});
 			} else {
-				throw new Error('Failed to update daily goals');
+				const errorData = await response.json();
+				console.error('Error response:', errorData);
+				throw new Error(
+					errorData.error || 'Failed to update daily goals'
+				);
 			}
 		} catch (error) {
 			console.error('Error updating daily goals:', error);
-			setMessage({ type: 'error', text: 'Failed to update daily goals' });
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: 'Failed to update daily goals';
+			setMessage({ type: 'error', text: errorMessage });
 		} finally {
 			setSaving(false);
 		}
@@ -269,7 +313,10 @@ export default function SettingsPage() {
 						<CardTitle>Profile Settings</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<form onSubmit={handleProfileSubmit} className='space-y-4'>
+						<form
+							onSubmit={handleProfileSubmit}
+							className='space-y-4'
+						>
 							<div>
 								<label
 									htmlFor='firstName'
@@ -282,7 +329,10 @@ export default function SettingsPage() {
 									id='firstName'
 									value={profileForm.firstName}
 									onChange={(e) =>
-										setProfileForm({ ...profileForm, firstName: e.target.value })
+										setProfileForm({
+											...profileForm,
+											firstName: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 								/>
@@ -299,7 +349,10 @@ export default function SettingsPage() {
 									id='lastName'
 									value={profileForm.lastName}
 									onChange={(e) =>
-										setProfileForm({ ...profileForm, lastName: e.target.value })
+										setProfileForm({
+											...profileForm,
+											lastName: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 								/>
@@ -316,7 +369,10 @@ export default function SettingsPage() {
 									id='email'
 									value={profileForm.email}
 									onChange={(e) =>
-										setProfileForm({ ...profileForm, email: e.target.value })
+										setProfileForm({
+											...profileForm,
+											email: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 								/>
@@ -351,7 +407,10 @@ export default function SettingsPage() {
 									id='orgName'
 									value={orgForm.name}
 									onChange={(e) =>
-										setOrgForm({ ...orgForm, name: e.target.value })
+										setOrgForm({
+											...orgForm,
+											name: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 								/>
@@ -368,7 +427,10 @@ export default function SettingsPage() {
 									id='orgSlug'
 									value={orgForm.slug}
 									onChange={(e) =>
-										setOrgForm({ ...orgForm, slug: e.target.value })
+										setOrgForm({
+											...orgForm,
+											slug: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 								/>
@@ -403,7 +465,10 @@ export default function SettingsPage() {
 									id='targetAmount'
 									value={goalForm.targetAmount}
 									onChange={(e) =>
-										setGoalForm({ ...goalForm, targetAmount: e.target.value })
+										setGoalForm({
+											...goalForm,
+											targetAmount: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 									placeholder='100000'
@@ -422,7 +487,10 @@ export default function SettingsPage() {
 										id='startDate'
 										value={goalForm.startDate}
 										onChange={(e) =>
-											setGoalForm({ ...goalForm, startDate: e.target.value })
+											setGoalForm({
+												...goalForm,
+												startDate: e.target.value,
+											})
 										}
 										className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 									/>
@@ -439,7 +507,10 @@ export default function SettingsPage() {
 										id='endDate'
 										value={goalForm.endDate}
 										onChange={(e) =>
-											setGoalForm({ ...goalForm, endDate: e.target.value })
+											setGoalForm({
+												...goalForm,
+												endDate: e.target.value,
+											})
 										}
 										className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 									/>
@@ -462,7 +533,10 @@ export default function SettingsPage() {
 						<CardTitle>Daily Outreach Goals</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<form onSubmit={handleDailyGoalsSubmit} className='space-y-4'>
+						<form
+							onSubmit={handleDailyGoalsSubmit}
+							className='space-y-4'
+						>
 							<div>
 								<label
 									htmlFor='defaultEmailsGoal'
@@ -476,7 +550,10 @@ export default function SettingsPage() {
 									min='1'
 									value={dailyGoalsForm.defaultEmailsGoal}
 									onChange={(e) =>
-										setDailyGoalsForm({ ...dailyGoalsForm, defaultEmailsGoal: e.target.value })
+										setDailyGoalsForm({
+											...dailyGoalsForm,
+											defaultEmailsGoal: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 									placeholder='8'
@@ -498,7 +575,10 @@ export default function SettingsPage() {
 									min='1'
 									value={dailyGoalsForm.defaultLinkedinGoal}
 									onChange={(e) =>
-										setDailyGoalsForm({ ...dailyGoalsForm, defaultLinkedinGoal: e.target.value })
+										setDailyGoalsForm({
+											...dailyGoalsForm,
+											defaultLinkedinGoal: e.target.value,
+										})
 									}
 									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
 									placeholder='8'
