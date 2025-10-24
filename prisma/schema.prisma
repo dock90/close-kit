@@ -12,11 +12,13 @@ datasource db {
 
 // Multi-tenancy
 model Organization {
-  id            String   @id @default(cuid())
-  name          String
-  slug          String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  name                String
+  slug                String   @unique
+  defaultEmailsGoal   Int      @default(8)
+  defaultLinkedinGoal Int      @default(8)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   users         User[]
   companies     Company[]
@@ -31,181 +33,181 @@ model Organization {
 }
 
 model User {
-  id                String   @id @default(cuid())
-  clerkId           String   @unique
-  email             String   @unique
-  firstName         String?
-  lastName          String?
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  role              String   @default("member") // admin, member
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  clerkId        String       @unique
+  email          String       @unique
+  firstName      String?
+  lastName       String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role           String       @default("member") // admin, member
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 // Sales Pipeline
 model Company {
-  id                String   @id @default(cuid())
-  name              String
-  website           String?
-  industry          String? // "healthcare" | "d2c" | "other"
-  employeeCount     String?
-  fundingStage      String?
-  location          String?
-  linkedinUrl       String?
-  notes             String?
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  name           String
+  website        String?
+  industry       String? // "healthcare" | "d2c" | "other"
+  employeeCount  String?
+  fundingStage   String?
+  location       String?
+  linkedinUrl    String?
+  notes          String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  contacts          Contact[]
-  deals             Deal[]
-  activities        Activity[]
+  contacts   Contact[]
+  deals      Deal[]
+  activities Activity[]
 }
 
 model Contact {
-  id                String   @id @default(cuid())
-  firstName         String
-  lastName          String
-  email             String?
-  phone             String?
-  title             String?
-  linkedinUrl       String?
-  companyId         String
-  company           Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  title          String?
+  linkedinUrl    String?
+  companyId      String
+  company        Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  deals             Deal[]
-  activities        Activity[]
-  reminders         Reminder[]
+  deals      Deal[]
+  activities Activity[]
+  reminders  Reminder[]
 }
 
 model Deal {
-  id                String   @id @default(cuid())
+  id                String       @id @default(cuid())
   name              String
   value             Int // in cents
   stage             String // "lead" | "contacted" | "discovery" | "proposal" | "negotiation" | "closed_won" | "closed_lost"
-  probability       Int @default(50) // 0-100
+  probability       Int          @default(50) // 0-100
   expectedCloseDate DateTime?
   actualCloseDate   DateTime?
   serviceType       String? // "nextjs_sanity" | "hydrogen_sanity" | "custom"
   projectDuration   String? // "6-8 weeks" | "8-10 weeks"
   lostReason        String?
   companyId         String
-  company           Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company           Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
   contactId         String
-  contact           Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contact           Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
   organizationId    String
   organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
-  activities        Activity[]
-  reminders         Reminder[]
+  activities Activity[]
+  reminders  Reminder[]
 }
 
 model Activity {
-  id                String   @id @default(cuid())
-  type              String // "email_sent" | "linkedin_request" | "linkedin_message" | "call" | "meeting" | "proposal_sent" | "follow_up" | "note"
-  subject           String?
-  notes             String?
-  scheduledDate     DateTime?
-  completedDate     DateTime?
-  status            String @default("completed") // "scheduled" | "completed" | "cancelled"
-  companyId         String?
-  company           Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  contactId         String?
-  contact           Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  dealId            String?
-  deal              Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  type           String // "email_sent" | "linkedin_request" | "linkedin_message" | "call" | "meeting" | "proposal_sent" | "follow_up" | "note"
+  subject        String?
+  notes          String?
+  scheduledDate  DateTime?
+  completedDate  DateTime?
+  status         String       @default("completed") // "scheduled" | "completed" | "cancelled"
+  companyId      String?
+  company        Company?     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  contactId      String?
+  contact        Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  dealId         String?
+  deal           Deal?        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  reminders         Reminder[]
+  reminders Reminder[]
 }
 
 model RevenueGoal {
-  id                String   @id @default(cuid())
-  targetAmount      Int // in cents
-  startDate         DateTime
-  endDate           DateTime
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  targetAmount   Int // in cents
+  startDate      DateTime
+  endDate        DateTime
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 // Weekly accountability reporting
 model WeeklyReport {
-  id                String   @id @default(cuid())
-  weekStartDate     DateTime
-  weekEndDate       DateTime
-  emailsSent        Int @default(0)
-  linkedinMessages  Int @default(0)
-  callsBooked       Int @default(0)
-  proposalsSent     Int @default(0)
-  dealsClosed       Int @default(0)
-  revenueGenerated  Int @default(0) // in cents
-  roadblocks        String?
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String       @id @default(cuid())
+  weekStartDate    DateTime
+  weekEndDate      DateTime
+  emailsSent       Int          @default(0)
+  linkedinMessages Int          @default(0)
+  callsBooked      Int          @default(0)
+  proposalsSent    Int          @default(0)
+  dealsClosed      Int          @default(0)
+  revenueGenerated Int          @default(0) // in cents
+  roadblocks       String?
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 }
 
 // Email/LinkedIn templates
 model Template {
-  id                String   @id @default(cuid())
-  name              String
-  type              String // "email" | "linkedin"
-  subject           String?
-  body              String
-  category          String? // "cold_outreach" | "follow_up" | "proposal" | "meeting_request" | "other"
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  name           String
+  type           String // "email" | "linkedin"
+  subject        String?
+  body           String
+  category       String? // "cold_outreach" | "follow_up" | "proposal" | "meeting_request" | "other"
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 // Daily outreach goals and tracking
 model DailyGoal {
-  id                String   @id @default(cuid())
-  date              DateTime
-  emailsGoal        Int @default(8)
-  linkedinGoal      Int @default(8)
-  emailsSent        Int @default(0)
-  linkedinSent      Int @default(0)
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  date           DateTime
+  emailsGoal     Int          @default(8)
+  linkedinGoal   Int          @default(8)
+  emailsSent     Int          @default(0)
+  linkedinSent   Int          @default(0)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@unique([organizationId, date])
 }
 
 // Smart follow-up reminders
 model Reminder {
-  id                String   @id @default(cuid())
-  type              String // "no_response_email" | "proposal_pending" | "discovery_call_tomorrow" | "custom"
-  title             String
-  description       String?
-  dueDate           DateTime
-  status            String @default("active") // "active" | "dismissed" | "completed"
-  priority          String @default("medium") // "low" | "medium" | "high"
-  activityId        String?
-  activity          Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  dealId            String?
-  deal              Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
-  contactId         String?
-  contact           Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String       @id @default(cuid())
+  type           String // "no_response_email" | "proposal_pending" | "discovery_call_tomorrow" | "custom"
+  title          String
+  description    String?
+  dueDate        DateTime
+  status         String       @default("active") // "active" | "dismissed" | "completed"
+  priority       String       @default("medium") // "low" | "medium" | "high"
+  activityId     String?
+  activity       Activity?    @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  dealId         String?
+  deal           Deal?        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  contactId      String?
+  contact        Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

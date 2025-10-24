@@ -13,6 +13,8 @@ interface User {
 		id: string;
 		name: string;
 		slug: string;
+		defaultEmailsGoal?: number;
+		defaultLinkedinGoal?: number;
 	};
 }
 
@@ -50,6 +52,12 @@ export default function SettingsPage() {
 		endDate: '',
 	});
 
+	// Daily outreach goals form state
+	const [dailyGoalsForm, setDailyGoalsForm] = useState({
+		defaultEmailsGoal: '8',
+		defaultLinkedinGoal: '8',
+	});
+
 	useEffect(() => {
 		fetchData();
 	}, []);
@@ -72,6 +80,10 @@ export default function SettingsPage() {
 					setOrgForm({
 						name: userData.organization.name || '',
 						slug: userData.organization.slug || '',
+					});
+					setDailyGoalsForm({
+						defaultEmailsGoal: userData.organization.defaultEmailsGoal?.toString() || '8',
+						defaultLinkedinGoal: userData.organization.defaultLinkedinGoal?.toString() || '8',
 					});
 				}
 			}
@@ -181,6 +193,38 @@ export default function SettingsPage() {
 		} catch (error) {
 			console.error('Error setting revenue goal:', error);
 			setMessage({ type: 'error', text: 'Failed to set revenue goal' });
+		} finally {
+			setSaving(false);
+		}
+	};
+
+	const handleDailyGoalsSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!user?.organization?.id) return;
+
+		setSaving(true);
+		setMessage(null);
+
+		try {
+			const response = await fetch(`/api/organizations/${user.organization.id}`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					defaultEmailsGoal: parseInt(dailyGoalsForm.defaultEmailsGoal),
+					defaultLinkedinGoal: parseInt(dailyGoalsForm.defaultLinkedinGoal),
+				}),
+			});
+
+			if (response.ok) {
+				const updatedOrg = await response.json();
+				setUser(prev => prev ? { ...prev, organization: updatedOrg } : null);
+				setMessage({ type: 'success', text: 'Daily outreach goals updated successfully' });
+			} else {
+				throw new Error('Failed to update daily goals');
+			}
+		} catch (error) {
+			console.error('Error updating daily goals:', error);
+			setMessage({ type: 'error', text: 'Failed to update daily goals' });
 		} finally {
 			setSaving(false);
 		}
@@ -407,6 +451,68 @@ export default function SettingsPage() {
 								className='w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
 							>
 								{saving ? 'Saving...' : 'Set Revenue Goal'}
+							</button>
+						</form>
+					</CardContent>
+				</Card>
+
+				{/* Daily Outreach Goals */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Daily Outreach Goals</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<form onSubmit={handleDailyGoalsSubmit} className='space-y-4'>
+							<div>
+								<label
+									htmlFor='defaultEmailsGoal'
+									className='block text-sm font-medium text-gray-700'
+								>
+									Daily Emails Goal
+								</label>
+								<input
+									type='number'
+									id='defaultEmailsGoal'
+									min='1'
+									value={dailyGoalsForm.defaultEmailsGoal}
+									onChange={(e) =>
+										setDailyGoalsForm({ ...dailyGoalsForm, defaultEmailsGoal: e.target.value })
+									}
+									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+									placeholder='8'
+								/>
+								<p className='mt-1 text-sm text-gray-500'>
+									Number of emails to send per day
+								</p>
+							</div>
+							<div>
+								<label
+									htmlFor='defaultLinkedinGoal'
+									className='block text-sm font-medium text-gray-700'
+								>
+									Daily LinkedIn Messages Goal
+								</label>
+								<input
+									type='number'
+									id='defaultLinkedinGoal'
+									min='1'
+									value={dailyGoalsForm.defaultLinkedinGoal}
+									onChange={(e) =>
+										setDailyGoalsForm({ ...dailyGoalsForm, defaultLinkedinGoal: e.target.value })
+									}
+									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+									placeholder='8'
+								/>
+								<p className='mt-1 text-sm text-gray-500'>
+									Number of LinkedIn messages to send per day
+								</p>
+							</div>
+							<button
+								type='submit'
+								disabled={saving}
+								className='w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
+							>
+								{saving ? 'Saving...' : 'Update Daily Goals'}
 							</button>
 						</form>
 					</CardContent>

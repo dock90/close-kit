@@ -62,11 +62,17 @@ export async function PATCH(
 			);
 		}
 
-		const { name, slug } = await request.json();
+		const { name, slug, defaultEmailsGoal, defaultLinkedinGoal } = await request.json();
+
+		const updateData: any = {};
+		if (name !== undefined) updateData.name = name;
+		if (slug !== undefined) updateData.slug = slug;
+		if (defaultEmailsGoal !== undefined) updateData.defaultEmailsGoal = defaultEmailsGoal;
+		if (defaultLinkedinGoal !== undefined) updateData.defaultLinkedinGoal = defaultLinkedinGoal;
 
 		const organization = await prisma.organization.update({
 			where: { id: id },
-			data: { name, slug },
+			data: updateData,
 		});
 
 		return NextResponse.json(organization);
