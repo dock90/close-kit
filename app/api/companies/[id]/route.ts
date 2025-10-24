@@ -98,6 +98,14 @@ export async function PATCH(
 				organizationId: dbUser.organizationId,
 			},
 			data,
+			include: {
+				_count: {
+					select: {
+						contacts: true,
+						deals: true,
+					},
+				},
+			},
 		});
 
 		return NextResponse.json(company);
