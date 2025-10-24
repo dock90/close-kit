@@ -31,13 +31,22 @@ export async function GET(request: NextRequest) {
 			},
 		});
 
-		// If no goal exists, create one with defaults
+		// If no goal exists, create one with organization's default goals
 		if (!dailyGoal) {
+			// Fetch organization to get default goals
+			const organization = await prisma.organization.findUnique({
+				where: { id: dbUser.organizationId },
+				select: { 
+					defaultEmailsGoal: true, 
+					defaultLinkedinGoal: true 
+				},
+			});
+
 			dailyGoal = await prisma.dailyGoal.create({
 				data: {
 					date: today,
-					emailsGoal: 8,
-					linkedinGoal: 8,
+					emailsGoal: organization?.defaultEmailsGoal || 8,
+					linkedinGoal: organization?.defaultLinkedinGoal || 8,
 					emailsSent: 0,
 					linkedinSent: 0,
 					organizationId: dbUser.organizationId,

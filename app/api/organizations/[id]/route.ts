@@ -62,11 +62,36 @@ export async function PATCH(
 			);
 		}
 
-		const { name, slug } = await request.json();
+		// Verify user belongs to this organization
+		const dbUser = await prisma.user.findUnique({
+			where: { clerkId: user.id },
+		});
+
+		if (!dbUser || dbUser.organizationId !== id) {
+			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+		}
+
+		const body = await request.json();
+		const { name, slug, defaultEmailsGoal, defaultLinkedinGoal } = body;
+
+		const updateData: any = {};
+		if (name !== undefined) updateData.name = name;
+		if (slug !== undefined) updateData.slug = slug;
+		if (defaultEmailsGoal !== undefined)
+			updateData.defaultEmailsGoal = defaultEmailsGoal;
+		if (defaultLinkedinGoal !== undefined)
+			updateData.defaultLinkedinGoal = defaultLinkedinGoal;
+
+		if (Object.keys(updateData).length === 0) {
+			return NextResponse.json(
+				{ error: 'No fields to update' },
+				{ status: 400 }
+			);
+		}
 
 		const organization = await prisma.organization.update({
 			where: { id: id },
-			data: { name, slug },
+			data: updateData,
 		});
 
 		return NextResponse.json(organization);
