@@ -10,6 +10,8 @@ import {
 	Calendar,
 	Edit,
 	Trash2,
+	Archive,
+	ArchiveRestore,
 } from 'lucide-react';
 import { Company } from '@/lib/stores';
 
@@ -17,6 +19,8 @@ interface CompanyCardProps {
 	company: Company;
 	onEdit?: (company: Company) => void;
 	onDelete?: (company: Company) => void;
+	onArchive?: (company: Company) => void;
+	onUnarchive?: (company: Company) => void;
 	onViewDetails?: (company: Company) => void;
 }
 
@@ -24,6 +28,8 @@ export function CompanyCard({
 	company,
 	onEdit,
 	onDelete,
+	onArchive,
+	onUnarchive,
 	onViewDetails,
 }: CompanyCardProps) {
 	const formatDate = (date: string) => {
@@ -58,7 +64,9 @@ export function CompanyCard({
 
 	return (
 		<Card
-			className='p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group'
+			className={`p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group ${
+				company.archived ? 'opacity-60 bg-gray-50' : ''
+			}`}
 			onClick={handleCardClick}
 		>
 			<div className='space-y-4'>
@@ -69,9 +77,16 @@ export function CompanyCard({
 							<Building2 className='h-6 w-6 text-blue-600' />
 						</div>
 						<div>
-							<h3 className='text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors'>
-								{company.name}
-							</h3>
+							<div className='flex items-center gap-2'>
+								<h3 className='text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors'>
+									{company.name}
+								</h3>
+								{company.archived && (
+									<span className='text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded'>
+										Archived
+									</span>
+								)}
+							</div>
 							{company.website && (
 								<div className='flex items-center space-x-1 text-sm text-gray-500'>
 									<Globe className='h-3 w-3' />
@@ -83,7 +98,7 @@ export function CompanyCard({
 
 					{/* Actions */}
 					<div className='flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity'>
-						{onEdit && (
+						{onEdit && !company.archived && (
 							<button
 								onClick={(e) =>
 									handleActionClick(e, () => onEdit(company))
@@ -93,6 +108,35 @@ export function CompanyCard({
 							>
 								<Edit className='h-4 w-4' />
 							</button>
+						)}
+						{company.archived ? (
+							onUnarchive && (
+								<button
+									onClick={(e) =>
+										handleActionClick(e, () =>
+											onUnarchive(company)
+										)
+									}
+									className='p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors'
+									title='Unarchive company'
+								>
+									<ArchiveRestore className='h-4 w-4' />
+								</button>
+							)
+						) : (
+							onArchive && (
+								<button
+									onClick={(e) =>
+										handleActionClick(e, () =>
+											onArchive(company)
+										)
+									}
+									className='p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors'
+									title='Archive company'
+								>
+									<Archive className='h-4 w-4' />
+								</button>
+							)
 						)}
 						{onDelete && (
 							<button
