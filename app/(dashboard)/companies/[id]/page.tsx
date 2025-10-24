@@ -7,9 +7,9 @@ import { CompanyForm } from '@/components/companies/CompanyForm';
 import { useCompanyStore, Company } from '@/lib/stores';
 
 interface CompanyPageProps {
-	params: {
+	params: Promise<{
 		id: string;
-	};
+	}>;
 }
 
 export default function CompanyPage({ params }: CompanyPageProps) {
@@ -20,12 +20,23 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 	const [error, setError] = useState<string | null>(null);
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+	const [companyId, setCompanyId] = useState<string | null>(null);
 
 	useEffect(() => {
+		const initializeParams = async () => {
+			const resolvedParams = await params;
+			setCompanyId(resolvedParams.id);
+		};
+		initializeParams();
+	}, [params]);
+
+	useEffect(() => {
+		if (!companyId) return;
+
 		const fetchCompany = async () => {
 			try {
 				setIsLoading(true);
-				const response = await fetch(`/api/companies/${params.id}`);
+				const response = await fetch(`/api/companies/${companyId}`);
 
 				if (!response.ok) {
 					throw new Error('Failed to fetch company details');
@@ -47,7 +58,7 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 		};
 
 		fetchCompany();
-	}, [params.id]);
+	}, [companyId]);
 
 	const handleUpdateCompany = async (companyData: Partial<Company>) => {
 		if (!editingCompany) return;
