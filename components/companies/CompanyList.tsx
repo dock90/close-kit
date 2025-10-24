@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 import { FilterDrawer } from '@/components/ui/filter-drawer';
@@ -40,6 +41,7 @@ export function CompanyList({
 	onCompanyEdit,
 	onCompanyDelete,
 }: CompanyListProps) {
+	const router = useRouter();
 	const { companies, setFilters, getFilteredCompanies } = useCompanyStore();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [industryFilter, setIndustryFilter] = useState('all');
@@ -229,7 +231,7 @@ export function CompanyList({
 						<Card
 							key={company.id}
 							className='p-6 hover:shadow-lg transition-shadow cursor-pointer touch-manipulation'
-							onClick={() => onCompanySelect?.(company)}
+							onClick={() => router.push(`/companies/${company.id}`)}
 							style={{ minHeight: '44px' }}
 						>
 						<div className='space-y-4'>
