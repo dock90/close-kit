@@ -15,6 +15,8 @@ import {
 	Phone,
 	MessageSquare,
 	FileText,
+	Archive,
+	ArchiveRestore,
 } from 'lucide-react';
 
 interface Company {
@@ -27,6 +29,7 @@ interface Company {
 	location?: string;
 	linkedinUrl?: string;
 	notes?: string;
+	archived?: boolean;
 	createdAt: Date;
 	contacts?: Contact[];
 	deals?: Deal[];
@@ -69,6 +72,8 @@ interface CompanyDetailViewProps {
 	company: Company;
 	onBack?: () => void;
 	onEdit?: (company: Company) => void;
+	onArchive?: (company: Company) => void;
+	onUnarchive?: (company: Company) => void;
 	onContactAdd?: (companyId: string) => void;
 	onDealAdd?: (companyId: string) => void;
 	onActivityAdd?: (companyId: string) => void;
@@ -85,6 +90,8 @@ export function CompanyDetailView({
 	company,
 	onBack,
 	onEdit,
+	onArchive,
+	onUnarchive,
 	onContactAdd,
 	onDealAdd,
 	onActivityAdd,
@@ -175,9 +182,16 @@ export function CompanyDetailView({
 							<Building2 className='h-6 w-6 text-blue-600' />
 						</div>
 						<div>
-							<h1 className='text-2xl font-bold text-gray-900'>
-								{company.name}
-							</h1>
+							<div className='flex items-center gap-3'>
+								<h1 className='text-2xl font-bold text-gray-900'>
+									{company.name}
+								</h1>
+								{company.archived && (
+									<span className='text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded'>
+										Archived
+									</span>
+								)}
+							</div>
 							{company.website && (
 								<div className='flex items-center space-x-1 text-sm text-gray-500'>
 									<Globe className='h-3 w-3' />
@@ -199,15 +213,40 @@ export function CompanyDetailView({
 					</div>
 				</div>
 
-				{onEdit && (
-					<button
-						onClick={() => onEdit(company)}
-						className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors'
-					>
-						<Edit className='h-4 w-4' />
-						<span>Edit</span>
-					</button>
-				)}
+				<div className='flex items-center gap-2'>
+					{company.archived ? (
+						onUnarchive && (
+							<button
+								onClick={() => onUnarchive(company)}
+								className='flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors'
+							>
+								<ArchiveRestore className='h-4 w-4' />
+								<span>Unarchive</span>
+							</button>
+						)
+					) : (
+						<>
+							{onEdit && (
+								<button
+									onClick={() => onEdit(company)}
+									className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors'
+								>
+									<Edit className='h-4 w-4' />
+									<span>Edit</span>
+								</button>
+							)}
+							{onArchive && (
+								<button
+									onClick={() => onArchive(company)}
+									className='flex items-center space-x-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors'
+								>
+									<Archive className='h-4 w-4' />
+									<span>Archive</span>
+								</button>
+							)}
+						</>
+					)}
+				</div>
 			</div>
 
 			{/* Quick Stats */}

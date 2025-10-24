@@ -18,6 +18,8 @@ interface CompanyListProps {
 	onCompanyCreate?: () => void;
 	onCompanyEdit?: (company: Company) => void;
 	onCompanyDelete?: (company: Company) => void;
+	onCompanyArchive?: (company: Company) => void;
+	onCompanyUnarchive?: (company: Company) => void;
 }
 
 const INDUSTRY_FILTERS = [
@@ -40,12 +42,15 @@ export function CompanyList({
 	onCompanyCreate,
 	onCompanyEdit,
 	onCompanyDelete,
+	onCompanyArchive,
+	onCompanyUnarchive,
 }: CompanyListProps) {
 	const router = useRouter();
 	const { companies, setFilters, getFilteredCompanies } = useCompanyStore();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [industryFilter, setIndustryFilter] = useState('all');
 	const [stageFilter, setStageFilter] = useState('all');
+	const [showArchived, setShowArchived] = useState(false);
 	const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -61,8 +66,10 @@ export function CompanyList({
 			filters.fundingStage = [stageFilter];
 		}
 
+		filters.showArchived = showArchived;
+
 		setFilters(filters);
-	}, [industryFilter, stageFilter, setFilters]);
+	}, [industryFilter, stageFilter, showArchived, setFilters]);
 
 	const filteredCompanies = getFilteredCompanies().filter((company) => {
 		const matchesSearch =
@@ -177,6 +184,16 @@ export function CompanyList({
 									</option>
 								))}
 							</select>
+
+							<label className='flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50'>
+								<input
+									type='checkbox'
+									checked={showArchived}
+									onChange={(e) => setShowArchived(e.target.checked)}
+									className='rounded'
+								/>
+								<span className='text-sm'>Show Archived</span>
+							</label>
 						</div>
 					</div>
 				</Card>
@@ -221,6 +238,17 @@ export function CompanyList({
 									</option>
 								))}
 							</select>
+						</div>
+						<div>
+							<label className='flex items-center gap-3 py-2'>
+								<input
+									type='checkbox'
+									checked={showArchived}
+									onChange={(e) => setShowArchived(e.target.checked)}
+									className='w-5 h-5 rounded'
+								/>
+								<span className='text-sm font-medium text-gray-700'>Show Archived Companies</span>
+							</label>
 						</div>
 					</div>
 				</FilterDrawer>

@@ -11,6 +11,8 @@ export function CompaniesPageClient() {
 		companies,
 		setCompanies,
 		addCompany,
+		archiveCompany,
+		unarchiveCompany,
 		setLoading,
 		setError,
 		isLoading,
@@ -71,6 +73,52 @@ export function CompaniesPageClient() {
 		}
 	};
 
+	const handleArchiveCompany = async (company: Company) => {
+		if (!confirm(`Are you sure you want to archive ${company.name}?`)) {
+			return;
+		}
+
+		try {
+			const response = await fetch(`/api/companies/${company.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ archived: true }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to archive company');
+			}
+
+			archiveCompany(company.id);
+		} catch (err) {
+			console.error('Error archiving company:', err);
+			alert('Failed to archive company. Please try again.');
+		}
+	};
+
+	const handleUnarchiveCompany = async (company: Company) => {
+		try {
+			const response = await fetch(`/api/companies/${company.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ archived: false }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to unarchive company');
+			}
+
+			unarchiveCompany(company.id);
+		} catch (err) {
+			console.error('Error unarchiving company:', err);
+			alert('Failed to unarchive company. Please try again.');
+		}
+	};
+
 
 	if (isLoading && companies.length === 0) {
 		return (
@@ -103,6 +151,8 @@ export function CompaniesPageClient() {
 		<>
 			<CompanyList
 				onCompanyCreate={() => setShowCreateModal(true)}
+				onCompanyArchive={handleArchiveCompany}
+				onCompanyUnarchive={handleUnarchiveCompany}
 			/>
 
 			{showCreateModal && (

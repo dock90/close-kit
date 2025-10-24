@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
 		const { searchParams } = new URL(request.url);
 		const industry = searchParams.get('industry');
 		const search = searchParams.get('search');
+		const includeArchived = searchParams.get('includeArchived') === 'true';
 
 		const dbUser = await prisma.user.findUnique({
 			where: { clerkId: user.id },
@@ -31,6 +32,11 @@ export async function GET(request: NextRequest) {
 		const where: any = {
 			organizationId: dbUser.organizationId,
 		};
+
+		// By default, exclude archived companies unless explicitly requested
+		if (!includeArchived) {
+			where.archived = false;
+		}
 
 		if (industry) {
 			where.industry = industry;

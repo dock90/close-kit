@@ -14,7 +14,7 @@ interface CompanyPageProps {
 
 export default function CompanyPage({ params }: CompanyPageProps) {
 	const router = useRouter();
-	const { updateCompany } = useCompanyStore();
+	const { updateCompany, archiveCompany, unarchiveCompany } = useCompanyStore();
 	const [company, setCompany] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -104,6 +104,56 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 		router.push('/companies');
 	};
 
+	const handleArchive = async (company: any) => {
+		if (!confirm(`Are you sure you want to archive ${company.name}?`)) {
+			return;
+		}
+
+		try {
+			const response = await fetch(`/api/companies/${company.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ archived: true }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to archive company');
+			}
+
+			const updatedCompany = await response.json();
+			archiveCompany(company.id);
+			setCompany(updatedCompany);
+		} catch (err) {
+			console.error('Error archiving company:', err);
+			alert('Failed to archive company. Please try again.');
+		}
+	};
+
+	const handleUnarchive = async (company: any) => {
+		try {
+			const response = await fetch(`/api/companies/${company.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ archived: false }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to unarchive company');
+			}
+
+			const updatedCompany = await response.json();
+			unarchiveCompany(company.id);
+			setCompany(updatedCompany);
+		} catch (err) {
+			console.error('Error unarchiving company:', err);
+			alert('Failed to unarchive company. Please try again.');
+		}
+	};
+
 	if (isLoading) {
 		return (
 			<div className='flex items-center justify-center py-12'>
@@ -168,6 +218,8 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 				company={transformedCompany}
 				onBack={handleBackToList}
 				onEdit={handleEdit}
+				onArchive={handleArchive}
+				onUnarchive={handleUnarchive}
 			/>
 
 			{showEditModal && editingCompany && (

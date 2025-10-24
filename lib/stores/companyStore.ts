@@ -11,6 +11,7 @@ export interface Company {
 	location?: string;
 	linkedinUrl?: string;
 	notes?: string;
+	archived?: boolean;
 	organizationId: string;
 	createdAt: string;
 	updatedAt: string;
@@ -69,6 +70,7 @@ export interface CompanyFilters {
 	location?: string[];
 	hasDeals?: boolean;
 	hasContacts?: boolean;
+	showArchived?: boolean;
 	dateRange?: {
 		start: string;
 		end: string;
@@ -100,6 +102,8 @@ interface CompanyStore {
 	addCompany: (company: Company) => void;
 	updateCompany: (id: string, updates: Partial<Company>) => void;
 	deleteCompany: (id: string) => void;
+	archiveCompany: (id: string) => void;
+	unarchiveCompany: (id: string) => void;
 	setSelectedCompany: (company: Company | null) => void;
 
 	// Filtering
@@ -282,6 +286,36 @@ export const useCompanyStore = create<CompanyStore>()(
 				get().calculateStats();
 			},
 
+			archiveCompany: (id) => {
+				set(
+					(state) => ({
+						companies: state.companies.map((company) =>
+							company.id === id
+								? { ...company, archived: true }
+								: company
+						),
+					}),
+					false,
+					'archiveCompany'
+				);
+				get().calculateStats();
+			},
+
+			unarchiveCompany: (id) => {
+				set(
+					(state) => ({
+						companies: state.companies.map((company) =>
+							company.id === id
+								? { ...company, archived: false }
+								: company
+						),
+					}),
+					false,
+					'unarchiveCompany'
+				);
+				get().calculateStats();
+			},
+
 			setSelectedCompany: (company) => {
 				set({ selectedCompany: company }, false, 'setSelectedCompany');
 			},
@@ -304,6 +338,10 @@ export const useCompanyStore = create<CompanyStore>()(
 			getFilteredCompanies: () => {
 				const { companies, filters } = get();
 				return companies.filter((company) => {
+					// Filter archived companies unless explicitly requested
+					if (!filters.showArchived && company.archived) {
+						return false;
+					}
 					if (
 						filters.industry &&
 						filters.industry.length > 0 &&
