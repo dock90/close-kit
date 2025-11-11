@@ -66,6 +66,22 @@ export function ContactForm({
 	const [companies, setCompanies] = useState<Company[]>([]);
 	const [loadingCompanies, setLoadingCompanies] = useState(true);
 
+	// Update form data when contact prop changes
+	useEffect(() => {
+		if (contact) {
+			setFormData({
+				firstName: contact.firstName || '',
+				lastName: contact.lastName || '',
+				email: contact.email || '',
+				phone: contact.phone || '',
+				title: contact.title || '',
+				linkedinUrl: contact.linkedinUrl || '',
+				companyId: contact.companyId || '',
+				...initialData,
+			});
+		}
+	}, [contact, initialData]);
+
 	// Fetch companies for dropdown
 	useEffect(() => {
 		const fetchCompanies = async () => {
