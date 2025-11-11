@@ -264,8 +264,6 @@ export function ContactList({
 						<ContactCard
 							key={contact.id}
 							contact={contact}
-							onEdit={onContactEdit}
-							onDelete={onContactDelete}
 							onViewDetails={onContactSelect}
 						/>
 					))}

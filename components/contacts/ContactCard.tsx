@@ -7,8 +7,6 @@ import {
 	Building2,
 	ExternalLink,
 	Calendar,
-	Edit,
-	Trash2,
 	Briefcase,
 	DollarSign,
 	Activity,
@@ -37,15 +35,11 @@ interface Contact {
 
 interface ContactCardProps {
 	contact: Contact;
-	onEdit?: (contact: Contact) => void;
-	onDelete?: (contact: Contact) => void;
 	onViewDetails?: (contact: Contact) => void;
 }
 
 export function ContactCard({
 	contact,
-	onEdit,
-	onDelete,
 	onViewDetails,
 }: ContactCardProps) {
 	const formatDate = (date: string) => {
@@ -60,11 +54,6 @@ export function ContactCard({
 		onViewDetails?.(contact);
 	};
 
-	const handleActionClick = (e: React.MouseEvent, action: () => void) => {
-		e.stopPropagation();
-		action();
-	};
-
 	return (
 		<Card
 			className='p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group'
@@ -72,7 +61,7 @@ export function ContactCard({
 		>
 			<div className='space-y-4'>
 				{/* Header */}
-				<div className='flex items-start justify-between'>
+				<div className='flex items-start'>
 					<div className='flex items-center space-x-3'>
 						<div className='w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center'>
 							<User className='h-6 w-6 text-indigo-600' />
@@ -88,34 +77,6 @@ export function ContactCard({
 								</div>
 							)}
 						</div>
-					</div>
-
-					{/* Actions */}
-					<div className='flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity'>
-						{onEdit && (
-							<button
-								onClick={(e) =>
-									handleActionClick(e, () => onEdit(contact))
-								}
-								className='p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors'
-								title='Edit contact'
-							>
-								<Edit className='h-4 w-4' />
-							</button>
-						)}
-						{onDelete && (
-							<button
-								onClick={(e) =>
-									handleActionClick(e, () =>
-										onDelete(contact)
-									)
-								}
-								className='p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors'
-								title='Delete contact'
-							>
-								<Trash2 className='h-4 w-4' />
-							</button>
-						)}
 					</div>
 				</div>
 
