@@ -89,28 +89,30 @@ export default function ContactsPage() {
 
 	return (
 		<>
-			{showContactForm ? (
-				<div className='space-y-6'>
-					<ContactForm
-						contact={editingContact || undefined}
-						onSubmit={editingContact ? handleContactUpdate : handleContactCreate}
-						onCancel={handleCancel}
-						isLoading={isLoading}
-					/>
+			<ContactList
+				onContactCreate={() => setShowContactForm(true)}
+				onContactSelect={(contact) => {
+					// TODO: Implement contact detail view
+					console.log('View contact:', contact);
+				}}
+				onContactEdit={handleEdit}
+				onContactDelete={async (contact) => {
+					// TODO: Implement contact deletion with confirmation
+					console.log('Delete contact:', contact);
+				}}
+			/>
+
+			{showContactForm && (
+				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+					<div className='bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
+						<ContactForm
+							contact={editingContact || undefined}
+							onSubmit={editingContact ? handleContactUpdate : handleContactCreate}
+							onCancel={handleCancel}
+							isLoading={isLoading}
+						/>
+					</div>
 				</div>
-			) : (
-				<ContactList
-					onContactCreate={() => setShowContactForm(true)}
-					onContactSelect={(contact) => {
-						// TODO: Implement contact detail view
-						console.log('View contact:', contact);
-					}}
-					onContactEdit={handleEdit}
-					onContactDelete={async (contact) => {
-						// TODO: Implement contact deletion with confirmation
-						console.log('Delete contact:', contact);
-					}}
-				/>
 			)}
 		</>
 	);
