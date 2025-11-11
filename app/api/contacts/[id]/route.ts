@@ -107,11 +107,17 @@ export async function PATCH(
 			);
 		}
 
+		// Handle empty string companyId by converting to null
+		const updateData = {
+			...data,
+			companyId: data.companyId || null,
+		};
+
 		const contact = await prisma.contact.update({
 			where: {
 				id: id,
 			},
-			data,
+			data: updateData,
 			include: {
 				company: true,
 			},

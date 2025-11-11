@@ -92,11 +92,15 @@ export async function POST(request: NextRequest) {
 
 		const data = await request.json();
 
+		// Handle empty string companyId by converting to null
+		const contactData = {
+			...data,
+			companyId: data.companyId || null,
+			organizationId: dbUser.organizationId,
+		};
+
 		const contact = await prisma.contact.create({
-			data: {
-				...data,
-				organizationId: dbUser.organizationId,
-			},
+			data: contactData,
 			include: {
 				company: true,
 			},

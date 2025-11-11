@@ -20,7 +20,7 @@ interface Contact {
 	phone?: string | null;
 	title?: string | null;
 	linkedinUrl?: string | null;
-	companyId: string;
+	companyId?: string | null;
 	company?: {
 		id: string;
 		name: string;

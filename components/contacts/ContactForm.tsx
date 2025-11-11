@@ -18,7 +18,7 @@ interface ContactFormData {
 	phone: string;
 	title: string;
 	linkedinUrl: string;
-	companyId: string;
+	companyId?: string;
 }
 
 interface ContactFormErrors {
@@ -128,10 +128,6 @@ export function ContactForm({
 
 		if (!formData.lastName.trim()) {
 			newErrors.lastName = 'Last name is required';
-		}
-
-		if (!formData.companyId) {
-			newErrors.companyId = 'Company is required';
 		}
 
 		if (formData.email && !isValidEmail(formData.email)) {
@@ -345,10 +341,10 @@ export function ContactForm({
 					<div className='md:col-span-2'>
 						<label className='block text-sm font-medium text-gray-700 mb-2'>
 							<Building2 className='inline h-4 w-4 mr-1' />
-							Company *
+							Company
 						</label>
 						<select
-							value={formData.companyId}
+							value={formData.companyId || ''}
 							onChange={(e) =>
 								handleChange('companyId', e.target.value)
 							}
@@ -362,7 +358,7 @@ export function ContactForm({
 							<option value=''>
 								{loadingCompanies
 									? 'Loading companies...'
-									: 'Select company'}
+									: 'Select company (optional)'}
 							</option>
 							{companies.map((company) => (
 								<option key={company.id} value={company.id}>

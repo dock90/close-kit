@@ -12,7 +12,7 @@ interface Contact {
 	phone?: string | null;
 	title?: string | null;
 	linkedinUrl?: string | null;
-	companyId: string;
+	companyId?: string | null;
 }
 
 export default function ContactsPage() {
