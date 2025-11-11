@@ -131,7 +131,7 @@ export function ActivityList({
 		})
 		.sort((a, b) => {
 			const getDate = (activity: Activity) => {
-				const date = activity.completedDate || activity.scheduledDate;
+				const date = activity.createdAt;
 				if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
 					return new Date(0);
 				}
