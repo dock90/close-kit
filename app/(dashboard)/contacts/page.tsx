@@ -1,14 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ContactList, ContactForm } from '@/components/contacts';
 
+interface Contact {
+	id: string;
+	firstName: string;
+	lastName: string;
+	email?: string | null;
+	phone?: string | null;
+	title?: string | null;
+	linkedinUrl?: string | null;
+	companyId: string;
+}
+
 export default function ContactsPage() {
+	const router = useRouter();
 	const [showContactForm, setShowContactForm] = useState(false);
-	const [isCreating, setIsCreating] = useState(false);
+	const [editingContact, setEditingContact] = useState<Contact | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleContactCreate = async (formData: any) => {
-		setIsCreating(true);
+		setIsLoading(true);
 		try {
 			const response = await fetch('/api/contacts', {
 				method: 'POST',
@@ -20,7 +34,6 @@ export default function ContactsPage() {
 
 			if (response.ok) {
 				setShowContactForm(false);
-				// Refresh the page to show the new contact
 				window.location.reload();
 			} else {
 				const error = await response.json();
@@ -31,8 +44,47 @@ export default function ContactsPage() {
 			console.error('Error creating contact:', error);
 			alert('Failed to create contact. Please try again.');
 		} finally {
-			setIsCreating(false);
+			setIsLoading(false);
 		}
+	};
+
+	const handleContactUpdate = async (formData: any) => {
+		if (!editingContact) return;
+
+		setIsLoading(true);
+		try {
+			const response = await fetch(`/api/contacts/${editingContact.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formData),
+			});
+
+			if (response.ok) {
+				setShowContactForm(false);
+				setEditingContact(null);
+				window.location.reload();
+			} else {
+				const error = await response.json();
+				console.error('Error updating contact:', error);
+				alert('Failed to update contact. Please try again.');
+			}
+		} catch (error) {
+			console.error('Error updating contact:', error);
+			alert('Failed to update contact. Please try again.');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleEdit = (contact: Contact) => {
+		router.push(`/contacts/${contact.id}`);
+	};
+
+	const handleCancel = () => {
+		setShowContactForm(false);
+		setEditingContact(null);
 	};
 
 	return (
@@ -40,9 +92,10 @@ export default function ContactsPage() {
 			{showContactForm ? (
 				<div className='space-y-6'>
 					<ContactForm
-						onSubmit={handleContactCreate}
-						onCancel={() => setShowContactForm(false)}
-						isLoading={isCreating}
+						contact={editingContact || undefined}
+						onSubmit={editingContact ? handleContactUpdate : handleContactCreate}
+						onCancel={handleCancel}
+						isLoading={isLoading}
 					/>
 				</div>
 			) : (
@@ -52,10 +105,7 @@ export default function ContactsPage() {
 						// TODO: Implement contact detail view
 						console.log('View contact:', contact);
 					}}
-					onContactEdit={(contact) => {
-						// TODO: Implement contact editing
-						console.log('Edit contact:', contact);
-					}}
+					onContactEdit={handleEdit}
 					onContactDelete={async (contact) => {
 						// TODO: Implement contact deletion with confirmation
 						console.log('Delete contact:', contact);
