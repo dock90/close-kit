@@ -2,9 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactForm } from '@/components/contacts/ContactForm';
-import { DeleteContactModal } from '@/components/contacts/DeleteContactModal';
-import { Trash2 } from 'lucide-react';
+import { ContactDetailView } from '@/components/contacts/ContactDetailView';
 
 interface ContactPageProps {
 	params: Promise<{
@@ -19,7 +17,6 @@ export default function ContactPage({ params }: ContactPageProps) {
 	const [error, setError] = useState<string | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [contactId, setContactId] = useState<string | null>(null);
-	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => {
@@ -79,17 +76,12 @@ export default function ContactPage({ params }: ContactPageProps) {
 
 			const updatedContact = await response.json();
 			setContact(updatedContact);
-			router.push('/contacts');
 		} catch (err) {
 			console.error('Error updating contact:', err);
 			alert('Failed to update contact. Please try again.');
 		} finally {
 			setIsSaving(false);
 		}
-	};
-
-	const handleCancel = () => {
-		router.back();
 	};
 
 	const handleDeleteContact = async () => {
@@ -110,7 +102,6 @@ export default function ContactPage({ params }: ContactPageProps) {
 			console.error('Error deleting contact:', err);
 			alert('Failed to delete contact. Please try again.');
 			setIsDeleting(false);
-			setIsDeleteModalOpen(false);
 		}
 	};
 
@@ -158,34 +149,12 @@ export default function ContactPage({ params }: ContactPageProps) {
 	}
 
 	return (
-		<div className='space-y-6'>
-			<div className='flex items-center justify-between mb-4'>
-				<h1 className='text-2xl font-bold text-gray-900'>
-					Edit Contact
-				</h1>
-				<button
-					onClick={() => setIsDeleteModalOpen(true)}
-					className='flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors'
-				>
-					<Trash2 className='h-4 w-4' />
-					<span>Delete Contact</span>
-				</button>
-			</div>
-
-			<ContactForm
-				contact={contact}
-				onSubmit={handleUpdateContact}
-				onCancel={handleCancel}
-				isLoading={isSaving}
-			/>
-
-			<DeleteContactModal
-				isOpen={isDeleteModalOpen}
-				onClose={() => setIsDeleteModalOpen(false)}
-				onConfirm={handleDeleteContact}
-				contactName={`${contact.firstName} ${contact.lastName}`}
-				isDeleting={isDeleting}
-			/>
-		</div>
+		<ContactDetailView
+			contact={contact}
+			onUpdate={handleUpdateContact}
+			onDelete={handleDeleteContact}
+			isUpdating={isSaving}
+			isDeleting={isDeleting}
+		/>
 	);
 }
