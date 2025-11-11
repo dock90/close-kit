@@ -92,10 +92,24 @@ export async function PATCH(
 
 		const data = await request.json();
 
-		const contact = await prisma.contact.update({
+		// First verify the contact belongs to the organization
+		const existingContact = await prisma.contact.findFirst({
 			where: {
 				id: id,
 				organizationId: dbUser.organizationId,
+			},
+		});
+
+		if (!existingContact) {
+			return NextResponse.json(
+				{ error: 'Contact not found' },
+				{ status: 404 }
+			);
+		}
+
+		const contact = await prisma.contact.update({
+			where: {
+				id: id,
 			},
 			data,
 			include: {
@@ -139,10 +153,24 @@ export async function DELETE(
 			);
 		}
 
-		await prisma.contact.delete({
+		// First verify the contact belongs to the organization
+		const existingContact = await prisma.contact.findFirst({
 			where: {
 				id: id,
 				organizationId: dbUser.organizationId,
+			},
+		});
+
+		if (!existingContact) {
+			return NextResponse.json(
+				{ error: 'Contact not found' },
+				{ status: 404 }
+			);
+		}
+
+		await prisma.contact.delete({
+			where: {
+				id: id,
 			},
 		});
 
