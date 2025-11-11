@@ -394,13 +394,14 @@ export function ActivityForm({
 						</div>
 					)}
 
-					{/* Completed Date */}
-					{formData.status === 'completed' && (
-						<div>
-							<label className='block text-sm font-medium text-gray-700 mb-2'>
-								<Clock className='inline h-4 w-4 mr-1' />
-								Completed Date *
-							</label>
+				{/* Completed Date */}
+				{formData.status === 'completed' && (
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							<Clock className='inline h-4 w-4 mr-1' />
+							Completed Date *
+						</label>
+						<div className='flex gap-2'>
 							<input
 								type='date'
 								value={
@@ -418,19 +419,27 @@ export function ActivityForm({
 											: undefined
 									)
 								}
-								className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+								className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
 									errors.completedDate
 										? 'border-red-300'
 										: 'border-gray-300'
 								}`}
 							/>
-							{errors.completedDate && (
-								<p className='mt-1 text-sm text-red-600'>
-									{errors.completedDate}
-								</p>
-							)}
+							<button
+								type='button'
+								onClick={() => handleChange('completedDate', new Date())}
+								className='px-4 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap'
+							>
+								Today
+							</button>
 						</div>
-					)}
+						{errors.completedDate && (
+							<p className='mt-1 text-sm text-red-600'>
+								{errors.completedDate}
+							</p>
+						)}
+					</div>
+				)}
 
 					{/* Notes */}
 					<div className='md:col-span-2'>
