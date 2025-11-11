@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ContactList, ContactForm } from '@/components/contacts';
 
 interface Contact {
@@ -15,6 +16,7 @@ interface Contact {
 }
 
 export default function ContactsPage() {
+	const router = useRouter();
 	const [showContactForm, setShowContactForm] = useState(false);
 	const [editingContact, setEditingContact] = useState<Contact | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -77,8 +79,7 @@ export default function ContactsPage() {
 	};
 
 	const handleEdit = (contact: Contact) => {
-		setEditingContact(contact);
-		setShowContactForm(true);
+		router.push(`/contacts/${contact.id}`);
 	};
 
 	const handleCancel = () => {

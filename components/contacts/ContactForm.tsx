@@ -79,6 +79,17 @@ export function ContactForm({
 				companyId: contact.companyId || '',
 				...initialData,
 			});
+		} else if (!contact && Object.keys(initialData).length > 0) {
+			setFormData({
+				firstName: '',
+				lastName: '',
+				email: '',
+				phone: '',
+				title: '',
+				linkedinUrl: '',
+				companyId: '',
+				...initialData,
+			});
 		}
 	}, [contact, initialData]);
 
