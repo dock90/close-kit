@@ -401,29 +401,42 @@ export function ActivityForm({
 								<Clock className='inline h-4 w-4 mr-1' />
 								Completed Date *
 							</label>
-							<input
-								type='date'
-								value={
-									formData.completedDate
-										? formData.completedDate
-												.toISOString()
-												.slice(0, 10)
-										: ''
-								}
-								onChange={(e) =>
-									handleChange(
-										'completedDate',
-										e.target.value
-											? new Date(e.target.value)
-											: undefined
-									)
-								}
-								className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-									errors.completedDate
-										? 'border-red-300'
-										: 'border-gray-300'
-								}`}
-							/>
+							<div className='flex items-center space-x-2'>
+								<input
+									type='date'
+									value={
+										formData.completedDate
+											? formData.completedDate
+													.toISOString()
+													.slice(0, 10)
+											: ''
+									}
+									onChange={(e) =>
+										handleChange(
+											'completedDate',
+											e.target.value
+												? new Date(e.target.value)
+												: undefined
+										)
+									}
+									className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+										errors.completedDate
+											? 'border-red-300'
+											: 'border-gray-300'
+									}`}
+								/>
+								<button
+									type='button'
+									onClick={() => {
+										const today = new Date();
+										today.setHours(0, 0, 0, 0);
+										handleChange('completedDate', today);
+									}}
+									className='px-3 py-2 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap'
+								>
+									Today
+								</button>
+							</div>
 							{errors.completedDate && (
 								<p className='mt-1 text-sm text-red-600'>
 									{errors.completedDate}
