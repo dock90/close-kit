@@ -89,7 +89,7 @@ export default function ContactPage({ params }: ContactPageProps) {
 	};
 
 	const handleCancel = () => {
-		router.push('/contacts');
+		router.back();
 	};
 
 	const handleDeleteContact = async () => {
