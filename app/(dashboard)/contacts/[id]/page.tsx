@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ContactForm } from '@/components/contacts/ContactForm';
+import { DeleteContactModal } from '@/components/contacts/DeleteContactModal';
+import { Trash2 } from 'lucide-react';
 
 interface ContactPageProps {
 	params: Promise<{
@@ -17,6 +19,8 @@ export default function ContactPage({ params }: ContactPageProps) {
 	const [error, setError] = useState<string | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [contactId, setContactId] = useState<string | null>(null);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => {
 		const initializeParams = async () => {
@@ -88,6 +92,28 @@ export default function ContactPage({ params }: ContactPageProps) {
 		router.push('/contacts');
 	};
 
+	const handleDeleteContact = async () => {
+		if (!contact) return;
+
+		setIsDeleting(true);
+		try {
+			const response = await fetch(`/api/contacts/${contact.id}`, {
+				method: 'DELETE',
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to delete contact');
+			}
+
+			router.push('/contacts');
+		} catch (err) {
+			console.error('Error deleting contact:', err);
+			alert('Failed to delete contact. Please try again.');
+			setIsDeleting(false);
+			setIsDeleteModalOpen(false);
+		}
+	};
+
 	if (isLoading) {
 		return (
 			<div className='flex items-center justify-center py-12'>
@@ -133,11 +159,32 @@ export default function ContactPage({ params }: ContactPageProps) {
 
 	return (
 		<div className='space-y-6'>
+			<div className='flex items-center justify-between mb-4'>
+				<h1 className='text-2xl font-bold text-gray-900'>
+					Edit Contact
+				</h1>
+				<button
+					onClick={() => setIsDeleteModalOpen(true)}
+					className='flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors'
+				>
+					<Trash2 className='h-4 w-4' />
+					<span>Delete Contact</span>
+				</button>
+			</div>
+
 			<ContactForm
 				contact={contact}
 				onSubmit={handleUpdateContact}
 				onCancel={handleCancel}
 				isLoading={isSaving}
+			/>
+
+			<DeleteContactModal
+				isOpen={isDeleteModalOpen}
+				onClose={() => setIsDeleteModalOpen(false)}
+				onConfirm={handleDeleteContact}
+				contactName={`${contact.firstName} ${contact.lastName}`}
+				isDeleting={isDeleting}
 			/>
 		</div>
 	);
