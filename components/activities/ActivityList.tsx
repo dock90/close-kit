@@ -130,16 +130,8 @@ export function ActivityList({
 			return matchesType && matchesStatus;
 		})
 		.sort((a, b) => {
-			const getDate = (activity: Activity) => {
-				const date = activity.completedDate || activity.scheduledDate;
-				if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-					return new Date(0);
-				}
-				return date;
-			};
-
-			const dateA = getDate(a);
-			const dateB = getDate(b);
+			const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+			const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
 			return dateB.getTime() - dateA.getTime();
 		});
 
