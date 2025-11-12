@@ -92,8 +92,7 @@ export default function ContactsPage() {
 			<ContactList
 				onContactCreate={() => setShowContactForm(true)}
 				onContactSelect={(contact) => {
-					// TODO: Implement contact detail view
-					console.log('View contact:', contact);
+					router.push(`/contacts/${contact.id}`);
 				}}
 				onContactEdit={handleEdit}
 				onContactDelete={async (contact) => {

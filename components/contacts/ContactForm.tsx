@@ -77,21 +77,9 @@ export function ContactForm({
 				title: contact.title || '',
 				linkedinUrl: contact.linkedinUrl || '',
 				companyId: contact.companyId || '',
-				...initialData,
-			});
-		} else if (!contact && Object.keys(initialData).length > 0) {
-			setFormData({
-				firstName: '',
-				lastName: '',
-				email: '',
-				phone: '',
-				title: '',
-				linkedinUrl: '',
-				companyId: '',
-				...initialData,
 			});
 		}
-	}, [contact, initialData]);
+	}, [contact]);
 
 	// Fetch companies for dropdown
 	useEffect(() => {

@@ -484,7 +484,7 @@ export function CompanyDetailView({
 							{company.contacts?.map((contact) => (
 								<Link
 									key={contact.id}
-									href={`/contacts?id=${contact.id}`}
+									href={`/contacts/${contact.id}`}
 									className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer group'
 								>
 									<div className='flex items-center space-x-3'>
@@ -513,7 +513,7 @@ export function CompanyDetailView({
 									</div>
 									<div className='flex items-center space-x-2'>
 										{contact.email && (
-											<button 
+											<button
 												onClick={(e) => {
 													e.preventDefault();
 													window.location.href = `mailto:${contact.email}`;
@@ -524,7 +524,7 @@ export function CompanyDetailView({
 											</button>
 										)}
 										{contact.phone && (
-											<button 
+											<button
 												onClick={(e) => {
 													e.preventDefault();
 													window.location.href = `tel:${contact.phone}`;

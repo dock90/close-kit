@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import {
 	User,
@@ -38,10 +41,9 @@ interface ContactCardProps {
 	onViewDetails?: (contact: Contact) => void;
 }
 
-export function ContactCard({
-	contact,
-	onViewDetails,
-}: ContactCardProps) {
+export function ContactCard({ contact, onViewDetails }: ContactCardProps) {
+	const router = useRouter();
+
 	const formatDate = (date: string) => {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
@@ -51,7 +53,11 @@ export function ContactCard({
 	};
 
 	const handleCardClick = () => {
-		onViewDetails?.(contact);
+		if (onViewDetails) {
+			onViewDetails(contact);
+		} else {
+			router.push(`/contacts/${contact.id}`);
+		}
 	};
 
 	return (
@@ -137,9 +143,7 @@ export function ContactCard({
 					<div className='flex items-center space-x-4 text-sm text-gray-500'>
 						<div className='flex items-center space-x-1'>
 							<DollarSign className='h-4 w-4' />
-							<span>
-								{contact._count?.deals || 0} deals
-							</span>
+							<span>{contact._count?.deals || 0} deals</span>
 						</div>
 						<div className='flex items-center space-x-1'>
 							<Activity className='h-4 w-4' />
