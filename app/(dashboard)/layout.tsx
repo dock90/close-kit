@@ -58,11 +58,13 @@ export default async function DashboardLayout({
 			<Sidebar />
 			<main className='flex-1 overflow-auto'>
 				<div className='p-4 lg:p-6 pb-20 lg:pb-6'>
-					{showTrialBanner && (
-						<TrialBanner
-							daysRemaining={daysRemaining}
-							trialEndsAt={trialEndsAt}
-						/>
+					{showTrialBanner && trialEndsAt && (
+						<div className='relative z-50 mb-6'>
+							<TrialBanner
+								daysRemaining={daysRemaining}
+								trialEndsAt={trialEndsAt.toISOString()}
+							/>
+						</div>
 					)}
 					{children}
 				</div>

@@ -4,8 +4,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
+	const { id } = await params;
 	try {
 		const user = await currentUser();
 		if (!user) {
@@ -25,7 +26,7 @@ export async function PATCH(
 
 		if (
 			!dbUser ||
-			dbUser.organizationId !== params.id ||
+			dbUser.organizationId !== id ||
 			dbUser.role !== 'admin'
 		) {
 			return NextResponse.json(
@@ -36,7 +37,7 @@ export async function PATCH(
 
 		// Update organization subscription
 		const organization = await prisma.organization.update({
-			where: { id: params.id },
+			where: { id },
 			data: {
 				subscriptionStatus,
 				subscriptionId: subscriptionId || undefined,

@@ -14,7 +14,7 @@ interface StickyHeaderProps {
 
 export function StickyHeader({ metrics }: StickyHeaderProps) {
 	return (
-		<div className='sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm lg:hidden'>
+		<div className='sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm lg:hidden'>
 			<div className='px-4 py-3'>
 				<div className='grid grid-cols-4 gap-2'>
 					<div className='text-center'>

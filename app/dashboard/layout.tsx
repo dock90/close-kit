@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/sidebar';
 import { QuickActionButton } from '@/components/quick-actions';
 import { ReminderBell } from '@/components/reminders';
 import { BottomNavigation } from '@/components/ui/bottom-navigation';
+import { TrialBanner } from '@/components/trial-banner';
 
 export default async function DashboardLayout({
 	children,
@@ -27,6 +28,33 @@ export default async function DashboardLayout({
 		redirect('/onboarding');
 	}
 
+	// Check trial status
+	const org = dbUser.organization;
+	const trialEndsAt = org.trialEndsAt;
+	const now = new Date();
+
+	// If trial has ended and subscription is not active, redirect to upgrade page
+	if (
+		trialEndsAt &&
+		now > trialEndsAt &&
+		org.subscriptionStatus !== 'active'
+	) {
+		redirect('/upgrade');
+	}
+
+	// Calculate days remaining in trial
+	let daysRemaining = 0;
+	let showTrialBanner = false;
+	if (
+		trialEndsAt &&
+		now <= trialEndsAt &&
+		org.subscriptionStatus === 'trial'
+	) {
+		const diffTime = trialEndsAt.getTime() - now.getTime();
+		daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+		showTrialBanner = true;
+	}
+
 	return (
 		<div className='flex h-screen bg-gray-100'>
 			<Sidebar />
@@ -35,11 +63,21 @@ export default async function DashboardLayout({
 				<div className='bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-end'>
 					<ReminderBell />
 				</div>
-				<div className='p-6'>{children}</div>
+				<div className='p-6'>
+					{showTrialBanner && trialEndsAt && (
+						<div className='relative z-50 mb-6'>
+							<TrialBanner
+								daysRemaining={daysRemaining}
+								trialEndsAt={trialEndsAt.toISOString()}
+							/>
+						</div>
+					)}
+					{children}
+				</div>
 			</main>
 			{/* Quick Action Floating Button */}
 			<QuickActionButton />
-      <BottomNavigation />
+			<BottomNavigation />
 		</div>
 	);
 }

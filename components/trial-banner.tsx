@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 interface TrialBannerProps {
 	daysRemaining: number;
-	trialEndsAt: Date;
+	trialEndsAt: string;
 }
 
 export function TrialBanner({ daysRemaining, trialEndsAt }: TrialBannerProps) {
@@ -16,16 +16,16 @@ export function TrialBanner({ daysRemaining, trialEndsAt }: TrialBannerProps) {
 		return null;
 	}
 
-	const formatDate = (date: Date) => {
+	const formatDate = (dateString: string) => {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'long',
 			day: 'numeric',
 			year: 'numeric',
-		}).format(date);
+		}).format(new Date(dateString));
 	};
 
 	return (
-		<div className='bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-lg shadow-sm'>
+		<div className='bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-lg shadow-sm relative z-40'>
 			<div className='flex items-start justify-between'>
 				<div className='flex items-start'>
 					<Clock className='h-5 w-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0' />
