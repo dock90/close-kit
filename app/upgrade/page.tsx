@@ -122,20 +122,6 @@ export default async function UpgradePage() {
 						</div>
 					)}
 				</div>
-
-				{isTrialExpired && (
-					<div className='mt-6 text-center'>
-						<p className='text-gray-600 text-sm'>
-							Need more time to decide?{' '}
-							<a
-								href='mailto:support@closekit.com'
-								className='text-indigo-600 hover:text-indigo-700 font-medium'
-							>
-								Get in touch
-							</a>
-						</p>
-					</div>
-				)}
 			</div>
 		</div>
 	);
