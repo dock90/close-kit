@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CompanyDetailView } from '@/components/companies/CompanyDetailView';
-import { CompanyForm } from '@/components/companies/CompanyForm';
-import { useCompanyStore, Company } from '@/lib/stores';
+import { useCompanyStore } from '@/lib/stores';
 
 interface CompanyPageProps {
 	params: Promise<{
@@ -18,8 +17,7 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 	const [company, setCompany] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [showEditModal, setShowEditModal] = useState(false);
-	const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+	const [isSaving, setIsSaving] = useState(false);
 	const [companyId, setCompanyId] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -60,12 +58,13 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 		fetchCompany();
 	}, [companyId]);
 
-	const handleUpdateCompany = async (companyData: Partial<Company>) => {
-		if (!editingCompany) return;
+	const handleUpdateCompany = async (companyData: any) => {
+		if (!company) return;
 
+		setIsSaving(true);
 		try {
 			const response = await fetch(
-				`/api/companies/${editingCompany.id}`,
+				`/api/companies/${company.id}`,
 				{
 					method: 'PATCH',
 					headers: {
@@ -80,24 +79,14 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 			}
 
 			const updatedCompany = await response.json();
-			updateCompany(editingCompany.id, updatedCompany);
+			updateCompany(company.id, updatedCompany);
 			setCompany(updatedCompany);
-			setShowEditModal(false);
-			setEditingCompany(null);
 		} catch (err) {
 			console.error('Error updating company:', err);
 			alert('Failed to update company. Please try again.');
+		} finally {
+			setIsSaving(false);
 		}
-	};
-
-	const handleEdit = (company: any) => {
-		const storeCompany = {
-			...company,
-			createdAt: company.createdAt.toISOString(),
-			updatedAt: company.updatedAt.toISOString(),
-		};
-		setEditingCompany(storeCompany);
-		setShowEditModal(true);
 	};
 
 	const handleBackToList = () => {
@@ -213,47 +202,13 @@ export default function CompanyPage({ params }: CompanyPageProps) {
 	};
 
 	return (
-		<>
-			<CompanyDetailView
-				company={transformedCompany}
-				onBack={handleBackToList}
-				onEdit={handleEdit}
-				onArchive={handleArchive}
-				onUnarchive={handleUnarchive}
-			/>
-
-			{showEditModal && editingCompany && (
-				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
-					<div className='bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
-						<div className='p-6'>
-							<div className='flex items-center justify-between mb-6'>
-								<h2 className='text-2xl font-bold text-gray-900'>
-									Edit Company
-								</h2>
-								<button
-									onClick={() => {
-										setShowEditModal(false);
-										setEditingCompany(null);
-									}}
-									className='text-gray-400 hover:text-gray-600'
-								>
-									<span className='text-2xl'>
-										&times;
-									</span>
-								</button>
-							</div>
-							<CompanyForm
-								company={editingCompany}
-								onSubmit={handleUpdateCompany}
-								onCancel={() => {
-									setShowEditModal(false);
-									setEditingCompany(null);
-								}}
-							/>
-						</div>
-					</div>
-				</div>
-			)}
-		</>
+		<CompanyDetailView
+			company={transformedCompany}
+			onBack={handleBackToList}
+			onUpdate={handleUpdateCompany}
+			onArchive={handleArchive}
+			onUnarchive={handleUnarchive}
+			isUpdating={isSaving}
+		/>
 	);
 }

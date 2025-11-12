@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
+import { CompanyForm } from './CompanyForm';
 import {
 	Building2,
 	Globe,
@@ -71,12 +72,13 @@ interface Activity {
 interface CompanyDetailViewProps {
 	company: Company;
 	onBack?: () => void;
-	onEdit?: (company: Company) => void;
+	onUpdate?: (companyData: any) => Promise<void>;
 	onArchive?: (company: Company) => void;
 	onUnarchive?: (company: Company) => void;
 	onContactAdd?: (companyId: string) => void;
 	onDealAdd?: (companyId: string) => void;
 	onActivityAdd?: (companyId: string) => void;
+	isUpdating?: boolean;
 }
 
 const TABS = [
@@ -89,14 +91,16 @@ const TABS = [
 export function CompanyDetailView({
 	company,
 	onBack,
-	onEdit,
+	onUpdate,
 	onArchive,
 	onUnarchive,
 	onContactAdd,
 	onDealAdd,
 	onActivityAdd,
+	isUpdating = false,
 }: CompanyDetailViewProps) {
 	const [activeTab, setActiveTab] = useState('overview');
+	const [isEditing, setIsEditing] = useState(false);
 
 	const formatCurrency = (amount: number) => {
 		return new Intl.NumberFormat('en-US', {
@@ -157,12 +161,66 @@ export function CompanyDetailView({
 		return icons[type as keyof typeof icons] || FileText;
 	};
 
+	const addUtmParams = (url: string) => {
+		if (!url) return '';
+
+		// Ensure the URL has a protocol
+		const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+
+		try {
+			const urlObj = new URL(fullUrl);
+			urlObj.searchParams.set('utm_source', 'close-kit');
+			urlObj.searchParams.set('utm_medium', 'crm');
+			urlObj.searchParams.set('utm_campaign', 'company-profile');
+			return urlObj.toString();
+		} catch {
+			return fullUrl;
+		}
+	};
+
 	const totalDealValue =
 		company.deals?.reduce((sum, deal) => sum + deal.value, 0) || 0;
 	const activeDeals =
 		company.deals?.filter(
 			(deal) => !['closed_won', 'closed_lost'].includes(deal.stage)
 		).length || 0;
+
+	const handleUpdate = async (formData: any) => {
+		if (onUpdate) {
+			await onUpdate(formData);
+			setIsEditing(false);
+		}
+	};
+
+	if (isEditing) {
+		// Convert Date to string for the form
+		const companyForForm = {
+			...company,
+			createdAt: company.createdAt.toISOString(),
+			updatedAt: company.createdAt.toISOString(),
+		};
+
+		return (
+			<div className='space-y-6'>
+				<div className='flex items-center justify-between mb-4'>
+					<button
+						onClick={() => setIsEditing(false)}
+						className='flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors'
+					>
+						<ArrowLeft className='h-5 w-5' />
+						<span>Back to Details</span>
+					</button>
+				</div>
+
+				<CompanyForm
+					company={companyForForm}
+					onSubmit={handleUpdate}
+					onCancel={() => setIsEditing(false)}
+					isLoading={isUpdating}
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<div className='space-y-6'>
@@ -196,11 +254,7 @@ export function CompanyDetailView({
 								<div className='flex items-center space-x-1 text-sm text-gray-500'>
 									<Globe className='h-3 w-3' />
 									<a
-										href={
-											company.website.startsWith('http')
-												? company.website
-												: `https://${company.website}`
-										}
+										href={addUtmParams(company.website)}
 										target='_blank'
 										rel='noopener noreferrer'
 										className='hover:text-blue-600 transition-colors'
@@ -226,9 +280,9 @@ export function CompanyDetailView({
 						)
 					) : (
 						<>
-							{onEdit && (
+							{onUpdate && (
 								<button
-									onClick={() => onEdit(company)}
+									onClick={() => setIsEditing(true)}
 									className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors'
 								>
 									<Edit className='h-4 w-4' />
