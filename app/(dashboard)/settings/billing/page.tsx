@@ -26,6 +26,7 @@ export default async function BillingSettingsPage() {
 				name: dbUser.organization.name,
 				subscriptionStatus: dbUser.organization.subscriptionStatus,
 				subscriptionId: dbUser.organization.subscriptionId,
+				stripeCustomerId: dbUser.organization.stripeCustomerId,
 				trialEndsAt:
 					dbUser.organization.trialEndsAt?.toISOString() || null,
 			}}
