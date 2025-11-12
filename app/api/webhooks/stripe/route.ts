@@ -103,27 +103,30 @@ export async function POST(request: NextRequest) {
 				break;
 			}
 
-			case 'invoice.payment_failed': {
-				const invoice = event.data.object as Stripe.Invoice;
-				const subscriptionId = invoice.subscription as string;
+		case 'invoice.payment_failed': {
+			const invoice = event.data.object as Stripe.Invoice;
+			const subscriptionId =
+				typeof invoice.subscription === 'string'
+					? invoice.subscription
+					: invoice.subscription?.id;
 
-				if (subscriptionId) {
-					const organization = await prisma.organization.findFirst({
-						where: { subscriptionId },
+			if (subscriptionId) {
+				const organization = await prisma.organization.findFirst({
+					where: { subscriptionId },
+				});
+
+				if (organization) {
+					await prisma.organization.update({
+						where: { id: organization.id },
+						data: { subscriptionStatus: 'expired' },
 					});
-
-					if (organization) {
-						await prisma.organization.update({
-							where: { id: organization.id },
-							data: { subscriptionStatus: 'expired' },
-						});
-						console.log(
-							`Payment failed for organization ${organization.id}`
-						);
-					}
+					console.log(
+						`Payment failed for organization ${organization.id}`
+					);
 				}
-				break;
 			}
+			break;
+		}
 
 			default:
 				console.log(`Unhandled event type: ${event.type}`);
