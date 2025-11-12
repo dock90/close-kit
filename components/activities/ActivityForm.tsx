@@ -46,7 +46,7 @@ interface ActivityFormProps {
 		id: string;
 		firstName: string;
 		lastName: string;
-		companyId: string;
+		companyId: string | null;
 	}>;
 	deals: Array<{ id: string; name: string; companyId: string }>;
 	onSubmit: (data: ActivityFormData) => void;

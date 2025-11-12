@@ -39,7 +39,7 @@ interface Contact {
 	id: string;
 	firstName: string;
 	lastName: string;
-	companyId: string;
+	companyId: string | null;
 }
 
 interface Deal {
