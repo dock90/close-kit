@@ -20,6 +20,7 @@ model Organization {
   trialEndsAt         DateTime?
   subscriptionStatus  String   @default("trial") // "trial" | "active" | "expired"
   subscriptionId      String?
+  stripeCustomerId    String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

@@ -13,6 +13,7 @@ export default function SettingsLayout({
 	const tabs = [
 		{ name: 'General', href: '/settings' },
 		{ name: 'Team', href: '/settings/team' },
+		{ name: 'Billing', href: '/settings/billing' },
 	];
 
 	return (

@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
 				const session = event.data.object as Stripe.Checkout.Session;
 				const organizationId = session.metadata?.organizationId;
 				const subscriptionId = session.subscription as string;
+				const customerId = session.customer as string;
 
 				if (organizationId && subscriptionId) {
 					await prisma.organization.update({
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
 						data: {
 							subscriptionStatus: 'active',
 							subscriptionId: subscriptionId,
+							stripeCustomerId: customerId,
 						},
 					});
 					console.log(
