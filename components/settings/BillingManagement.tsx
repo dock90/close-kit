@@ -171,7 +171,7 @@ export function BillingManagement({
 								Trial
 							</span>
 						)}
-						{(isExpired || trialExpired) && (
+						{!isActive && (isExpired || trialExpired) && (
 							<span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800'>
 								<AlertCircle className='h-4 w-4 mr-1' />
 								Expired
