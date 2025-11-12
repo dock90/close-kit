@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Sidebar } from '@/components/sidebar';
 import { BottomNavigation } from '@/components/ui/bottom-navigation';
 import { TrialBanner } from '@/components/trial-banner';
+import { SubscriptionSuccessHandler } from '@/components/SubscriptionSuccessHandler';
 
 export default async function DashboardLayout({
 	children,
@@ -70,6 +71,7 @@ export default async function DashboardLayout({
 				</div>
 			</main>
 			<BottomNavigation />
+			<SubscriptionSuccessHandler />
 		</div>
 	);
 }
