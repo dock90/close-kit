@@ -107,50 +107,50 @@ export default async function HomePage() {
 							Here's the thing about sales tools...
 						</h2>
 					</div>
-					<div className='grid md:grid-cols-3 gap-8 items-start'>
-						<div className='bg-red-50 border-2 border-red-200 rounded-2xl p-8'>
-							<div className='inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg mb-4'>
-								<FileText className='h-6 w-6 text-red-600' />
-							</div>
-							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Spreadsheets
-							</h3>
-							<p className='text-gray-700 mb-3'>
-								<em>Too flexible.</em> You can do anything, which means you end up with a mess.
-							</p>
-							<p className='text-sm text-gray-600'>
-								Where did I put those notes from last week's call? Which tab is this in? Did I update the status?
-							</p>
+				<div className='grid md:grid-cols-3 gap-8 items-stretch'>
+					<div className='bg-red-50 border-2 border-red-200 rounded-2xl p-8 flex flex-col'>
+						<div className='inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg mb-4'>
+							<FileText className='h-6 w-6 text-red-600' />
 						</div>
-						<div className='bg-orange-50 border-2 border-orange-200 rounded-2xl p-8'>
-							<div className='inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mb-4'>
-								<Target className='h-6 w-6 text-orange-600' />
-							</div>
-							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								Traditional CRMs
-							</h3>
-							<p className='text-gray-700 mb-3'>
-								<em>Too complicated.</em> A million fields to configure. Custom workflows. Integration hell.
-							</p>
-							<p className='text-sm text-gray-600'>
-								You spend more time configuring the CRM than actually talking to prospects.
-							</p>
-						</div>
-						<div className='bg-green-50 border-2 border-green-200 rounded-2xl p-8'>
-							<div className='inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4'>
-								<CheckCircle2 className='h-6 w-6 text-green-600' />
-							</div>
-							<h3 className='text-xl font-bold text-gray-900 mb-3'>
-								CloseKit
-							</h3>
-							<p className='text-gray-700 mb-3'>
-								<em>Opinionated and proud of it.</em> We built in exactly what matters for closing deals.
-							</p>
-							<p className='text-sm text-gray-600'>
-								No setup. No decisions about which fields to track. Just sign up and start working your pipeline.
-							</p>
-						</div>
+						<h3 className='text-xl font-bold text-gray-900 mb-3'>
+							Spreadsheets
+						</h3>
+						<p className='text-gray-700 mb-3'>
+							<em>Too flexible.</em> You can do anything, which means you end up with a mess.
+						</p>
+						<p className='text-sm text-gray-600'>
+							Where did I put those notes from last week's call? Which tab is this in? Did I update the status?
+						</p>
 					</div>
+					<div className='bg-orange-50 border-2 border-orange-200 rounded-2xl p-8 flex flex-col'>
+						<div className='inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mb-4'>
+							<Target className='h-6 w-6 text-orange-600' />
+						</div>
+						<h3 className='text-xl font-bold text-gray-900 mb-3'>
+							Traditional CRMs
+						</h3>
+						<p className='text-gray-700 mb-3'>
+							<em>Too complicated.</em> A million fields to configure. Custom workflows. Integration hell.
+						</p>
+						<p className='text-sm text-gray-600'>
+							You spend more time configuring the CRM than actually talking to prospects.
+						</p>
+					</div>
+					<div className='bg-green-50 border-2 border-green-200 rounded-2xl p-8 flex flex-col'>
+						<div className='inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4'>
+							<CheckCircle2 className='h-6 w-6 text-green-600' />
+						</div>
+						<h3 className='text-xl font-bold text-gray-900 mb-3'>
+							CloseKit
+						</h3>
+						<p className='text-gray-700 mb-3'>
+							<em>Opinionated and proud of it.</em> We built in exactly what matters for closing deals.
+						</p>
+						<p className='text-sm text-gray-600'>
+							No setup. No decisions about which fields to track. Just sign up and start working your pipeline.
+						</p>
+					</div>
+				</div>
 				</div>
 			</section>
 
@@ -248,135 +248,68 @@ export default async function HomePage() {
 				</div>
 			</section>
 
-			{/* Pricing Section */}
-			<section className='py-20 px-4 sm:px-6 lg:px-8 bg-white'>
-				<div className='max-w-7xl mx-auto'>
-					<div className='text-center mb-16'>
-						<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
-							Simple, Transparent Pricing
-						</h2>
-						<p className='text-xl text-gray-600'>
-							Start free, upgrade when you're ready
+		{/* Pricing Section */}
+		<section className='py-20 px-4 sm:px-6 lg:px-8 bg-white'>
+			<div className='max-w-7xl mx-auto'>
+				<div className='text-center mb-16'>
+					<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
+						Simple, Transparent Pricing
+					</h2>
+					<p className='text-xl text-gray-600'>
+						14-day free trial, no credit card needed
+					</p>
+				</div>
+
+				<div className='flex justify-center'>
+					{/* Single Plan */}
+					<div className='bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-10 text-white shadow-2xl max-w-md w-full'>
+						<div className='text-center mb-8'>
+							<h3 className='text-3xl font-bold mb-4'>Get Started</h3>
+							<div className='mb-2'>
+								<span className='text-5xl font-bold'>$29</span>
+								<span className='text-2xl text-indigo-100'>/month</span>
+							</div>
+							<p className='text-indigo-100 text-lg'>After your 14-day free trial</p>
+						</div>
+						<ul className='space-y-4 mb-10'>
+							<li className='flex items-start'>
+								<CheckCircle2 className='h-6 w-6 text-green-300 mr-3 mt-0.5 flex-shrink-0' />
+								<span className='text-lg'>Unlimited users</span>
+							</li>
+							<li className='flex items-start'>
+								<CheckCircle2 className='h-6 w-6 text-green-300 mr-3 mt-0.5 flex-shrink-0' />
+								<span className='text-lg'>Unlimited companies & deals</span>
+							</li>
+							<li className='flex items-start'>
+								<CheckCircle2 className='h-6 w-6 text-green-300 mr-3 mt-0.5 flex-shrink-0' />
+								<span className='text-lg'>Revenue goal tracking</span>
+							</li>
+							<li className='flex items-start'>
+								<CheckCircle2 className='h-6 w-6 text-green-300 mr-3 mt-0.5 flex-shrink-0' />
+								<span className='text-lg'>Weekly reports & analytics</span>
+							</li>
+							<li className='flex items-start'>
+								<CheckCircle2 className='h-6 w-6 text-green-300 mr-3 mt-0.5 flex-shrink-0' />
+								<span className='text-lg'>Email & LinkedIn templates</span>
+							</li>
+							<li className='flex items-start'>
+								<CheckCircle2 className='h-6 w-6 text-green-300 mr-3 mt-0.5 flex-shrink-0' />
+								<span className='text-lg'>Priority support</span>
+							</li>
+						</ul>
+						<Link
+							href='/sign-up'
+							className='block w-full text-center px-8 py-4 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg shadow-lg'
+						>
+							Start Your 14-Day Free Trial
+						</Link>
+						<p className='text-center text-indigo-100 text-sm mt-4'>
+							No credit card required • Cancel anytime
 						</p>
 					</div>
-
-					<div className='grid md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
-						{/* Free Plan */}
-						<div className='bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-indigo-600 transition-colors'>
-							<h3 className='text-2xl font-bold text-gray-900 mb-2'>Free</h3>
-							<div className='mb-6'>
-								<span className='text-4xl font-bold text-gray-900'>$0</span>
-								<span className='text-gray-600'>/month</span>
-							</div>
-							<ul className='space-y-3 mb-8'>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>1 user</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Up to 50 companies</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Basic pipeline management</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Activity tracking</span>
-								</li>
-							</ul>
-							<Link
-								href='/sign-up'
-								className='block w-full text-center px-6 py-3 border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-semibold'
-							>
-								Start Free
-							</Link>
-						</div>
-
-						{/* Pro Plan */}
-						<div className='bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl transform scale-105 relative'>
-							<div className='absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold'>
-								MOST POPULAR
-							</div>
-							<h3 className='text-2xl font-bold mb-2'>Pro</h3>
-							<div className='mb-6'>
-								<span className='text-4xl font-bold'>$29</span>
-								<span className='text-indigo-100'>/month</span>
-							</div>
-							<ul className='space-y-3 mb-8'>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-300 mr-2 mt-0.5 flex-shrink-0' />
-									<span>Unlimited users</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-300 mr-2 mt-0.5 flex-shrink-0' />
-									<span>Unlimited companies & deals</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-300 mr-2 mt-0.5 flex-shrink-0' />
-									<span>Revenue goal tracking</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-300 mr-2 mt-0.5 flex-shrink-0' />
-									<span>Weekly reports</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-300 mr-2 mt-0.5 flex-shrink-0' />
-									<span>Email & LinkedIn templates</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-300 mr-2 mt-0.5 flex-shrink-0' />
-									<span>Priority support</span>
-								</li>
-							</ul>
-							<Link
-								href='/sign-up'
-								className='block w-full text-center px-6 py-3 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition-colors font-semibold'
-							>
-								Start Free Trial
-							</Link>
-						</div>
-
-						{/* Agency Plan */}
-						<div className='bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-indigo-600 transition-colors'>
-							<h3 className='text-2xl font-bold text-gray-900 mb-2'>Agency</h3>
-							<div className='mb-6'>
-								<span className='text-4xl font-bold text-gray-900'>$99</span>
-								<span className='text-gray-600'>/month</span>
-							</div>
-							<ul className='space-y-3 mb-8'>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Up to 5 users</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Multi-tenant support</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>White-label options</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Everything in Pro</span>
-								</li>
-								<li className='flex items-start'>
-									<CheckCircle2 className='h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0' />
-									<span className='text-gray-700'>Dedicated account manager</span>
-								</li>
-							</ul>
-							<Link
-								href='/sign-up'
-								className='block w-full text-center px-6 py-3 border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-semibold'
-							>
-								Start Free Trial
-							</Link>
-						</div>
-					</div>
 				</div>
-			</section>
+			</div>
+		</section>
 
 			{/* Final CTA Section */}
 			<section className='py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 to-purple-600'>
