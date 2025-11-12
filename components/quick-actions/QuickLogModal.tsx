@@ -135,6 +135,8 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		console.log('Form submitted, type:', type);
+		console.log('Form data:', formData);
 		setIsLoading(true);
 
 		try {
@@ -152,9 +154,22 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					}),
 				});
 
-				if (!response.ok) throw new Error('Failed to create deal');
+				if (!response.ok) {
+					const errorData = await response.json();
+					console.error('Failed to create deal:', errorData);
+					throw new Error('Failed to create deal');
+				}
 			} else if (type === 'reminder') {
 				// Create reminder
+				console.log('Creating reminder with data:', {
+					type: 'custom',
+					title: formData.subject,
+					description: formData.notes,
+					dueDate: formData.scheduledDate,
+					contactId: formData.contactId,
+					dealId: formData.dealId,
+				});
+
 				const response = await fetch('/api/reminders', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -168,7 +183,14 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					}),
 				});
 
-				if (!response.ok) throw new Error('Failed to create reminder');
+				if (!response.ok) {
+					const errorData = await response.json();
+					console.error('Failed to create reminder:', errorData);
+					throw new Error('Failed to create reminder');
+				}
+
+				const reminderResult = await response.json();
+				console.log('Reminder created successfully:', reminderResult);
 			} else {
 				// Log activity
 				const response = await fetch('/api/activities', {
@@ -186,14 +208,27 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					}),
 				});
 
-				if (!response.ok) throw new Error('Failed to log activity');
+				if (!response.ok) {
+					const errorData = await response.json();
+					console.error('Failed to log activity:', errorData);
+					throw new Error('Failed to log activity');
+				}
+
+				const activityResult = await response.json();
+				console.log('Activity logged successfully:', activityResult);
 			}
 
+			// Show success message
+			alert(type === 'reminder' ? 'Reminder created successfully!' : type === 'deal' ? 'Deal created successfully!' : 'Activity logged successfully!');
 			onClose();
-			window.location.reload(); // Refresh to show new data
+
+			// Use setTimeout to ensure the modal closes before reload
+			setTimeout(() => {
+				window.location.reload();
+			}, 100);
 		} catch (error) {
 			console.error('Error:', error);
-			alert('Failed to save. Please try again.');
+			alert(`Failed to save: ${error instanceof Error ? error.message : 'Unknown error'}. Check console for details.`);
 		} finally {
 			setIsLoading(false);
 		}
@@ -224,10 +259,10 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					<div>
 						<label className='block text-sm font-medium text-gray-700 mb-2'>
 							<Building2 className='inline h-4 w-4 mr-1' />
-							Company *
+							Company {type !== 'reminder' && '*'}
 						</label>
 						<select
-							required
+							required={type !== 'reminder'}
 							value={formData.companyId}
 							onChange={(e) => {
 								setFormData({
@@ -252,10 +287,10 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					<div>
 						<label className='block text-sm font-medium text-gray-700 mb-2'>
 							<User className='inline h-4 w-4 mr-1' />
-							Contact *
+							Contact {type !== 'reminder' && '*'}
 						</label>
 						<select
-							required
+							required={type !== 'reminder'}
 							value={formData.contactId}
 							onChange={(e) =>
 								setFormData({
@@ -360,6 +395,7 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 							<input
 								type='date'
 								required
+								min={new Date().toISOString().split('T')[0]}
 								value={formData.scheduledDate}
 								onChange={(e) =>
 									setFormData({

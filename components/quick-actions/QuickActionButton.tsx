@@ -58,6 +58,7 @@ export function QuickActionButton() {
 	];
 
 	const handleActionClick = (type: QuickActionType) => {
+		console.log('Quick action clicked:', type);
 		setActiveModal(type);
 		setIsOpen(false);
 	};
