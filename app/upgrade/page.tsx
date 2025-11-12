@@ -106,17 +106,8 @@ export default async function UpgradePage() {
 					</div>
 
 					<div className='text-center text-sm text-gray-500'>
-						<p className='mb-2'>
-							By subscribing, you agree to our Terms of Service
-						</p>
 						<p>
-							Questions?{' '}
-							<a
-								href='mailto:support@closekit.com'
-								className='text-indigo-600 hover:text-indigo-700'
-							>
-								Contact support
-							</a>
+							By subscribing, you agree to our Terms of Service
 						</p>
 					</div>
 
