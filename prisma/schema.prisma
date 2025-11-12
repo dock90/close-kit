@@ -17,6 +17,9 @@ model Organization {
   slug                String   @unique
   defaultEmailsGoal   Int      @default(8)
   defaultLinkedinGoal Int      @default(8)
+  trialEndsAt         DateTime?
+  subscriptionStatus  String   @default("trial") // "trial" | "active" | "expired"
+  subscriptionId      String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

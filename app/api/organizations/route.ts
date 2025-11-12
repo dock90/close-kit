@@ -33,22 +33,28 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Create organization and user
-		const organization = await prisma.organization.create({
-			data: {
-				name,
-				slug,
-				users: {
-					create: {
-						clerkId: user.id,
-						email: user.emailAddresses[0]?.emailAddress || '',
-						firstName: user.firstName || null,
-						lastName: user.lastName || null,
-						role: 'admin',
-					},
+	// Create organization and user
+	// Set trial to end 14 days from now
+	const trialEndsAt = new Date();
+	trialEndsAt.setDate(trialEndsAt.getDate() + 14);
+
+	const organization = await prisma.organization.create({
+		data: {
+			name,
+			slug,
+			trialEndsAt,
+			subscriptionStatus: 'trial',
+			users: {
+				create: {
+					clerkId: user.id,
+					email: user.emailAddresses[0]?.emailAddress || '',
+					firstName: user.firstName || null,
+					lastName: user.lastName || null,
+					role: 'admin',
 				},
 			},
-		});
+		},
+	});
 
 		// Update Clerk user metadata with organizationId
 		const client = await clerkClient();
@@ -62,7 +68,7 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json(organization);
 	} catch (error: any) {
 		console.error('Error creating organization:', error);
-		
+
 		// Check for Prisma unique constraint violation
 		if (error.code === 'P2002' && error.meta?.target?.includes('slug')) {
 			return NextResponse.json(
@@ -70,7 +76,7 @@ export async function POST(request: NextRequest) {
 				{ status: 409 }
 			);
 		}
-		
+
 		return NextResponse.json(
 			{ error: 'Internal server error' },
 			{ status: 500 }

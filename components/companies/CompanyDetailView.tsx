@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { CompanyForm } from './CompanyForm';
+import { Industry } from '@/lib/stores';
 import {
 	Building2,
 	Globe,
@@ -24,7 +25,7 @@ interface Company {
 	id: string;
 	name: string;
 	website?: string;
-	industry?: string;
+	industry?: Industry | '';
 	employeeCount?: string;
 	fundingStage?: string;
 	location?: string;
