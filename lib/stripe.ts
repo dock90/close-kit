@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 // Initialize Stripe with the secret key
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-	apiVersion: '2025-01-27.acacia',
+	apiVersion: '2025-10-29.clover',
 	typescript: true,
 });
 
@@ -133,4 +133,3 @@ export function mapSubscriptionStatus(
 			return 'expired';
 	}
 }
-

@@ -105,10 +105,12 @@ export async function POST(request: NextRequest) {
 
 		case 'invoice.payment_failed': {
 			const invoice = event.data.object as Stripe.Invoice;
+			// subscription can be a string, Subscription object, or null
+			const subscription = (invoice as any).subscription;
 			const subscriptionId =
-				typeof invoice.subscription === 'string'
-					? invoice.subscription
-					: invoice.subscription?.id;
+				typeof subscription === 'string'
+					? subscription
+					: subscription?.id;
 
 			if (subscriptionId) {
 				const organization = await prisma.organization.findFirst({

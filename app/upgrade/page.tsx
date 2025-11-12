@@ -15,13 +15,13 @@ export default async function UpgradePage() {
 		include: { organization: true },
 	});
 
-	if (!dbUser) {
+	if (!dbUser || !dbUser.organization) {
 		redirect('/onboarding');
 	}
 
-	const org = dbUser.organization;
-	const trialEndsAt = org.trialEndsAt;
-	const isTrialExpired = trialEndsAt && new Date() > trialEndsAt;
+	const org = dbUser.organization as any;
+	const trialEndsAt = org.trialEndsAt as Date | null;
+	const isTrialExpired = trialEndsAt ? new Date() > trialEndsAt : false;
 
 	// Calculate days remaining (if still in trial)
 	let daysRemaining = 0;
@@ -38,4 +38,3 @@ export default async function UpgradePage() {
 		/>
 	);
 }
-
