@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/sidebar';
 import { BottomNavigation } from '@/components/ui/bottom-navigation';
 import { TrialBanner } from '@/components/trial-banner';
 import { SubscriptionSuccessHandler } from '@/components/SubscriptionSuccessHandler';
+import { QuickActionButton } from '@/components/quick-actions';
 
 export default async function DashboardLayout({
 	children,
@@ -71,6 +72,7 @@ export default async function DashboardLayout({
 				</div>
 			</main>
 			<BottomNavigation />
+			<QuickActionButton />
 			<SubscriptionSuccessHandler />
 		</div>
 	);
