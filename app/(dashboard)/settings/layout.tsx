@@ -23,6 +23,16 @@ export default function SettingsLayout({
 				<p className='text-gray-600 mt-2'>
 					Manage your account and organization settings
 				</p>
+				<p className='text-sm text-gray-500 mt-2'>
+					Need help? Have feedback?{' '}
+					<a
+						href='mailto:edward@dock90.io'
+						className='text-indigo-600 hover:text-indigo-700 font-medium'
+					>
+						Email me: edward@dock90.io
+					</a>{' '}
+					— I literally check every email
+				</p>
 			</div>
 
 			{/* Tab Navigation */}
@@ -55,4 +65,3 @@ export default function SettingsLayout({
 		</div>
 	);
 }
-
