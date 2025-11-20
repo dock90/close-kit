@@ -83,9 +83,22 @@ export async function POST(request: NextRequest) {
 
 		const data = await request.json();
 
+		// Filter out null values and empty strings
+		const cleanData: any = {};
+		Object.entries(data).forEach(([key, value]) => {
+			if (value !== null && value !== '') {
+				// Convert date strings to Date objects if they exist
+				if ((key === 'expectedCloseDate' || key === 'actualCloseDate') && typeof value === 'string') {
+					cleanData[key] = new Date(value);
+				} else {
+					cleanData[key] = value;
+				}
+			}
+		});
+
 		const deal = await prisma.deal.create({
 			data: {
-				...data,
+				...cleanData,
 				organizationId: dbUser.organizationId,
 			},
 			include: {
@@ -97,8 +110,12 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json(deal);
 	} catch (error) {
 		console.error('Error creating deal:', error);
+		console.error('Error details:', error instanceof Error ? error.message : String(error));
 		return NextResponse.json(
-			{ error: 'Internal server error' },
+			{
+				error: 'Internal server error',
+				details: error instanceof Error ? error.message : String(error)
+			},
 			{ status: 500 }
 		);
 	}

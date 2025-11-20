@@ -100,7 +100,7 @@ model Deal {
   expectedCloseDate DateTime?
   actualCloseDate   DateTime?
   serviceType       String? // "nextjs_sanity" | "hydrogen_sanity" | "custom"
-  projectDuration   String? // "6-8 weeks" | "8-10 weeks"
+  projectDuration   String? // "6-8 weeks" | "8-10 weeks" | "ongoing"
   lostReason        String?
   companyId         String
   company           Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
