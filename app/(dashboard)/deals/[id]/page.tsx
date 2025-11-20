@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DealForm } from '@/components/deals/DealForm';
 import { DealCard } from '@/components/deals/DealCard';
+import { ActivityList } from '@/components/activities';
 import { useCompanyStore, Deal } from '@/lib/stores';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 
@@ -28,6 +29,7 @@ export default function DealDetailPage() {
 
 	const { setCompanies } = useCompanyStore();
 	const [deal, setDeal] = useState<Deal | null>(null);
+	const [activities, setActivities] = useState<any[]>([]);
 	const [isEditing, setIsEditing] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingData, setIsLoadingData] = useState(true);
@@ -37,6 +39,12 @@ export default function DealDetailPage() {
 		fetchDeal();
 		fetchCompanies();
 	}, [dealId]);
+
+	useEffect(() => {
+		if (deal) {
+			fetchRelatedActivities();
+		}
+	}, [deal]);
 
 	const fetchDeal = async () => {
 		try {
@@ -64,6 +72,40 @@ export default function DealDetailPage() {
 			}
 		} catch (error) {
 			console.error('Error fetching companies:', error);
+		}
+	};
+
+	const fetchRelatedActivities = async () => {
+		if (!deal) return;
+
+		try {
+			// Fetch activities for the company and contact associated with this deal
+			const params = new URLSearchParams();
+			if (deal.companyId) {
+				params.append('companyId', deal.companyId);
+			}
+			if (deal.contactId) {
+				params.append('contactId', deal.contactId);
+			}
+
+			const response = await fetch(`/api/activities?${params.toString()}`);
+			if (response.ok) {
+				const data = await response.json();
+				// Parse dates
+				const parsedActivities = data.map((activity: any) => ({
+					...activity,
+					scheduledDate: activity.scheduledDate
+						? new Date(activity.scheduledDate)
+						: undefined,
+					completedDate: activity.completedDate
+						? new Date(activity.completedDate)
+						: undefined,
+					createdAt: new Date(activity.createdAt),
+				}));
+				setActivities(parsedActivities);
+			}
+		} catch (error) {
+			console.error('Error fetching related activities:', error);
 		}
 	};
 
@@ -233,7 +275,23 @@ export default function DealDetailPage() {
 					isLoading={isLoading}
 				/>
 			) : (
-				<DealCard deal={deal} />
+				<>
+					<DealCard deal={deal} />
+
+					{/* Related Activities Section */}
+					<div className='space-y-4'>
+						<div>
+							<h2 className='text-2xl font-bold text-gray-900'>
+								Related Activities
+							</h2>
+							<p className='text-gray-600'>
+								Activities for {deal.company?.name} and{' '}
+								{deal.contact?.firstName} {deal.contact?.lastName}
+							</p>
+						</div>
+						<ActivityList activities={activities} showFilters={true} />
+					</div>
+				</>
 			)}
 		</div>
 	);

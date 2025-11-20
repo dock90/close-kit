@@ -31,7 +31,7 @@ const navigationGroups = [
 	],
 	[
 		{ name: 'Templates', href: '/templates', icon: Mail },
-		{ name: 'Reports', href: '/reports', icon: FileText },
+		{ name: 'Weekly Reports', href: '/reports', icon: FileText },
 		{ name: 'Settings', href: '/settings', icon: Settings },
 	],
 ];
