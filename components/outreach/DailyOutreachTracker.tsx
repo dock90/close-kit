@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Mail, MessageSquare, TrendingUp } from 'lucide-react';
 
-interface DailyGoal {
-	id: string;
-	date: string;
+interface WeeklyStats {
 	emailsGoal: number;
 	linkedinGoal: number;
 	emailsSent: number;
@@ -14,22 +12,72 @@ interface DailyGoal {
 }
 
 export function DailyOutreachTracker() {
-	const [dailyGoal, setDailyGoal] = useState<DailyGoal | null>(null);
+	const [weeklyStats, setWeeklyStats] = useState<WeeklyStats | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		fetchDailyGoal();
+		fetchWeeklyStats();
 	}, []);
 
-	const fetchDailyGoal = async () => {
+	const fetchWeeklyStats = async () => {
 		try {
-			const response = await fetch('/api/daily-goals/today');
-			if (response.ok) {
-				const data = await response.json();
-				setDailyGoal(data);
+			// Fetch user with organization settings
+			const userResponse = await fetch('/api/users/me');
+			if (!userResponse.ok) {
+				throw new Error('Failed to fetch user');
 			}
+			const userData = await userResponse.json();
+
+			// Get daily goals from organization settings
+			const dailyEmailGoal = userData.organization?.defaultEmailsGoal || 2;
+			const dailyLinkedinGoal = userData.organization?.defaultLinkedinGoal || 2;
+
+			// Calculate weekly goals (daily * 5 workdays)
+			const weeklyEmailGoal = dailyEmailGoal * 5;
+			const weeklyLinkedinGoal = dailyLinkedinGoal * 5;
+
+			// Get current week start (Sunday)
+			const now = new Date();
+			const weekStart = new Date(now);
+			weekStart.setDate(now.getDate() - now.getDay());
+			weekStart.setHours(0, 0, 0, 0);
+
+			// Get week end (next Sunday)
+			const weekEnd = new Date(weekStart);
+			weekEnd.setDate(weekStart.getDate() + 7);
+
+			// Fetch activities for the current week
+			const activitiesResponse = await fetch('/api/activities');
+			if (!activitiesResponse.ok) {
+				throw new Error('Failed to fetch activities');
+			}
+			const activities = await activitiesResponse.json();
+
+			// Count emails and LinkedIn messages completed this week
+			const emailsSent = activities.filter((activity: any) => {
+				if (activity.type !== 'email_sent' || activity.status !== 'completed') {
+					return false;
+				}
+				const completedDate = new Date(activity.completedDate || activity.createdAt);
+				return completedDate >= weekStart && completedDate < weekEnd;
+			}).length;
+
+			const linkedinSent = activities.filter((activity: any) => {
+				if ((activity.type !== 'linkedin_message' && activity.type !== 'linkedin_request') || activity.status !== 'completed') {
+					return false;
+				}
+				const completedDate = new Date(activity.completedDate || activity.createdAt);
+				return completedDate >= weekStart && completedDate < weekEnd;
+			}).length;
+
+			setWeeklyStats({
+				emailsGoal: weeklyEmailGoal,
+				linkedinGoal: weeklyLinkedinGoal,
+				emailsSent,
+				linkedinSent,
+			});
 		} catch (error) {
-			console.error('Error fetching daily goal:', error);
+			console.error('Error fetching weekly stats:', error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -61,10 +109,10 @@ export function DailyOutreachTracker() {
 		);
 	}
 
-	const emailsGoal = dailyGoal?.emailsGoal || 8;
-	const linkedinGoal = dailyGoal?.linkedinGoal || 8;
-	const emailsSent = dailyGoal?.emailsSent || 0;
-	const linkedinSent = dailyGoal?.linkedinSent || 0;
+	const emailsGoal = weeklyStats?.emailsGoal || 10;
+	const linkedinGoal = weeklyStats?.linkedinGoal || 10;
+	const emailsSent = weeklyStats?.emailsSent || 0;
+	const linkedinSent = weeklyStats?.linkedinSent || 0;
 
 	const emailPercentage = (emailsSent / emailsGoal) * 100;
 	const linkedinPercentage = (linkedinSent / linkedinGoal) * 100;
@@ -74,13 +122,10 @@ export function DailyOutreachTracker() {
 			<div className='flex items-center justify-between mb-4'>
 				<h3 className='text-lg font-semibold text-gray-900 flex items-center'>
 					<TrendingUp className='h-5 w-5 mr-2 text-blue-600' />
-					Daily Outreach
+					Weekly Outreach
 				</h3>
 				<span className='text-sm text-gray-500'>
-					{new Date().toLocaleDateString('en-US', {
-						month: 'short',
-						day: 'numeric',
-					})}
+					This Week
 				</span>
 			</div>
 

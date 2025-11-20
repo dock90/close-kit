@@ -3,12 +3,9 @@
 import { useEffect, useState } from 'react';
 import { MetricsCard } from './MetricsCard';
 import {
-	TrendingUp,
-	Target,
 	DollarSign,
 	BarChart3,
 	Calendar,
-	Zap,
 	Percent,
 } from 'lucide-react';
 
@@ -52,7 +49,7 @@ export function SuccessMetrics() {
 					<div className='h-4 bg-gray-200 rounded w-64 animate-pulse'></div>
 				</div>
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-					{[...Array(7)].map((_, i) => (
+					{[...Array(4)].map((_, i) => (
 						<div
 							key={i}
 							className='bg-white border border-gray-200 rounded-lg p-6 animate-pulse'
@@ -97,22 +94,10 @@ export function SuccessMetrics() {
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
 				<MetricsCard
-					title='Outreach Volume'
-					value={metrics.outreachVolume}
-					icon={TrendingUp}
-					description='Emails + LinkedIn messages this week'
-				/>
-				<MetricsCard
 					title='Pipeline Value'
 					value={formatCurrency(metrics.pipelineValue)}
 					icon={DollarSign}
 					description='Total value of active deals'
-				/>
-				<MetricsCard
-					title='Weighted Pipeline'
-					value={formatCurrency(metrics.weightedPipeline)}
-					icon={Target}
-					description='Pipeline × probability'
 				/>
 				<MetricsCard
 					title='Conversion Rate'
@@ -131,12 +116,6 @@ export function SuccessMetrics() {
 					value={metrics.averageDaysToClose}
 					icon={Calendar}
 					description='Average time from lead to close'
-				/>
-				<MetricsCard
-					title='Activity Streak'
-					value={`${metrics.activityStreak} days`}
-					icon={Zap}
-					description='Consecutive days of 6+ actions'
 				/>
 			</div>
 		</div>
