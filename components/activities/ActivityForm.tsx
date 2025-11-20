@@ -22,9 +22,9 @@ interface ActivityFormData {
 	scheduledDate?: Date;
 	completedDate?: Date;
 	status: string;
-	companyId: string;
+	companyId?: string;
 	contactId: string;
-	dealId: string;
+	dealId?: string;
 }
 
 interface ActivityFormErrors {
@@ -125,10 +125,6 @@ export function ActivityForm({
 			newErrors.subject = 'Subject is required';
 		}
 
-		if (!formData.companyId) {
-			newErrors.companyId = 'Company is required';
-		}
-
 		if (!formData.contactId) {
 			newErrors.contactId = 'Contact is required';
 		}
@@ -150,18 +146,23 @@ export function ActivityForm({
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (validateForm()) {
-			onSubmit(formData);
+			// Convert empty strings to undefined for optional fields
+			const submissionData = {
+				...formData,
+				companyId: formData.companyId || undefined,
+				dealId: formData.dealId || undefined,
+			};
+			onSubmit(submissionData as ActivityFormData);
 		}
 	};
 
-	const filteredContacts = contacts.filter(
-		(contact) =>
-			!formData.companyId || contact.companyId === formData.companyId
-	);
+	const filteredContacts = formData.companyId
+		? contacts.filter((contact) => contact.companyId === formData.companyId)
+		: contacts;
 
-	const filteredDeals = deals.filter(
-		(deal) => !formData.companyId || deal.companyId === formData.companyId
-	);
+	const filteredDeals = formData.companyId
+		? deals.filter((deal) => deal.companyId === formData.companyId)
+		: deals;
 
 	const selectedActivityType = ACTIVITY_TYPES.find(
 		(type) => type.value === formData.type
@@ -262,20 +263,18 @@ export function ActivityForm({
 					<div>
 						<label className='block text-sm font-medium text-gray-700 mb-2'>
 							<Building2 className='inline h-4 w-4 mr-1' />
-							Company *
+							Company (Optional)
 						</label>
 						<select
 							value={formData.companyId}
 							onChange={(e) => {
 								handleChange('companyId', e.target.value);
-								handleChange('contactId', ''); // Reset contact when company changes
-								handleChange('dealId', ''); // Reset deal when company changes
+								if (e.target.value) {
+									handleChange('contactId', ''); // Reset contact when company changes
+									handleChange('dealId', ''); // Reset deal when company changes
+								}
 							}}
-							className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-								errors.companyId
-									? 'border-red-300'
-									: 'border-gray-300'
-							}`}
+							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 						>
 							<option value=''>Select company</option>
 							{companies.map((company) => (
@@ -284,11 +283,6 @@ export function ActivityForm({
 								</option>
 							))}
 						</select>
-						{errors.companyId && (
-							<p className='mt-1 text-sm text-red-600'>
-								{errors.companyId}
-							</p>
-						)}
 					</div>
 
 					{/* Contact */}
@@ -307,7 +301,6 @@ export function ActivityForm({
 									? 'border-red-300'
 									: 'border-gray-300'
 							}`}
-							disabled={!formData.companyId}
 						>
 							<option value=''>Select contact</option>
 							{filteredContacts.map((contact) => (
@@ -321,9 +314,9 @@ export function ActivityForm({
 								{errors.contactId}
 							</p>
 						)}
-						{!formData.companyId && (
+						{formData.companyId && (
 							<p className='mt-1 text-xs text-gray-500'>
-								Select a company first
+								Showing contacts for selected company
 							</p>
 						)}
 					</div>
@@ -340,7 +333,6 @@ export function ActivityForm({
 								handleChange('dealId', e.target.value)
 							}
 							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-							disabled={!formData.companyId}
 						>
 							<option value=''>Select deal</option>
 							{filteredDeals.map((deal) => (
@@ -349,9 +341,9 @@ export function ActivityForm({
 								</option>
 							))}
 						</select>
-						{!formData.companyId && (
+						{formData.companyId && (
 							<p className='mt-1 text-xs text-gray-500'>
-								Select a company first
+								Showing deals for selected company
 							</p>
 						)}
 					</div>
@@ -394,52 +386,57 @@ export function ActivityForm({
 						</div>
 					)}
 
-				{/* Completed Date */}
-				{formData.status === 'completed' && (
-					<div>
-						<label className='block text-sm font-medium text-gray-700 mb-2'>
-							<Clock className='inline h-4 w-4 mr-1' />
-							Completed Date *
-						</label>
-						<div className='flex gap-2'>
-							<input
-								type='date'
-								value={
-									formData.completedDate
-										? formData.completedDate
-												.toISOString()
-												.slice(0, 10)
-										: ''
-								}
-								onChange={(e) =>
-									handleChange(
-										'completedDate',
-										e.target.value
-											? new Date(e.target.value)
-											: undefined
-									)
-								}
-								className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-									errors.completedDate
-										? 'border-red-300'
-										: 'border-gray-300'
-								}`}
-							/>
-							<button
-								type='button'
-								onClick={() => handleChange('completedDate', new Date())}
-								className='px-4 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap'
-							>
-								Today
-							</button>
+					{/* Completed Date */}
+					{formData.status === 'completed' && (
+						<div>
+							<label className='block text-sm font-medium text-gray-700 mb-2'>
+								<Clock className='inline h-4 w-4 mr-1' />
+								Completed Date *
+							</label>
+							<div className='flex gap-2'>
+								<input
+									type='date'
+									value={
+										formData.completedDate
+											? formData.completedDate
+													.toISOString()
+													.slice(0, 10)
+											: ''
+									}
+									onChange={(e) =>
+										handleChange(
+											'completedDate',
+											e.target.value
+												? new Date(e.target.value)
+												: undefined
+										)
+									}
+									className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+										errors.completedDate
+											? 'border-red-300'
+											: 'border-gray-300'
+									}`}
+								/>
+								<button
+									type='button'
+									onClick={() =>
+										handleChange(
+											'completedDate',
+											new Date()
+										)
+									}
+									className='px-4 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap'
+								>
+									Today
+								</button>
+							</div>
+							{errors.completedDate && (
+								<p className='mt-1 text-sm text-red-600'>
+									{errors.completedDate}
+								</p>
+							)}
 						</div>
-						{errors.completedDate && (
-							<p className='mt-1 text-sm text-red-600'>
-								{errors.completedDate}
-							</p>
-						)}
-					</div>
-				)}
+					)}
 
 					{/* Notes */}
 					<div className='md:col-span-2'>
@@ -489,7 +486,9 @@ export function ActivityForm({
 							className='flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
 						>
 							<Save className='h-4 w-4' />
-							<span>{isLoading ? 'Saving...' : 'Save Activity'}</span>
+							<span>
+								{isLoading ? 'Saving...' : 'Save Activity'}
+							</span>
 						</button>
 					</div>
 				</div>

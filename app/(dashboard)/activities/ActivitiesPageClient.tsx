@@ -134,14 +134,14 @@ export function ActivitiesPageClient() {
 	const handleSubmit = async (data: any) => {
 		setIsLoading(true);
 		try {
-			// Clean up the data - convert empty strings to null for optional fields
-			const cleanedData = {
-				...data,
-				dealId: data.dealId === '' ? null : data.dealId,
-				contactId: data.contactId === '' ? null : data.contactId,
-				notes: data.notes === '' ? null : data.notes,
-				subject: data.subject === '' ? null : data.subject,
-			};
+		// Clean up the data - convert empty strings to null for optional fields
+		const cleanedData = {
+			...data,
+			companyId: data.companyId === '' ? null : data.companyId,
+			dealId: data.dealId === '' ? null : data.dealId,
+			notes: data.notes === '' ? null : data.notes,
+			subject: data.subject === '' ? null : data.subject,
+		};
 
 		const isEditing = editingActivity !== null;
 		const url = isEditing

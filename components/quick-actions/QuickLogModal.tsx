@@ -125,13 +125,12 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 	};
 
 	const config = getModalConfig();
-	const filteredContacts = contacts.filter(
-		(contact) =>
-			!formData.companyId || contact.companyId === formData.companyId
-	);
-	const filteredDeals = deals.filter(
-		(deal) => !formData.companyId || deal.companyId === formData.companyId
-	);
+	const filteredContacts = formData.companyId
+		? contacts.filter((contact) => contact.companyId === formData.companyId)
+		: contacts;
+	const filteredDeals = formData.companyId
+		? deals.filter((deal) => deal.companyId === formData.companyId)
+		: deals;
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -263,22 +262,22 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					<div>
 						<label className='block text-sm font-medium text-gray-700 mb-2'>
 							<Building2 className='inline h-4 w-4 mr-1' />
-							Company {type !== 'reminder' && '*'}
+							Company {type === 'deal' && '*'}
 						</label>
 						<select
-							required={type !== 'reminder'}
+							required={type === 'deal'}
 							value={formData.companyId}
 							onChange={(e) => {
 								setFormData({
 									...formData,
 									companyId: e.target.value,
-									contactId: '',
-									dealId: '',
+									contactId: formData.companyId && !e.target.value ? '' : formData.contactId,
+									dealId: formData.companyId && !e.target.value ? '' : formData.dealId,
 								});
 							}}
 							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 						>
-							<option value=''>Select company</option>
+							<option value=''>Select company (optional)</option>
 							{companies.map((company) => (
 								<option key={company.id} value={company.id}>
 									{company.name}
@@ -302,8 +301,7 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 									contactId: e.target.value,
 								})
 							}
-							disabled={!formData.companyId}
-							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100'
+							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 						>
 							<option value=''>Select contact</option>
 							{filteredContacts.map((contact) => (
