@@ -30,6 +30,7 @@ export default async function TeamSettingsPage() {
 			<TeamManagement
 				currentUser={dbUser}
 				teamMembers={teamMembers}
+				organization={dbUser.organization}
 			/>
 		</div>
 	);

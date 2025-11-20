@@ -34,12 +34,6 @@ export default function SettingsPage() {
 		email: '',
 	});
 
-	// Organization form state
-	const [orgForm, setOrgForm] = useState({
-		name: '',
-		slug: '',
-	});
-
 	// Daily outreach goals form state
 	const [dailyGoalsForm, setDailyGoalsForm] = useState({
 		defaultEmailsGoal: '8',
@@ -65,10 +59,6 @@ export default function SettingsPage() {
 					email: userData.email || '',
 				});
 				if (userData.organization) {
-					setOrgForm({
-						name: userData.organization.name || '',
-						slug: userData.organization.slug || '',
-					});
 					setDailyGoalsForm({
 						defaultEmailsGoal:
 							userData.organization.defaultEmailsGoal?.toString() ||
@@ -112,46 +102,6 @@ export default function SettingsPage() {
 		} catch (error) {
 			console.error('Error updating profile:', error);
 			setMessage({ type: 'error', text: 'Failed to update profile' });
-		} finally {
-			setSaving(false);
-		}
-	};
-
-	const handleOrgSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!user?.organization?.id) return;
-
-		setSaving(true);
-		setMessage(null);
-
-		try {
-			const response = await fetch(
-				`/api/organizations/${user.organization.id}`,
-				{
-					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(orgForm),
-				}
-			);
-
-			if (response.ok) {
-				const updatedOrg = await response.json();
-				setUser((prev) =>
-					prev ? { ...prev, organization: updatedOrg } : null
-				);
-				setMessage({
-					type: 'success',
-					text: 'Organization updated successfully',
-				});
-			} else {
-				throw new Error('Failed to update organization');
-			}
-		} catch (error) {
-			console.error('Error updating organization:', error);
-			setMessage({
-				type: 'error',
-				text: 'Failed to update organization',
-			});
 		} finally {
 			setSaving(false);
 		}
@@ -316,65 +266,7 @@ export default function SettingsPage() {
 					</CardContent>
 				</Card>
 
-				{/* Organization Settings */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Organization Settings</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<form onSubmit={handleOrgSubmit} className='space-y-4'>
-							<div>
-								<label
-									htmlFor='orgName'
-									className='block text-sm font-medium text-gray-700'
-								>
-									Organization Name
-								</label>
-								<input
-									type='text'
-									id='orgName'
-									value={orgForm.name}
-									onChange={(e) =>
-										setOrgForm({
-											...orgForm,
-											name: e.target.value,
-										})
-									}
-									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-								/>
-							</div>
-							<div>
-								<label
-									htmlFor='orgSlug'
-									className='block text-sm font-medium text-gray-700'
-								>
-									Organization URL
-								</label>
-								<input
-									type='text'
-									id='orgSlug'
-									value={orgForm.slug}
-									onChange={(e) =>
-										setOrgForm({
-											...orgForm,
-											slug: e.target.value,
-										})
-									}
-									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-								/>
-							</div>
-							<button
-								type='submit'
-								disabled={saving}
-								className='w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
-							>
-								{saving ? 'Saving...' : 'Update Organization'}
-							</button>
-						</form>
-					</CardContent>
-			</Card>
-
-			{/* Daily Outreach Goals */}
+				{/* Daily Outreach Goals */}
 				<Card>
 					<CardHeader>
 						<CardTitle>Daily Outreach Goals</CardTitle>

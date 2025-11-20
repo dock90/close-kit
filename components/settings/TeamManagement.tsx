@@ -12,18 +12,33 @@ type User = {
 	createdAt: Date;
 };
 
+type Organization = {
+	id: string;
+	name: string;
+	slug: string;
+};
+
 type TeamManagementProps = {
 	currentUser: User;
 	teamMembers: User[];
+	organization: Organization;
 };
 
-export function TeamManagement({ currentUser, teamMembers }: TeamManagementProps) {
+export function TeamManagement({ currentUser, teamMembers, organization }: TeamManagementProps) {
 	const [email, setEmail] = useState('');
 	const [role, setRole] = useState('member');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const router = useRouter();
+
+	// Organization form state
+	const [orgForm, setOrgForm] = useState({
+		name: organization.name,
+		slug: organization.slug,
+	});
+	const [orgSaving, setOrgSaving] = useState(false);
+	const [orgMessage, setOrgMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
 	const isAdmin = currentUser.role === 'admin';
 
@@ -99,8 +114,109 @@ export function TeamManagement({ currentUser, teamMembers }: TeamManagementProps
 		}
 	};
 
+	const handleOrgSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setOrgSaving(true);
+		setOrgMessage(null);
+
+		try {
+			const response = await fetch(`/api/organizations/${organization.id}`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(orgForm),
+			});
+
+			if (response.ok) {
+				setOrgMessage({
+					type: 'success',
+					text: 'Organization updated successfully',
+				});
+				router.refresh();
+			} else {
+				throw new Error('Failed to update organization');
+			}
+		} catch (error) {
+			console.error('Error updating organization:', error);
+			setOrgMessage({
+				type: 'error',
+				text: 'Failed to update organization',
+			});
+		} finally {
+			setOrgSaving(false);
+		}
+	};
+
 	return (
 		<div className='space-y-6'>
+			{/* Organization Settings - only visible to admins */}
+			{isAdmin && (
+				<div className='bg-white shadow rounded-lg p-6'>
+					<h2 className='text-lg font-medium text-gray-900 mb-4'>
+						Organization Settings
+					</h2>
+					{orgMessage && (
+						<div
+							className={`mb-4 p-4 rounded-md ${
+								orgMessage.type === 'success'
+									? 'bg-green-50 text-green-800'
+									: 'bg-red-50 text-red-800'
+							}`}
+						>
+							{orgMessage.text}
+						</div>
+					)}
+					<form onSubmit={handleOrgSubmit} className='space-y-4'>
+						<div>
+							<label
+								htmlFor='orgName'
+								className='block text-sm font-medium text-gray-700'
+							>
+								Organization Name
+							</label>
+							<input
+								type='text'
+								id='orgName'
+								value={orgForm.name}
+								onChange={(e) =>
+									setOrgForm({
+										...orgForm,
+										name: e.target.value,
+									})
+								}
+								className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+							/>
+						</div>
+						<div>
+							<label
+								htmlFor='orgSlug'
+								className='block text-sm font-medium text-gray-700'
+							>
+								Organization URL
+							</label>
+							<input
+								type='text'
+								id='orgSlug'
+								value={orgForm.slug}
+								onChange={(e) =>
+									setOrgForm({
+										...orgForm,
+										slug: e.target.value,
+									})
+								}
+								className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+							/>
+						</div>
+						<button
+							type='submit'
+							disabled={orgSaving}
+							className='w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
+						>
+							{orgSaving ? 'Saving...' : 'Update Organization'}
+						</button>
+					</form>
+				</div>
+			)}
+
 			{/* Invite form - only visible to admins */}
 			{isAdmin && (
 				<div className='bg-white shadow rounded-lg p-6'>
