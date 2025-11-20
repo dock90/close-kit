@@ -9,3 +9,5 @@ export { DashboardHeader } from './DashboardHeader';
 export { WeekMetrics } from './WeekMetrics';
 export { MiniDealPipeline } from './MiniDealPipeline';
 export { WeeklyReportWidget } from './WeeklyReportWidget';
+export { DashboardPageClient } from './DashboardPageClient';
+export { DashboardSkeleton } from './DashboardSkeleton';

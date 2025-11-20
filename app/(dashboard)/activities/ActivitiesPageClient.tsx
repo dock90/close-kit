@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { ActivityList } from '@/components/activities';
 import { ActivityForm } from '@/components/activities';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 interface Activity {
 	id: string;
@@ -48,41 +50,86 @@ interface Deal {
 	companyId: string;
 }
 
-interface ActivitiesPageClientProps {
-	initialActivities: Activity[];
-	companies: Company[];
-	contacts: Contact[];
-	deals: Deal[];
+function ActivitiesSkeleton() {
+	return (
+		<div className='space-y-6'>
+			<div className='flex justify-between items-center'>
+				<div>
+					<Skeleton className='h-8 w-48 mb-2' />
+					<Skeleton className='h-5 w-64' />
+				</div>
+				<Skeleton className='h-10 w-32' />
+			</div>
+			<Card>
+				<CardHeader>
+					<Skeleton className='h-6 w-32' />
+				</CardHeader>
+				<CardContent>
+					<div className='space-y-3'>
+						<Skeleton className='h-20 w-full' />
+						<Skeleton className='h-20 w-full' />
+						<Skeleton className='h-20 w-full' />
+						<Skeleton className='h-20 w-full' />
+						<Skeleton className='h-20 w-full' />
+					</div>
+				</CardContent>
+			</Card>
+		</div>
+	);
 }
 
-export function ActivitiesPageClient({
-	initialActivities,
-	companies,
-	contacts,
-	deals,
-}: ActivitiesPageClientProps) {
-	// Convert serialized dates back to Date objects and handle null values
-	const parsedActivities = initialActivities.map((activity) => ({
-		...activity,
-		subject: activity.subject ?? undefined,
-		notes: activity.notes ?? undefined,
-		company: activity.company ?? undefined,
-		contact: activity.contact ?? undefined,
-		deal: activity.deal ?? undefined,
-		scheduledDate: activity.scheduledDate
-			? new Date(activity.scheduledDate)
-			: undefined,
-		completedDate: activity.completedDate
-			? new Date(activity.completedDate)
-			: undefined,
-		createdAt: new Date(activity.createdAt),
-	}));
-
-	const [activities, setActivities] = useState(parsedActivities);
+export function ActivitiesPageClient() {
+	const [activities, setActivities] = useState<Activity[]>([]);
+	const [companies, setCompanies] = useState<Company[]>([]);
+	const [contacts, setContacts] = useState<Contact[]>([]);
+	const [deals, setDeals] = useState<Deal[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isInitialLoading, setIsInitialLoading] = useState(true);
 	const router = useRouter();
+
+	useEffect(() => {
+		fetchActivitiesData();
+	}, []);
+
+	const fetchActivitiesData = async () => {
+		try {
+			setIsInitialLoading(true);
+			const response = await fetch('/api/activities-data');
+			if (response.ok) {
+				const data = await response.json();
+				// Convert serialized dates back to Date objects
+				const parsedActivities = data.activities.map((activity: Activity) => ({
+					...activity,
+					subject: activity.subject ?? undefined,
+					notes: activity.notes ?? undefined,
+					company: activity.company ?? undefined,
+					contact: activity.contact ?? undefined,
+					deal: activity.deal ?? undefined,
+					scheduledDate: activity.scheduledDate
+						? new Date(activity.scheduledDate)
+						: undefined,
+					completedDate: activity.completedDate
+						? new Date(activity.completedDate)
+						: undefined,
+					createdAt: new Date(activity.createdAt),
+				}));
+				setActivities(parsedActivities);
+				setCompanies(data.companies);
+				setContacts(data.contacts);
+				setDeals(data.deals);
+			}
+		} catch (error) {
+			console.error('Error fetching activities data:', error);
+		} finally {
+			setIsInitialLoading(false);
+		}
+	};
+
+	if (isInitialLoading) {
+		return <ActivitiesSkeleton />;
+	}
 
 	const handleSubmit = async (data: any) => {
 		setIsLoading(true);
