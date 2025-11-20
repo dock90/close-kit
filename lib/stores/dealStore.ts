@@ -44,7 +44,7 @@ export type DealStage =
 
 export type ServiceType = 'nextjs_sanity' | 'hydrogen_sanity' | 'custom';
 
-export type ProjectDuration = '6-8 weeks' | '8-10 weeks';
+export type ProjectDuration = '6-8 weeks' | '8-10 weeks' | 'ongoing';
 
 export interface Activity {
 	id: string;

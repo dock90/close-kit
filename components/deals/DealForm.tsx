@@ -65,6 +65,7 @@ const SERVICE_TYPE_OPTIONS: { value: ServiceType; label: string }[] = [
 const PROJECT_DURATION_OPTIONS: { value: ProjectDuration; label: string }[] = [
 	{ value: '6-8 weeks', label: '6-8 weeks' },
 	{ value: '8-10 weeks', label: '8-10 weeks' },
+	{ value: 'ongoing', label: 'Ongoing' },
 ];
 
 export function DealForm({
