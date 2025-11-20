@@ -5,17 +5,15 @@ import {
 	Calendar,
 	Building2,
 	User,
-	Edit,
-	Trash2,
 	ChevronLeft,
 	ChevronRight,
+	Eye,
 } from 'lucide-react';
 import { useDealStore, Deal, DealStage } from '@/lib/stores';
 
 interface DealKanbanProps {
 	onDealUpdate?: (dealId: string, updates: Partial<Deal>) => void;
-	onDealEdit?: (deal: Deal) => void;
-	onDealDelete?: (deal: Deal) => void;
+	onDealView?: (deal: Deal) => void;
 }
 
 const STAGES: { key: DealStage; label: string; color: string }[] = [
@@ -54,8 +52,7 @@ const STAGES: { key: DealStage; label: string; color: string }[] = [
 
 export function DealKanban({
 	onDealUpdate,
-	onDealEdit,
-	onDealDelete,
+	onDealView,
 }: DealKanbanProps) {
 	const { deals, moveDealToStage } = useDealStore();
 	const [draggedDeal, setDraggedDeal] = useState<string | null>(null);
@@ -109,9 +106,8 @@ export function DealKanban({
 		setDraggedDeal(null);
 	};
 
-	const handleActionClick = (e: React.MouseEvent, action: () => void) => {
-		e.stopPropagation();
-		action();
+	const handleCardClick = (deal: Deal) => {
+		onDealView?.(deal);
 	};
 
 	const handleTouchStart = (e: React.TouchEvent, dealId: string) => {
@@ -218,7 +214,8 @@ export function DealKanban({
 												onTouchStart={(e) => handleTouchStart(e, deal.id)}
 												onTouchMove={handleTouchMove}
 												onTouchEnd={(e) => handleTouchEnd(e, stage.key)}
-												className='bg-white rounded-lg p-4 shadow-sm border cursor-move hover:shadow-md transition-all duration-200 group touch-manipulation relative'
+												onClick={() => handleCardClick(deal)}
+												className='bg-white rounded-lg p-4 shadow-sm border cursor-pointer hover:shadow-md transition-all duration-200 group touch-manipulation relative hover:border-blue-400'
 												style={{ minHeight: '44px', ...swipeStyle }}
 											>
 												{/* Swipe indicators */}
@@ -241,45 +238,8 @@ export function DealKanban({
 														<h4 className='font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors'>
 															{deal.name}
 														</h4>
-														<div className='flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity'>
-															{onDealEdit && (
-																<button
-																	onClick={(
-																		e
-																	) =>
-																		handleActionClick(
-																			e,
-																			() =>
-																				onDealEdit(
-																					deal
-																				)
-																		)
-																	}
-																	className='p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors'
-																	title='Edit deal'
-																>
-																	<Edit className='h-3 w-3' />
-																</button>
-															)}
-															{onDealDelete && (
-																<button
-																	onClick={(
-																		e
-																	) =>
-																		handleActionClick(
-																			e,
-																			() =>
-																				onDealDelete(
-																					deal
-																				)
-																		)
-																	}
-																	className='p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors'
-																	title='Delete deal'
-																>
-																	<Trash2 className='h-3 w-3' />
-																</button>
-															)}
+														<div className='flex items-center opacity-0 group-hover:opacity-100 transition-opacity'>
+															<Eye className='h-4 w-4 text-blue-600' />
 														</div>
 													</div>
 

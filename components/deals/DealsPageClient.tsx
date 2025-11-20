@@ -8,9 +8,8 @@ import { useDealStore, Deal } from '@/lib/stores';
 
 export function DealsPageClient() {
 	const router = useRouter();
-	const { deals, setDeals, updateDeal, deleteDeal, setLoading, isLoading } =
+	const { deals, setDeals, updateDeal, setLoading, isLoading } =
 		useDealStore();
-	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => {
 		fetchDeals();
@@ -51,33 +50,8 @@ export function DealsPageClient() {
 		}
 	};
 
-	const handleDealEdit = (deal: Deal) => {
+	const handleDealView = (deal: Deal) => {
 		router.push(`/deals/${deal.id}`);
-	};
-
-	const handleDealDelete = async (deal: Deal) => {
-		if (
-			!confirm(
-				`Are you sure you want to delete the deal "${deal.name}"?`
-			)
-		) {
-			return;
-		}
-
-		try {
-			setIsDeleting(true);
-			const response = await fetch(`/api/deals/${deal.id}`, {
-				method: 'DELETE',
-			});
-
-			if (response.ok) {
-				deleteDeal(deal.id);
-			}
-		} catch (error) {
-			console.error('Error deleting deal:', error);
-		} finally {
-			setIsDeleting(false);
-		}
 	};
 
 	if (isLoading) {
@@ -134,8 +108,7 @@ export function DealsPageClient() {
 			) : (
 				<DealKanban
 					onDealUpdate={handleDealUpdate}
-					onDealEdit={handleDealEdit}
-					onDealDelete={handleDealDelete}
+					onDealView={handleDealView}
 				/>
 			)}
 		</div>
