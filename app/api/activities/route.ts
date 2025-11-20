@@ -16,6 +16,9 @@ export async function GET(request: NextRequest) {
 		const type = searchParams.get('type');
 		const status = searchParams.get('status');
 		const limit = searchParams.get('limit');
+		const contactId = searchParams.get('contactId');
+		const companyId = searchParams.get('companyId');
+		const dealId = searchParams.get('dealId');
 
 		const dbUser = await prisma.user.findUnique({
 			where: { clerkId: user.id },
@@ -39,6 +42,18 @@ export async function GET(request: NextRequest) {
 
 		if (status) {
 			where.status = status;
+		}
+
+		if (contactId) {
+			where.contactId = contactId;
+		}
+
+		if (companyId) {
+			where.companyId = companyId;
+		}
+
+		if (dealId) {
+			where.dealId = dealId;
 		}
 
 		const activities = await prisma.activity.findMany({

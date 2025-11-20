@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ContactDetailView } from '@/components/contacts/ContactDetailView';
+import { ActivityList } from '@/components/activities';
 
 interface ContactPageProps {
 	params: Promise<{
@@ -18,6 +19,8 @@ export default function ContactPage({ params }: ContactPageProps) {
 	const [isSaving, setIsSaving] = useState(false);
 	const [contactId, setContactId] = useState<string | null>(null);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [activities, setActivities] = useState<any[]>([]);
+	const [isLoadingActivities, setIsLoadingActivities] = useState(false);
 
 	useEffect(() => {
 		const initializeParams = async () => {
@@ -54,7 +57,31 @@ export default function ContactPage({ params }: ContactPageProps) {
 			}
 		};
 
+		const fetchActivities = async () => {
+			try {
+				setIsLoadingActivities(true);
+				const response = await fetch(`/api/activities?contactId=${contactId}`);
+
+				if (response.ok) {
+					const data = await response.json();
+					// Convert date strings to Date objects
+					const activitiesWithDates = data.map((activity: any) => ({
+						...activity,
+						scheduledDate: activity.scheduledDate ? new Date(activity.scheduledDate) : undefined,
+						completedDate: activity.completedDate ? new Date(activity.completedDate) : undefined,
+						createdAt: new Date(activity.createdAt),
+					}));
+					setActivities(activitiesWithDates);
+				}
+			} catch (err) {
+				console.error('Error fetching activities:', err);
+			} finally {
+				setIsLoadingActivities(false);
+			}
+		};
+
 		fetchContact();
+		fetchActivities();
 	}, [contactId]);
 
 	const handleUpdateContact = async (formData: any) => {
@@ -149,12 +176,31 @@ export default function ContactPage({ params }: ContactPageProps) {
 	}
 
 	return (
-		<ContactDetailView
-			contact={contact}
-			onUpdate={handleUpdateContact}
-			onDelete={handleDeleteContact}
-			isUpdating={isSaving}
-			isDeleting={isDeleting}
-		/>
+		<div className='space-y-6'>
+			<ContactDetailView
+				contact={contact}
+				onUpdate={handleUpdateContact}
+				onDelete={handleDeleteContact}
+				isUpdating={isSaving}
+				isDeleting={isDeleting}
+			/>
+
+			{/* Activities Section */}
+			<div>
+				<h2 className='text-2xl font-bold text-gray-900 mb-4'>
+					Activities
+				</h2>
+				{isLoadingActivities ? (
+					<div className='flex items-center justify-center py-8'>
+						<div className='text-center'>
+							<div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2'></div>
+							<p className='text-gray-600 text-sm'>Loading activities...</p>
+						</div>
+					</div>
+				) : (
+					<ActivityList activities={activities} />
+				)}
+			</div>
+		</div>
 	);
 }
