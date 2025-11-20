@@ -18,16 +18,8 @@ interface User {
 	};
 }
 
-interface RevenueGoal {
-	id: string;
-	targetAmount: number;
-	startDate: string;
-	endDate: string;
-}
-
 export default function SettingsPage() {
 	const [user, setUser] = useState<User | null>(null);
-	const [revenueGoal, setRevenueGoal] = useState<RevenueGoal | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
 	const [message, setMessage] = useState<{
@@ -46,13 +38,6 @@ export default function SettingsPage() {
 	const [orgForm, setOrgForm] = useState({
 		name: '',
 		slug: '',
-	});
-
-	// Revenue goal form state
-	const [goalForm, setGoalForm] = useState({
-		targetAmount: '',
-		startDate: '',
-		endDate: '',
 	});
 
 	// Daily outreach goals form state
@@ -93,22 +78,8 @@ export default function SettingsPage() {
 							'8',
 					});
 				}
-			}
-
-		// Fetch current revenue goal
-		const goalRes = await fetch('/api/revenue-goals');
-		if (goalRes.ok) {
-			const goalData = await goalRes.json();
-			if (goalData) {
-				setRevenueGoal(goalData);
-				setGoalForm({
-					targetAmount: goalData.targetAmount.toString(),
-					startDate: goalData.startDate.split('T')[0],
-					endDate: goalData.endDate.split('T')[0],
-				});
-			}
 		}
-		} catch (error) {
+	} catch (error) {
 			console.error('Error fetching data:', error);
 			setMessage({ type: 'error', text: 'Failed to load settings' });
 		} finally {
@@ -181,42 +152,6 @@ export default function SettingsPage() {
 				type: 'error',
 				text: 'Failed to update organization',
 			});
-		} finally {
-			setSaving(false);
-		}
-	};
-
-	const handleGoalSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setSaving(true);
-		setMessage(null);
-
-	try {
-		const goalData = {
-			targetAmount: parseFloat(goalForm.targetAmount),
-			startDate: new Date(goalForm.startDate).toISOString(),
-			endDate: new Date(goalForm.endDate).toISOString(),
-		};
-
-		const response = await fetch('/api/revenue-goals', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(goalData),
-		});
-
-			if (response.ok) {
-				const newGoal = await response.json();
-				setRevenueGoal(newGoal);
-				setMessage({
-					type: 'success',
-					text: 'Revenue goal set successfully',
-				});
-			} else {
-				throw new Error('Failed to set revenue goal');
-			}
-		} catch (error) {
-			console.error('Error setting revenue goal:', error);
-			setMessage({ type: 'error', text: 'Failed to set revenue goal' });
 		} finally {
 			setSaving(false);
 		}
@@ -437,90 +372,9 @@ export default function SettingsPage() {
 							</button>
 						</form>
 					</CardContent>
-				</Card>
+			</Card>
 
-				{/* Revenue Goal */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Revenue Goal</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<form onSubmit={handleGoalSubmit} className='space-y-4'>
-							<div>
-								<label
-									htmlFor='targetAmount'
-									className='block text-sm font-medium text-gray-700'
-								>
-									Target Amount ($)
-								</label>
-								<input
-									type='number'
-									id='targetAmount'
-									value={goalForm.targetAmount}
-									onChange={(e) =>
-										setGoalForm({
-											...goalForm,
-											targetAmount: e.target.value,
-										})
-									}
-									className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-									placeholder='100000'
-								/>
-							</div>
-							<div className='grid grid-cols-2 gap-4'>
-								<div>
-									<label
-										htmlFor='startDate'
-										className='block text-sm font-medium text-gray-700'
-									>
-										Start Date
-									</label>
-									<input
-										type='date'
-										id='startDate'
-										value={goalForm.startDate}
-										onChange={(e) =>
-											setGoalForm({
-												...goalForm,
-												startDate: e.target.value,
-											})
-										}
-										className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor='endDate'
-										className='block text-sm font-medium text-gray-700'
-									>
-										End Date
-									</label>
-									<input
-										type='date'
-										id='endDate'
-										value={goalForm.endDate}
-										onChange={(e) =>
-											setGoalForm({
-												...goalForm,
-												endDate: e.target.value,
-											})
-										}
-										className='mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-									/>
-								</div>
-							</div>
-							<button
-								type='submit'
-								disabled={saving}
-								className='w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
-							>
-								{saving ? 'Saving...' : 'Set Revenue Goal'}
-							</button>
-						</form>
-					</CardContent>
-				</Card>
-
-				{/* Daily Outreach Goals */}
+			{/* Daily Outreach Goals */}
 				<Card>
 					<CardHeader>
 						<CardTitle>Daily Outreach Goals</CardTitle>

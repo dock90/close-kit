@@ -34,6 +34,7 @@ model Organization {
   templates     Template[]
   dailyGoals    DailyGoal[]
   reminders     Reminder[]
+  salesVision   SalesVision?
 }
 
 model User {
@@ -194,6 +195,28 @@ model DailyGoal {
   updatedAt      DateTime     @updatedAt
 
   @@unique([organizationId, date])
+}
+
+// Sales Vision
+model SalesVision {
+  id                String       @id @default(cuid())
+  q1Vision          String?
+  twelveMonthGoal   Int          @default(0) // in dollars
+  bigProblem        String?
+  approach          String?
+  whatNotToDo       String?
+  strategyStatement String?
+  q1Focus1          String?
+  q1Focus2          String?
+  q1Focus3          String?
+  weeklyCadence1    String?
+  weeklyCadence2    String?
+  weeklyCadence3    String?
+  metric            String?
+  organizationId    String       @unique
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 }
 
 // Smart follow-up reminders

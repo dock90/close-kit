@@ -14,12 +14,14 @@ import {
 	Home,
 	Mail,
 	LogOut,
+	Target,
 } from 'lucide-react';
 import { SignOutButton } from '@clerk/nextjs';
 
 const navigationGroups = [
 	[
 		{ name: 'Dashboard', href: '/dashboard', icon: Home },
+		{ name: 'Sales Vision', href: '/sales-vision', icon: Target },
 		{ name: 'Deals', href: '/deals', icon: TrendingUp },
 		{ name: 'Activities', href: '/activities', icon: Activity },
 	],
