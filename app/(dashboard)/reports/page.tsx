@@ -154,12 +154,12 @@ export default function ReportsPage() {
 								Revenue Generated
 							</div>
 						</div>
-						<div className='text-center'>
-							<div className='text-3xl font-bold text-indigo-600'>
-								{formatCurrency(
-									metrics.revenue.pipelineValue / 100
-								)}
-							</div>
+					<div className='text-center'>
+						<div className='text-3xl font-bold text-indigo-600'>
+							{formatCurrency(
+								metrics.revenue.pipelineValue
+							)}
+						</div>
 							<div className='text-sm text-gray-600'>
 								Pipeline Value
 							</div>
@@ -172,11 +172,11 @@ export default function ReportsPage() {
 								Goal Progress
 								{metrics.revenue.goalTarget > 0 && (
 									<span className='block text-xs text-gray-500 mt-1'>
-										Target:{' '}
-										{formatCurrency(
-											metrics.revenue.goalTarget / 100
-										)}
-									</span>
+								Target:{' '}
+									{formatCurrency(
+										metrics.revenue.goalTarget
+									)}
+								</span>
 								)}
 							</div>
 						</div>

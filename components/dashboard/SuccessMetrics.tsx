@@ -82,7 +82,7 @@ export function SuccessMetrics() {
 			currency: 'USD',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
-		}).format(value / 100);
+		}).format(value);
 	};
 
 	return (
