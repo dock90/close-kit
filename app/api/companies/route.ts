@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
 		const companies = await prisma.company.findMany({
 			where,
 			include: {
+				contacts: true,
 				_count: {
 					select: {
 						contacts: true,
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
 				organizationId: dbUser.organizationId,
 			},
 			include: {
+				contacts: true,
 				_count: {
 					select: {
 						contacts: true,
