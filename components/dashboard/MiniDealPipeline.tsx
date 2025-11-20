@@ -34,7 +34,7 @@ export function MiniDealPipeline({ deals }: MiniDealPipelineProps) {
 			currency: 'USD',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
-		}).format(amount / 100);
+		}).format(amount);
 	};
 
 	const getDealsByStage = (stage: string) => {

@@ -34,7 +34,17 @@ export function ReminderBell() {
 		fetchReminders();
 		// Refresh reminders every minute
 		const interval = setInterval(fetchReminders, 60000);
-		return () => clearInterval(interval);
+
+		// Listen for reminder creation events
+		const handleReminderCreated = () => {
+			fetchReminders();
+		};
+		window.addEventListener('reminderCreated', handleReminderCreated);
+
+		return () => {
+			clearInterval(interval);
+			window.removeEventListener('reminderCreated', handleReminderCreated);
+		};
 	}, []);
 
 	const fetchReminders = async () => {

@@ -95,19 +95,19 @@ export default function SettingsPage() {
 				}
 			}
 
-			// Fetch current revenue goal
-			const goalRes = await fetch('/api/revenue-goals');
-			if (goalRes.ok) {
-				const goalData = await goalRes.json();
-				if (goalData) {
-					setRevenueGoal(goalData);
-					setGoalForm({
-						targetAmount: goalData.targetAmount.toString(),
-						startDate: goalData.startDate.split('T')[0],
-						endDate: goalData.endDate.split('T')[0],
-					});
-				}
+		// Fetch current revenue goal
+		const goalRes = await fetch('/api/revenue-goals');
+		if (goalRes.ok) {
+			const goalData = await goalRes.json();
+			if (goalData) {
+				setRevenueGoal(goalData);
+				setGoalForm({
+					targetAmount: goalData.targetAmount.toString(),
+					startDate: goalData.startDate.split('T')[0],
+					endDate: goalData.endDate.split('T')[0],
+				});
 			}
+		}
 		} catch (error) {
 			console.error('Error fetching data:', error);
 			setMessage({ type: 'error', text: 'Failed to load settings' });
@@ -191,18 +191,18 @@ export default function SettingsPage() {
 		setSaving(true);
 		setMessage(null);
 
-		try {
-			const goalData = {
-				targetAmount: parseFloat(goalForm.targetAmount),
-				startDate: new Date(goalForm.startDate).toISOString(),
-				endDate: new Date(goalForm.endDate).toISOString(),
-			};
+	try {
+		const goalData = {
+			targetAmount: parseFloat(goalForm.targetAmount),
+			startDate: new Date(goalForm.startDate).toISOString(),
+			endDate: new Date(goalForm.endDate).toISOString(),
+		};
 
-			const response = await fetch('/api/revenue-goals', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(goalData),
-			});
+		const response = await fetch('/api/revenue-goals', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(goalData),
+		});
 
 			if (response.ok) {
 				const newGoal = await response.json();

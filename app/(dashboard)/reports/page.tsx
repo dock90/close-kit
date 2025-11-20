@@ -144,12 +144,12 @@ export default function ReportsPage() {
 				</CardHeader>
 				<CardContent>
 					<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-						<div className='text-center'>
-							<div className='text-3xl font-bold text-green-600'>
-								{formatCurrency(
-									metrics.revenue.revenueGenerated / 100
-								)}
-							</div>
+					<div className='text-center'>
+						<div className='text-3xl font-bold text-green-600'>
+							{formatCurrency(
+								metrics.revenue.revenueGenerated
+							)}
+						</div>
 							<div className='text-sm text-gray-600'>
 								Revenue Generated
 							</div>
@@ -225,12 +225,12 @@ export default function ReportsPage() {
 											</p>
 										)}
 									</div>
-									<div className='text-right'>
-										<div className='font-semibold text-green-600'>
-											{formatCurrency(
-												report.revenueGenerated / 100
-											)}
-										</div>
+								<div className='text-right'>
+									<div className='font-semibold text-green-600'>
+										{formatCurrency(
+											report.revenueGenerated
+										)}
+									</div>
 										<div className='text-sm text-gray-500'>
 											Revenue
 										</div>

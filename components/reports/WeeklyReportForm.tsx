@@ -132,14 +132,12 @@ export function WeeklyReportForm({
 	};
 
 	const formatCurrency = (amount: number) => {
-		// Convert from cents to dollars
-		const dollars = amount / 100;
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: 'USD',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
-		}).format(dollars);
+		}).format(amount);
 	};
 
 	const formatDate = (date: Date) => {

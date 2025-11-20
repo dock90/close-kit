@@ -24,14 +24,13 @@ export function RevenueProgress({
 	const remainingRevenue = Math.max(targetRevenue - currentRevenue, 0);
 
 	const formatCurrency = (amount: number) => {
-		// Convert from cents to dollars
-		const dollars = amount / 100;
+		// Revenue goals are stored in dollars (not cents like deals)
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: 'USD',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
-		}).format(dollars);
+		}).format(amount);
 	};
 
 	const getDaysRemaining = () => {

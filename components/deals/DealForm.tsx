@@ -88,8 +88,6 @@ export function DealForm({
 		companyId: '',
 		contactId: '',
 		...initialData,
-		// Convert cents to dollars if initialData has a value
-		...(initialData.value ? { value: initialData.value / 100 } : {}),
 	});
 
 	const [errors, setErrors] = useState<DealFormErrors>({});
@@ -141,11 +139,7 @@ export function DealForm({
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (validateForm()) {
-			// Convert dollars to cents before submitting
-			onSubmit({
-				...formData,
-				value: Math.round(formData.value * 100),
-			});
+			onSubmit(formData);
 		}
 	};
 

@@ -141,25 +141,28 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 
 		try {
 			if (type === 'deal') {
-				// Create deal
-				const response = await fetch('/api/deals', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						name: formData.subject,
-						value: parseInt(formData.value) * 100, // Convert to cents
-						stage: 'lead',
-						companyId: formData.companyId,
-						contactId: formData.contactId,
-					}),
-				});
+			// Create deal
+			const response = await fetch('/api/deals', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: formData.subject,
+					value: parseInt(formData.value),
+					stage: 'lead',
+					companyId: formData.companyId,
+					contactId: formData.contactId,
+				}),
+			});
 
-				if (!response.ok) {
-					const errorData = await response.json();
-					console.error('Failed to create deal:', errorData);
-					throw new Error('Failed to create deal');
-				}
-			} else if (type === 'reminder') {
+			if (!response.ok) {
+				const errorData = await response.json();
+				console.error('Failed to create deal:', errorData);
+				throw new Error('Failed to create deal');
+			}
+
+			// Dispatch custom event to notify components to refresh
+			window.dispatchEvent(new CustomEvent('dealCreated'));
+		} else if (type === 'reminder') {
 				// Create reminder
 				console.log('Creating reminder with data:', {
 					type: 'custom',
@@ -189,9 +192,12 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					throw new Error('Failed to create reminder');
 				}
 
-				const reminderResult = await response.json();
-				console.log('Reminder created successfully:', reminderResult);
-			} else {
+			const reminderResult = await response.json();
+			console.log('Reminder created successfully:', reminderResult);
+
+			// Dispatch custom event to notify ReminderBell to refresh
+			window.dispatchEvent(new CustomEvent('reminderCreated'));
+		} else {
 				// Log activity
 				const response = await fetch('/api/activities', {
 					method: 'POST',
@@ -214,18 +220,16 @@ export function QuickLogModal({ type, onClose }: QuickLogModalProps) {
 					throw new Error('Failed to log activity');
 				}
 
-				const activityResult = await response.json();
-				console.log('Activity logged successfully:', activityResult);
-			}
+			const activityResult = await response.json();
+			console.log('Activity logged successfully:', activityResult);
 
-			// Show success message
-			alert(type === 'reminder' ? 'Reminder created successfully!' : type === 'deal' ? 'Deal created successfully!' : 'Activity logged successfully!');
-			onClose();
+			// Dispatch custom event to notify components to refresh
+			window.dispatchEvent(new CustomEvent('activityCreated'));
+		}
 
-			// Use setTimeout to ensure the modal closes before reload
-			setTimeout(() => {
-				window.location.reload();
-			}, 100);
+		// Show success message
+		alert(type === 'reminder' ? 'Reminder created successfully!' : type === 'deal' ? 'Deal created successfully!' : 'Activity logged successfully!');
+		onClose();
 		} catch (error) {
 			console.error('Error:', error);
 			alert(`Failed to save: ${error instanceof Error ? error.message : 'Unknown error'}. Check console for details.`);

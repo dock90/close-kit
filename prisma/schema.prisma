@@ -94,7 +94,7 @@ model Contact {
 model Deal {
   id                String       @id @default(cuid())
   name              String
-  value             Int // in cents
+  value             Int // in dollars
   stage             String // "lead" | "contacted" | "discovery" | "proposal" | "negotiation" | "closed_won" | "closed_lost"
   probability       Int          @default(50) // 0-100
   expectedCloseDate DateTime?
@@ -158,7 +158,7 @@ model WeeklyReport {
   callsBooked      Int          @default(0)
   proposalsSent    Int          @default(0)
   dealsClosed      Int          @default(0)
-  revenueGenerated Int          @default(0) // in cents
+  revenueGenerated Int          @default(0) // in dollars
   roadblocks       String?
   organizationId   String
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
