@@ -11,25 +11,25 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 interface Activity {
 	id: string;
 	type: string;
-	subject?: string | null;
-	notes?: string | null;
-	scheduledDate?: Date | string | null;
-	completedDate?: Date | string | null;
+	subject?: string;
+	notes?: string;
+	scheduledDate?: Date;
+	completedDate?: Date;
 	status: string;
 	companyId?: string;
 	contactId?: string;
 	dealId?: string;
 	company?: {
 		name: string;
-	} | null;
+	};
 	contact?: {
 		firstName: string;
 		lastName: string;
-	} | null;
+	};
 	deal?: {
 		name: string;
-	} | null;
-	createdAt: Date | string;
+	};
+	createdAt: Date;
 }
 
 interface Company {
