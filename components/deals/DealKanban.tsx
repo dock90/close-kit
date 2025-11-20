@@ -50,13 +50,14 @@ const STAGES: { key: DealStage; label: string; color: string }[] = [
 	},
 ];
 
-export function DealKanban({
-	onDealUpdate,
-	onDealView,
-}: DealKanbanProps) {
+export function DealKanban({ onDealUpdate, onDealView }: DealKanbanProps) {
 	const { deals, moveDealToStage } = useDealStore();
 	const [draggedDeal, setDraggedDeal] = useState<string | null>(null);
-	const [touchStart, setTouchStart] = useState<{ x: number; y: number; dealId: string } | null>(null);
+	const [touchStart, setTouchStart] = useState<{
+		x: number;
+		y: number;
+		dealId: string;
+	} | null>(null);
 	const [touchOffset, setTouchOffset] = useState(0);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -134,10 +135,12 @@ export function DealKanban({
 		if (!touchStart) return;
 
 		const swipeThreshold = 100;
-		const deal = deals.find(d => d.id === touchStart.dealId);
+		const deal = deals.find((d) => d.id === touchStart.dealId);
 
 		if (Math.abs(touchOffset) > swipeThreshold && deal) {
-			const currentStageIndex = STAGES.findIndex(s => s.key === currentStage);
+			const currentStageIndex = STAGES.findIndex(
+				(s) => s.key === currentStage
+			);
 
 			if (touchOffset < 0 && currentStageIndex < STAGES.length - 1) {
 				// Swipe left - move to next stage
@@ -158,15 +161,6 @@ export function DealKanban({
 
 	return (
 		<div className='space-y-6'>
-			<div className='flex items-center justify-between'>
-				<div>
-					<h2 className='text-2xl font-bold text-gray-900'>
-						Deal Pipeline
-					</h2>
-					<p className='text-gray-600'>{deals.length} total deals</p>
-				</div>
-			</div>
-
 			<div className='overflow-x-auto' ref={scrollContainerRef}>
 				<div className='flex space-x-4 min-w-max pb-4 lg:pb-4 pb-20'>
 					{STAGES.map((stage) => {
@@ -198,121 +192,152 @@ export function DealKanban({
 										onDrop={(e) => handleDrop(e, stage.key)}
 									>
 										{stageDeals.map((deal) => {
-											const isBeingSwiped = touchStart?.dealId === deal.id;
-											const swipeStyle = isBeingSwiped ? {
-												transform: `translateX(${touchOffset}px)`,
-												transition: 'none'
-											} : {};
+											const isBeingSwiped =
+												touchStart?.dealId === deal.id;
+											const swipeStyle = isBeingSwiped
+												? {
+														transform: `translateX(${touchOffset}px)`,
+														transition: 'none',
+												  }
+												: {};
 
 											return (
-											<div
-												key={deal.id}
-												draggable
-												onDragStart={(e) =>
-													handleDragStart(e, deal.id)
-												}
-												onTouchStart={(e) => handleTouchStart(e, deal.id)}
-												onTouchMove={handleTouchMove}
-												onTouchEnd={(e) => handleTouchEnd(e, stage.key)}
-												onClick={() => handleCardClick(deal)}
-												className='bg-white rounded-lg p-4 shadow-sm border cursor-pointer hover:shadow-md transition-all duration-200 group touch-manipulation relative hover:border-blue-400'
-												style={{ minHeight: '44px', ...swipeStyle }}
-											>
-												{/* Swipe indicators */}
-												{isBeingSwiped && (
-													<>
-														{touchOffset < -50 && (
-															<div className='absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600'>
-																<ChevronRight className='h-6 w-6' />
-															</div>
-														)}
-														{touchOffset > 50 && (
-															<div className='absolute left-2 top-1/2 -translate-y-1/2 text-indigo-600'>
-																<ChevronLeft className='h-6 w-6' />
-															</div>
-														)}
-													</>
-												)}
-												<div className='space-y-3'>
-													<div className='flex items-start justify-between'>
-														<h4 className='font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors'>
-															{deal.name}
-														</h4>
-														<div className='flex items-center opacity-0 group-hover:opacity-100 transition-opacity'>
-															<Eye className='h-4 w-4 text-blue-600' />
-														</div>
-													</div>
-
-													<div className='flex items-center justify-between'>
-														<span className='text-lg font-semibold text-gray-900'>
-															{formatCurrency(
-																deal.value
+												<div
+													key={deal.id}
+													draggable
+													onDragStart={(e) =>
+														handleDragStart(
+															e,
+															deal.id
+														)
+													}
+													onTouchStart={(e) =>
+														handleTouchStart(
+															e,
+															deal.id
+														)
+													}
+													onTouchMove={
+														handleTouchMove
+													}
+													onTouchEnd={(e) =>
+														handleTouchEnd(
+															e,
+															stage.key
+														)
+													}
+													onClick={() =>
+														handleCardClick(deal)
+													}
+													className='bg-white rounded-lg p-4 shadow-sm border cursor-pointer hover:shadow-md transition-all duration-200 group touch-manipulation relative hover:border-blue-400'
+													style={{
+														minHeight: '44px',
+														...swipeStyle,
+													}}
+												>
+													{/* Swipe indicators */}
+													{isBeingSwiped && (
+														<>
+															{touchOffset <
+																-50 && (
+																<div className='absolute right-2 top-1/2 -translate-y-1/2 text-indigo-600'>
+																	<ChevronRight className='h-6 w-6' />
+																</div>
 															)}
-														</span>
-														<span className='text-sm text-gray-600'>
-															{deal.probability}%
-														</span>
-													</div>
+															{touchOffset >
+																50 && (
+																<div className='absolute left-2 top-1/2 -translate-y-1/2 text-indigo-600'>
+																	<ChevronLeft className='h-6 w-6' />
+																</div>
+															)}
+														</>
+													)}
+													<div className='space-y-3'>
+														<div className='flex items-start justify-between'>
+															<h4 className='font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors'>
+																{deal.name}
+															</h4>
+															<div className='flex items-center opacity-0 group-hover:opacity-100 transition-opacity'>
+																<Eye className='h-4 w-4 text-blue-600' />
+															</div>
+														</div>
 
-													<div className='space-y-2'>
-														<div className='flex items-center space-x-2 text-sm text-gray-600'>
-															<Building2 className='h-3 w-3' />
-															<span className='truncate'>
+														<div className='flex items-center justify-between'>
+															<span className='text-lg font-semibold text-gray-900'>
+																{formatCurrency(
+																	deal.value
+																)}
+															</span>
+															<span className='text-sm text-gray-600'>
 																{
-																	deal.company
-																		?.name
+																	deal.probability
 																}
+																%
 															</span>
 														</div>
-														<div className='flex items-center space-x-2 text-sm text-gray-600'>
-															<User className='h-3 w-3' />
-															<span>
-																{
-																	deal.contact
-																		?.firstName
-																}{' '}
-																{
-																	deal.contact
-																		?.lastName
-																}
-															</span>
-														</div>
-														{deal.expectedCloseDate && (
+
+														<div className='space-y-2'>
 															<div className='flex items-center space-x-2 text-sm text-gray-600'>
-																<Calendar className='h-3 w-3' />
+																<Building2 className='h-3 w-3' />
+																<span className='truncate'>
+																	{
+																		deal
+																			.company
+																			?.name
+																	}
+																</span>
+															</div>
+															<div className='flex items-center space-x-2 text-sm text-gray-600'>
+																<User className='h-3 w-3' />
 																<span>
-																	Due{' '}
-																	{formatDate(
-																		new Date(
-																			deal.expectedCloseDate
-																		)
-																	)}
+																	{
+																		deal
+																			.contact
+																			?.firstName
+																	}{' '}
+																	{
+																		deal
+																			.contact
+																			?.lastName
+																	}
+																</span>
+															</div>
+															{deal.expectedCloseDate && (
+																<div className='flex items-center space-x-2 text-sm text-gray-600'>
+																	<Calendar className='h-3 w-3' />
+																	<span>
+																		Due{' '}
+																		{formatDate(
+																			new Date(
+																				deal.expectedCloseDate
+																			)
+																		)}
+																	</span>
+																</div>
+															)}
+														</div>
+
+														{deal.serviceType && (
+															<div className='text-xs text-gray-500'>
+																<span className='bg-gray-100 px-2 py-1 rounded'>
+																	{
+																		deal.serviceType
+																	}
+																</span>
+															</div>
+														)}
+
+														{deal.projectDuration && (
+															<div className='text-xs text-gray-500'>
+																<span className='bg-gray-100 px-2 py-1 rounded'>
+																	{
+																		deal.projectDuration
+																	}
 																</span>
 															</div>
 														)}
 													</div>
-
-													{deal.serviceType && (
-														<div className='text-xs text-gray-500'>
-															<span className='bg-gray-100 px-2 py-1 rounded'>
-																{
-																	deal.serviceType
-																}
-															</span>
-														</div>
-													)}
-
-													{deal.projectDuration && (
-														<div className='text-xs text-gray-500'>
-															<span className='bg-gray-100 px-2 py-1 rounded'>
-																{
-																	deal.projectDuration
-																}
-															</span>
-														</div>
-													)}
 												</div>
-											</div>
 											);
 										})}
 

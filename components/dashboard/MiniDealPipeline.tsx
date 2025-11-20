@@ -52,17 +52,12 @@ export function MiniDealPipeline({ deals }: MiniDealPipelineProps) {
 		<Card className='p-6'>
 			<div className='space-y-6'>
 				<div className='flex items-center justify-between'>
-					<div>
-						<h3 className='text-lg font-semibold text-gray-900'>
-							Deal Pipeline
-						</h3>
-						<p className='text-sm text-gray-500 mt-1'>
-							{deals.length} active deals •{' '}
-							{formatCurrency(
-								deals.reduce((sum, deal) => sum + deal.value, 0)
-							)}
-						</p>
-					</div>
+					<p className='text-sm text-gray-500 mt-1'>
+						{deals.length} active deals •{' '}
+						{formatCurrency(
+							deals.reduce((sum, deal) => sum + deal.value, 0)
+						)}
+					</p>
 					<Link
 						href='/deals'
 						className='flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700'

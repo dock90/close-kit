@@ -49,64 +49,66 @@ export function RevenueProgress({
 	};
 
 	return (
-		<Card className='p-6'>
-			<div className='space-y-4'>
-				<div className='flex items-center justify-between'>
-					<h3 className='text-lg font-semibold text-gray-900'>
-						Revenue Goal
-					</h3>
-					<span className='text-sm text-gray-500'>{period}</span>
-				</div>
-
-				<div className='space-y-2'>
-					<div className='flex justify-between text-sm'>
-						<span className='text-gray-600'>Progress</span>
-						<span className='font-medium'>
-							{progressPercentage.toFixed(1)}%
-						</span>
-					</div>
-
-					<div className='w-full bg-gray-200 rounded-full h-3'>
-						<div
-							className={`h-3 rounded-full transition-all duration-300 ${getProgressColor()}`}
-							style={{ width: `${progressPercentage}%` }}
-						/>
-					</div>
-
-					<div className='flex justify-between text-sm text-gray-600'>
-						<span>{formatCurrency(currentRevenue)}</span>
-						<span>{formatCurrency(targetRevenue)}</span>
-					</div>
-				</div>
-
-				<div className='grid grid-cols-2 gap-4 pt-4 border-t'>
-					<div>
-						<p className='text-sm text-gray-500'>Remaining</p>
-						<p className='text-lg font-semibold text-gray-900'>
-							{formatCurrency(remainingRevenue)}
-						</p>
-					</div>
-					<div>
-						<p className='text-sm text-gray-500'>Days Left</p>
-						<p className='text-lg font-semibold text-gray-900'>
-							{getDaysRemaining()}
-						</p>
-					</div>
-				</div>
-
-				{progressPercentage < 100 && (
-					<div className='text-xs text-gray-500 bg-gray-50 p-3 rounded-lg'>
-						<p className='font-medium mb-1'>Daily target needed:</p>
-						<p>
-							{formatCurrency(
-								remainingRevenue /
-									Math.max(getDaysRemaining(), 1)
-							)}{' '}
-							per day
-						</p>
-					</div>
-				)}
+		<div className='space-y-4'>
+			<div className='flex items-center justify-between'>
+				<h2 className='text-xl font-semibold text-gray-900'>
+					Revenue Goal
+				</h2>
+				<span className='text-sm text-gray-500'>{period}</span>
 			</div>
-		</Card>
+
+			<Card className='p-6'>
+				<div className='space-y-4'>
+					<div className='space-y-2'>
+						<div className='flex justify-between text-sm'>
+							<span className='text-gray-600'>Progress</span>
+							<span className='font-medium'>
+								{progressPercentage.toFixed(1)}%
+							</span>
+						</div>
+
+						<div className='w-full bg-gray-200 rounded-full h-3'>
+							<div
+								className={`h-3 rounded-full transition-all duration-300 ${getProgressColor()}`}
+								style={{ width: `${progressPercentage}%` }}
+							/>
+						</div>
+
+						<div className='flex justify-between text-sm text-gray-600'>
+							<span>{formatCurrency(currentRevenue)}</span>
+							<span>{formatCurrency(targetRevenue)}</span>
+						</div>
+					</div>
+
+					<div className='grid grid-cols-2 gap-4 pt-4 border-t'>
+						<div>
+							<p className='text-sm text-gray-500'>Remaining</p>
+							<p className='text-lg font-semibold text-gray-900'>
+								{formatCurrency(remainingRevenue)}
+							</p>
+						</div>
+						<div>
+							<p className='text-sm text-gray-500'>Days Left</p>
+							<p className='text-lg font-semibold text-gray-900'>
+								{getDaysRemaining()}
+							</p>
+						</div>
+					</div>
+
+					{progressPercentage < 100 && (
+						<div className='text-xs text-gray-500 bg-gray-50 p-3 rounded-lg'>
+							<p className='font-medium mb-1'>Daily target needed:</p>
+							<p>
+								{formatCurrency(
+									remainingRevenue /
+										Math.max(getDaysRemaining(), 1)
+								)}{' '}
+								per day
+							</p>
+						</div>
+					)}
+				</div>
+			</Card>
+		</div>
 	);
 }

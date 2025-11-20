@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { MetricsCard } from './MetricsCard';
-import {
-	DollarSign,
-	BarChart3,
-	Calendar,
-	Percent,
-} from 'lucide-react';
+import { DollarSign, BarChart3, Calendar, Percent } from 'lucide-react';
 
 interface SuccessMetricsData {
 	outreachVolume: number;
@@ -86,11 +81,8 @@ export function SuccessMetrics() {
 		<div>
 			<div className='mb-4'>
 				<h2 className='text-xl font-semibold text-gray-900'>
-					Success Metrics
+					Sales Metrics
 				</h2>
-				<p className='text-sm text-gray-600'>
-					Track your key performance indicators
-				</p>
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
 				<MetricsCard
