@@ -64,12 +64,14 @@ export function DealKanban({
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	const formatCurrency = (amount: number) => {
+		// Convert from cents to dollars
+		const dollars = amount / 100;
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: 'USD',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
-		}).format(amount);
+		}).format(dollars);
 	};
 
 	const formatDate = (date: Date) => {
@@ -122,11 +124,11 @@ export function DealKanban({
 
 	const handleTouchMove = (e: React.TouchEvent) => {
 		if (!touchStart) return;
-		
+
 		const touch = e.touches[0];
 		const deltaX = touch.clientX - touchStart.x;
 		const deltaY = touch.clientY - touchStart.y;
-		
+
 		// Only handle horizontal swipes (not vertical scrolling)
 		if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
 			setTouchOffset(deltaX);
@@ -136,13 +138,13 @@ export function DealKanban({
 
 	const handleTouchEnd = (e: React.TouchEvent, currentStage: DealStage) => {
 		if (!touchStart) return;
-		
+
 		const swipeThreshold = 100;
 		const deal = deals.find(d => d.id === touchStart.dealId);
-		
+
 		if (Math.abs(touchOffset) > swipeThreshold && deal) {
 			const currentStageIndex = STAGES.findIndex(s => s.key === currentStage);
-			
+
 			if (touchOffset < 0 && currentStageIndex < STAGES.length - 1) {
 				// Swipe left - move to next stage
 				const nextStage = STAGES[currentStageIndex + 1].key;
@@ -155,7 +157,7 @@ export function DealKanban({
 				onDealUpdate?.(touchStart.dealId, { stage: prevStage });
 			}
 		}
-		
+
 		setTouchStart(null);
 		setTouchOffset(0);
 	};
@@ -207,7 +209,7 @@ export function DealKanban({
 												transform: `translateX(${touchOffset}px)`,
 												transition: 'none'
 											} : {};
-											
+
 											return (
 											<div
 												key={deal.id}

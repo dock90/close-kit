@@ -19,12 +19,14 @@ export function RevenueChart({
 	onPeriodChange,
 }: RevenueChartProps) {
 	const formatCurrency = (amount: number) => {
+		// Convert from cents to dollars
+		const dollars = amount / 100;
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: 'USD',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
-		}).format(amount);
+		}).format(dollars);
 	};
 
 	const formatDate = (dateString: string) => {
