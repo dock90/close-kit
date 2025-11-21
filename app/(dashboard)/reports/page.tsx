@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
+import { Plus, RefreshCw } from 'lucide-react';
 
 interface ReportMetrics {
 	currentWeek: {
@@ -32,28 +34,54 @@ interface ReportMetrics {
 }
 
 export default function ReportsPage() {
+	const router = useRouter();
 	const [metrics, setMetrics] = useState<ReportMetrics | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isGenerating, setIsGenerating] = useState(false);
 
 	useEffect(() => {
-		const fetchMetrics = async () => {
-			try {
-				setIsLoading(true);
-				const response = await fetch('/api/metrics');
-				if (!response.ok) {
-					throw new Error('Failed to fetch metrics');
-				}
-				const data = await response.json();
-				setMetrics(data);
-			} catch (error) {
-				console.error('Error fetching report metrics:', error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
 		fetchMetrics();
 	}, []);
+
+	const fetchMetrics = async () => {
+		try {
+			setIsLoading(true);
+			const response = await fetch('/api/metrics');
+			if (!response.ok) {
+				throw new Error('Failed to fetch metrics');
+			}
+			const data = await response.json();
+			setMetrics(data);
+		} catch (error) {
+			console.error('Error fetching report metrics:', error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleGenerateReport = async () => {
+		try {
+			setIsGenerating(true);
+			const response = await fetch('/api/weekly-reports/generate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({}),
+			});
+
+			if (response.ok) {
+				// Refresh metrics to show the new report
+				await fetchMetrics();
+				alert('Weekly report generated successfully!');
+			} else {
+				throw new Error('Failed to generate report');
+			}
+		} catch (error) {
+			console.error('Error generating report:', error);
+			alert('Failed to generate report. Please try again.');
+		} finally {
+			setIsGenerating(false);
+		}
+	};
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
@@ -87,11 +115,31 @@ export default function ReportsPage() {
 
 	return (
 		<div className='space-y-6'>
-			<div>
-				<h1 className='text-3xl font-bold text-gray-900'>Weekly Reports</h1>
-				<p className='text-gray-600'>
-					Track your performance and weekly progress
-				</p>
+			<div className='flex justify-between items-start'>
+				<div>
+					<h1 className='text-3xl font-bold text-gray-900'>Weekly Reports</h1>
+					<p className='text-gray-600'>
+						Track your performance and weekly progress
+					</p>
+				</div>
+				<button
+					onClick={handleGenerateReport}
+					disabled={isGenerating}
+					className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
+					style={{ minHeight: '44px' }}
+				>
+					{isGenerating ? (
+						<>
+							<RefreshCw className='h-4 w-4 mr-2 animate-spin' />
+							Generating...
+						</>
+					) : (
+						<>
+							<Plus className='h-4 w-4 mr-2' />
+							Generate This Week's Report
+						</>
+					)}
+				</button>
 			</div>
 
 			{/* Weekly Report */}
@@ -192,20 +240,37 @@ export default function ReportsPage() {
 				<CardContent>
 					{metrics.weeklyReports.length === 0 ? (
 						<div className='text-center py-8'>
-							<p className='text-gray-500'>
-								No weekly reports yet. Start tracking your
-								progress!
+							<p className='text-gray-500 mb-4'>
+								No weekly reports yet. Generate your first report!
 							</p>
+							<button
+								onClick={handleGenerateReport}
+								disabled={isGenerating}
+								className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
+							>
+								{isGenerating ? (
+									<>
+										<RefreshCw className='h-4 w-4 mr-2 animate-spin' />
+										Generating...
+									</>
+								) : (
+									<>
+										<Plus className='h-4 w-4 mr-2' />
+										Generate First Report
+									</>
+								)}
+							</button>
 						</div>
 					) : (
 						<div className='space-y-4'>
 							{metrics.weeklyReports.map((report) => (
 								<div
 									key={report.id}
-									className='flex items-center justify-between p-4 border rounded-lg'
+									onClick={() => router.push(`/reports/${report.id}`)}
+									className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors'
 								>
 									<div>
-										<h4 className='font-medium'>
+										<h4 className='font-medium text-blue-600 hover:text-blue-700'>
 											Week of{' '}
 											{formatDate(report.weekStartDate)} -{' '}
 											{formatDate(report.weekEndDate)}
