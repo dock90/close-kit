@@ -174,34 +174,29 @@ export function ActivitiesPageClient() {
 
 			const updatedActivity = await response.json();
 
+			// Parse dates for the activity
+			const parsedActivity = {
+				...updatedActivity,
+				scheduledDate: updatedActivity.scheduledDate
+					? new Date(updatedActivity.scheduledDate)
+					: undefined,
+				completedDate: updatedActivity.completedDate
+					? new Date(updatedActivity.completedDate)
+					: undefined,
+				createdAt: new Date(updatedActivity.createdAt),
+			};
+
 			if (isEditing) {
 				// Update the existing activity in the list
 				setActivities(
 					activities.map((a) =>
-						a.id === editingActivity.id
-							? {
-									...updatedActivity,
-									scheduledDate: updatedActivity.scheduledDate
-										? new Date(
-												updatedActivity.scheduledDate
-										  )
-										: undefined,
-									completedDate: updatedActivity.completedDate
-										? new Date(
-												updatedActivity.completedDate
-										  )
-										: undefined,
-									createdAt: new Date(
-										updatedActivity.createdAt
-									),
-							  }
-							: a
+						a.id === editingActivity.id ? parsedActivity : a
 					)
 				);
 				setEditingActivity(null);
 			} else {
-				// Add the new activity to the list
-				setActivities([updatedActivity, ...activities]);
+				// Add the new activity to the top of the list
+				setActivities([parsedActivity, ...activities]);
 			}
 
 			setShowForm(false);
