@@ -112,12 +112,21 @@ export function CompanyDetailView({
 		}).format(amount);
 	};
 
-	const formatDate = (date: Date) => {
+	const formatDate = (date: Date | string | null | undefined) => {
+		if (!date) return 'N/A';
+
+		const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+		// Check if date is valid
+		if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+			return 'N/A';
+		}
+
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
 			day: 'numeric',
 			year: 'numeric',
-		}).format(date);
+		}).format(dateObj);
 	};
 
 	const formatIndustry = (industry?: string) => {
